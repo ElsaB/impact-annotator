@@ -31,7 +31,7 @@ this should be split into several sub-folders.
 eg:
 
 	- description
-	- predictions
+	- prediction
 	- validation
 
 I suggest that within those sub-folders we create entry folder in the form YYMMDD.
