@@ -1,0 +1,158 @@
+---
+title: "IMPACT data first look"
+author: "ElsaB"
+date: "18/05/10"
+output: html_document
+---
+
+
+# Dataset
+
+```{r echo=FALSE}
+dd = read.table("../../../data/all_IMPACT_mutations_180508.txt", sep="\t", stringsAsFactors=F, header=T)
+```
+
+## general
+
+```{r echo=TRUE}
+## dd is the raw mutation tsv file we have
+nrow(dd)
+colnames(dd)
+```
+
+```{r echo=TRUE}
+## number of patients
+length(unique(dd$Tumor_Sample_Barcode))
+```
+
+```{r echo=TRUE}
+## number of ~ genes
+length(unique(dd$Hugo_Symbol))
+```
+
+
+## variant types and assignment
+
+```{r echo=TRUE}
+# the different assignment class:
+table(dd$confidence_class)
+```
+
+Here are details on what that means:
+
+- **AUTO_OK** : every variant that enter the database is assign this label.
+- **UNLIKELY** : a curator manually switch the confidence from auto_ok to unlikely, ie to drop.
+- **OK_NOT_SO** : a curator dropped the variant too but the variant is higher confidence.
+- **MANUAL_OK** : a curator has been changing his mind ie auto_ok -> drop -> ok.
+- **UNKNOWN** : those variants are not curated. Mostly intergenic or synonymous.
+
+```{r echo=TRUE}
+# variant effect versus assignment:
+table(dd$Consequence, dd$confidence_class)
+```
+
+Here we see that coding variants are not in the "unknown" class.
+
+Most of the unknown are intronic or synonymous or upstream.
+
+We also see that coding variants are unbalanced towards the "auto_ok" class.
+
+```{r echo=TRUE}
+# variant type versus assignment:
+table(dd$Variant_Type, dd$confidence_class)
+# DNP = di-nucleotide
+# TNP = tri-nucleotide
+```
+
+## contamination
+
+I quote:
+
+**minor_contamination : this is our calculation of presence of possible another sample in the tumor. This should be less than or equal to 0.01.**
+
+```{r echo=TRUE}
+summary(dd$minor_contamination)
+# suggested cutoff:
+sum(dd$minor_contamination > 0.01)
+```
+
+## occurence in normals
+
+Each variant is evaluted in ~15 run-specific normals + 20 fixed normals.
+
+Unfortunately we only have the mixed information.
+
+And we only have the count in the normals, no VAF or other info.
+
+```{r echo=TRUE}
+# this is count;frequency
+names(table(dd$occurence_in_normals))[c(1:5,100:105)]
+```
+
+## variant key level
+
+```{r echo=FALSE}
+dd$variant.key = paste(dd$Chromosome,
+		       dd$Start_Position,
+		       dd$Reference_Allele,
+		       dd$Tumor_Seq_Allele2,
+		       sep="_"
+		       )
+```
+
+```{r echo=TRUE}
+# number of unique variants
+length(unique(dd$variant.key))
+# assignment(s) per unique variant
+gg = as.data.frame(table(dd$variant.key))
+summary(gg$Freq)
+sum(gg$Freq>1)
+sum(gg$Freq>5)
+sum(gg$Freq>10)
+```
+
+```{r echo=FALSE}
+#library(parallel)
+#vclass = mclapply(unique(dd$variant.key), function(v) dd$confidence_class[dd$variant.key==v], mc.cores=7)
+#load("./vclass.Rdata")
+#vunique = lapply(vclass, unique)
+#vlength = sapply(vunique, length)
+# number of different label per variant
+#table(vlength)
+```
+
+# Reduced dataset
+
+## restricted variant types
+
+```{r echo=TRUE}
+keep_type = c("frameshift_deletion","frameshift_insertion",
+	      "nonframeshift_deletion","nonframeshift_insertion",
+	      "nonsynonymous_SNV",
+	      "splicing",
+	      "stopgain_SNV")
+hh = dd[which(dd$Consequence %in% keep_type),]
+# size after type filtering:
+nrow(hh)
+# assignement:
+table(hh$Consequence, hh$confidence_class)
+# del ins snv:
+table(hh$Variant_Type)
+# recurrence
+gh = as.data.frame(table(hh$variant.key))
+sum(gh$Freq>1)
+sum(gh$Freq>2)
+sum(gh$Freq>5)
+sum(gh$Freq>10)
+# gene
+length(unique(hh$Hugo_Symbol))
+```
+
+```{r echo=FALSE}
+#vclassh = mclapply(unique(hh$variant.key), function(v) hh$confidence_class[hh$variant.key==v], mc.cores=7)
+#vuniqueh = lapply(vclassh, unique)
+#vlengthh = sapply(vuniqueh, length)
+#table(vlengthh)
+#vtest = sapply( vclassh, function(x) any(grepl("_OK",x)) & any(grepl("UNLIKELY",x)) )
+#vtest2 = sapply( vclassh, function(x) any(grepl("_OK",x)) & any(grepl("UNKNOWN",x)) )
+```
