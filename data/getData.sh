@@ -4,4 +4,4 @@
 
 username=$1 # your luna username
 
-scp ${username}@luna:/ifs/res/papaemme/users/eb2/impact-annotator/data/data_mutations_extended_180508.txt .
+scp ${username}@luna:/ifs/res/papaemme/users/eb2/impact-annotator/data/all_IMPACT_mutations_180508.txt .
