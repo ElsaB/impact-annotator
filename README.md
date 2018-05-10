@@ -19,13 +19,17 @@ usefull documentation, biblo, slides for talks...
 - **src**
 
 main scripts that are used across analysis.
+
 eg: predictors, cross-validation scripts, evaluation scripts.
 
 - **analysis**
 
 folder where you design and run analysis.
+
 this should be split into several sub-folders.
+
 eg:
+
 	- description
 	- predictions
 	- validation
@@ -37,4 +41,4 @@ I suggest that within those sub-folders we create entry folder in the form YYMMD
 
 folder where we summarize the main results in a mardown.
 
-the markdown should have entries in the form YYMMDD that can point to other markdown from the analysis part.
+the markdown should have entries in the form YYMMDD that can point to other markdowns from the analysis part.
