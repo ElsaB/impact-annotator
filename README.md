@@ -39,6 +39,6 @@ I suggest that within those sub-folders we create entry folder in the form YYMMD
 
 - **results**
 
-folder where we summarize the main results in a mardown.
+folder where we summarize the main results in a mardown (notebook.md).
 
 the markdown should have entries in the form YYMMDD that can point to other markdowns from the analysis part.
