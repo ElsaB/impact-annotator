@@ -1,0 +1,54 @@
+---
+title: "Somatic mutational burden"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+# Dataset
+
+```{r echo=FALSE}
+dd = read.table("../../../data/all_IMPACT_mutations_180508.txt", sep="\t", stringsAsFactors=F, header=T)
+```
+
+
+```{r}
+mutations.somatic <- subset(dd, occurence_in_normals %in% c('', '0', "0;0"))
+sample.burden <- sort(table(mutations.somatic $Tumor_Sample_Barcode))
+plot(sample.burden[sample.burden>10])
+
+```
+
+
+samples with highest burden of somatic mutations
+```{r}
+tail(sample.burden)
+```
+
+```{r}
+hyper.mutations <- subset(mutations.somatic, Tumor_Sample_Barcode==names(tail(sample.burden, n=1)))
+```
+
+```{r}
+par(mfrow=c(2,1))
+hist(hyper.mutations$t_vaf, main='Vaf somatic mutations of top mutated sample', col='black')
+hist(mutations.somatic$t_vaf, main='Vaf somatic mutations of all samples', col='black')
+```
+
+```{r}
+manual.mutations <- subset(dd, confidence_class=='MANUAL_OK')
+hist(manual.mutations$t_vaf, col='black')
+```
+
+```{r}
+hist(subset(dd,confidence_class=='UNLIKELY')$t_vaf, col='black')
+```
+```{r}
+hist(dd$minor_contamination)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).
