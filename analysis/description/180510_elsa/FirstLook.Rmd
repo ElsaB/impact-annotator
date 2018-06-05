@@ -53,7 +53,7 @@ table(dd$Consequence, dd$confidence_class)
 
 Here we see that coding variants are not in the "unknown" class.
 
-Most of the unknown are intronic or synonymous or upstream.
+Most of the unknowns are intronic or synonymous or utr or upstream.
 
 We also see that coding variants are unbalanced towards the "auto_ok" class.
 
@@ -66,7 +66,7 @@ table(dd$Variant_Type, dd$confidence_class)
 
 ## contamination
 
-I quote:
+I quote Ahmet:
 
 **minor_contamination : this is our calculation of presence of possible another sample in the tumor. This should be less than or equal to 0.01.**
 
@@ -80,7 +80,7 @@ sum(dd$minor_contamination > 0.01)
 
 Each variant is evaluted in ~15 run-specific normals + 20 fixed normals.
 
-Unfortunately we only have the mixed information.
+Unfortunately we only have the mixed information for now.
 
 And we only have the count in the normals, no VAF or other info.
 

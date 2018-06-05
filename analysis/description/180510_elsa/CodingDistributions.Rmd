@@ -1,0 +1,174 @@
+---
+title: "CODING MUTATIONS"
+author: "ElsaB"
+date: "18/05/29"
+output: html_document
+---
+
+```{r, echo=FALSE, results="hide", include=FALSE}
+source("../../../src/utils/ggstyles.R")
+```
+
+# Coding mutations
+
+Here we will only select the coding mutations (including splicing) from the IMPACT dataset.
+
+```{r echo=FALSE}
+dd = read.table("../../../data/all_IMPACT_mutations_180508.txt", sep="\t", stringsAsFactors=F, header=T)
+```
+
+```{r echo=TRUE}
+# RAW DATA:
+# size
+nrow(dd)
+# variant effect versus assignment:
+table(dd$Consequence, dd$confidence_class)
+```
+
+```{r echo=TRUE}
+# FILTERING:
+# coding mutations
+keep.coding = c("frameshift_deletion","frameshift_insertion",
+	      "nonframeshift_deletion","nonframeshift_insertion",
+	      "nonsynonymous_SNV",
+	      "splicing","splicing_noncanonical",
+	      "stopgain_SNV","stoploss_SNV",
+	      "Translation_Start_Site"
+	      )
+hh = dd[which(dd$Consequence %in% keep.coding),]
+```
+
+```{r echo=TRUE}
+# size after type filtering:
+nrow(hh)
+# assignement:
+table(hh$Consequence, hh$confidence_class)
+# del ins snv:
+table(hh$Variant_Type)
+```
+
+```{r echo=FALSE}
+hh$variant.key = paste(hh$Chromosome,
+		       hh$Start_Position,
+		       hh$Reference_Allele,
+		       hh$Tumor_Seq_Allele2,
+		       sep="_"
+		       )
+```
+
+# Contamination
+
+Remove contaminated samples:
+
+```{r echo=TRUE}
+# cutoff
+hh = hh[hh$minor_contamination <= 0.01,]
+# size
+nrow(hh)
+```
+
+
+# Coding curated mutations
+
+Here we select the coding mutations that have been curated as being somatic / non-somatic.
+
+Most of the coding mutations have been curated, only a few splicing/stoploss are in the unknowns.
+
+```{r echo=TRUE}
+# keep the curated mutations
+hh = hh[hh$confidence_class != "UNKNOWN",]
+# somatic versus non-somatic label
+hh$label = "somatic"
+hh$label[hh$confidence_class=="UNLIKELY" | hh$confidence_class=="OK_NOT_SO"] = "non-somatic"
+```
+
+The dataset is highly unbalanced:
+
+```{r echo=TRUE}
+table(hh$label)
+```
+
+```{r echo=TRUE}
+# consequence versus somatic
+table(hh$Consequence, hh$label)
+# variant type versus somatic:
+table(hh$Variant_Type, hh$label)
+```
+
+## Frequency in normals
+
+We look at the frequency of somatic / non-somatic variants in the pool of normals.
+
+```{r echo=FALSE}
+hh$occurence_in_normals[which(hh$occurence_in_normals=="0")] = "0;0"
+hh$occurence_in_normals[which(hh$occurence_in_normals=="")] = "0;0"
+hh$freq_normals = zaza=sapply(hh$occurence_in_normals, function(x) 100*as.numeric(strsplit(x,split=";")[[1]][2]))
+hh$in_normals = "no"
+hh$in_normals[hh$freq_normals!=0] = "yes"
+```
+
+```{r, echo=FALSE}
+mytwolabel = c("#f1a340","#998ec3")
+# density
+ggplot(hh, aes(x=freq_normals, fill=label)) + geom_density(alpha=.9) + theme1 + topleg + nolegtitle + scale_x_sqrt() + scale_y_sqrt() + scale_fill_manual(values=mytwolabel)
+# barplot
+ggplot(hh, aes(x=in_normals, fill=label)) + geom_bar(alpha=.9) + theme1 + topleg + nolegtitle + scale_fill_manual(values=mytwolabel)
+```
+
+```{r echo=TRUE}
+iwhy = which(hh$label=="somatic" & hh$in_normals=="yes")
+summary(hh[iwhy,"freq_normals"])
+length(iwhy)
+```
+
+**what happenned with those supposely somatic calls that are present in the normals as well???**
+
+
+## Tumor VAF and DIRPROP
+
+We investigate VAF and strand bias.
+
+First, reproduce the VAF as a sanity check:
+
+```{r echo=TRUE}
+ddvaf = data.frame(raw_t_vaf = hh$t_vaf,
+		   do_t_vaf = as.numeric(hh$t_alt_count / hh$t_depth),
+		   go_t_vaf = as.numeric((hh$t_alt_neg_count+hh$t_alt_plus_count) / hh$t_depth)
+		   )
+# sanity check #1:
+ggplot(ddvaf) + geom_point(aes(x=raw_t_vaf, y=do_t_vaf)) + theme1
+# sanity check #2:
+ggplot(ddvaf) + geom_point(aes(x=raw_t_vaf, y=go_t_vaf)) + theme1
+```
+
+**There is a couple of outliers where we are not able to reproduce the VAF based on the raw counts.**
+This might be related to different mapping quality thresholds...
+
+
+Distribution of VAF for the somatic / non-somatic categories:
+
+
+```{r echo=FALSE, results="hide"}
+# density of the tumor VAF
+ggplot(hh, aes(x=t_vaf, fill=label)) + geom_density(alpha=.7) + theme1 + topleg + nolegtitle + scale_fill_manual(values=mytwolabel)
+```
+
+As expected, the non-somatic density has a peak at 0.5 (ie the likely germline calls),
+and a peak at low VAF (ie the likely artefacts calls).
+
+Second, we look at the strand bias:
+
+```{r echo=TRUE}
+hh$DIRPROP = pmin(hh$t_alt_neg_count,hh$t_alt_plus_count) / pmax(hh$t_alt_neg_count,hh$t_alt_plus_count)
+```
+
+Distribution of strand ratio for the somatic / non-somatic categories:
+
+
+```{r echo=FALSE, results="hide"}
+# density of the tumor DIRPROP
+ggplot(hh, aes(x=DIRPROP, fill=label)) + geom_density(alpha=.7) + theme1 + topleg + nolegtitle + scale_fill_manual(values=mytwolabel)
+```
+
+As expected, the non-somatic density has a heavier low strand ratio tail (likely from the artefact calls),
+although this is not very pronounced.
