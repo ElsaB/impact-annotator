@@ -49,13 +49,21 @@ runCV <- function(mypredictor, labelTrain, variantTrain, nfolds=5, nrepeats=10, 
 }
 
 # EVALUATE CV
-evaluateCVwithROCR <- function(resCV, measure="acc", x.measure="cutoff") {
+evaluateCVwithROCR <- function(resCV, measure="acc", x.measure="cutoff", positiveClass="real") {
     # example of usage: 
     #    - measure="tpr", x.measure="fpr" ---> ROC curve
     #    - measure="auc", x.measure="cutoff" ---> AUC
-    list.pred = lapply(resCV, function(c) 1-c[[1]]) # TO MAKE SURE
+    # proba
+    #list.pred = lapply(resCV, function(c) 1-c[[1]])
+    list.pred = lapply(resCV, function(c) c[[1]])
+    # ref
     list.ref = lapply(resCV, function(c) c[[2]])
+    uu = unique(unlist(list.ref))
+    mylevel = c(positiveClass,uu[uu!=positiveClass])
+    list.ref = lapply(list.ref, function(x) factor(x, levels=mylevel))
+    # object
     pred.obj = prediction(list.pred, list.ref)
+    # evaluate
     perf.obj = performance(pred.obj, measure=measure, x.measure=x.measure)
     return(perf.obj)
 }
