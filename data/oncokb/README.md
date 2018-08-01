@@ -4,12 +4,12 @@
 
 To annotate the cleaned dataset `cleaned_IMPACT_mutations_180508.txt` with the oncokb annotations from [oncokb-annotator](https://github.com/oncokb/oncokb-annotator) run **in the cluster**:
 ```shell
-$ bash annotate_with_oncokb_annotator.sh
+$ bsub -I -We 20 -R select[internet] "bash annotate_with_oncokb_annotator.sh"
 ```
 
 The output file `oncokb_annotated_cleaned_IMPACT_mutations_180508.txt` is the annotated version.
 
-The CPU time on the cluster was 425.2 seconds.
+The CPU time on the cluster was 495.6 seconds.
 
 ***
 
@@ -22,7 +22,7 @@ $ git clone https://github.com/oncokb/oncokb-annotator.git
 
 The script `annotate_with_oncokb_annotator.sh` does the following:
 
-* First calls `prepare_for_annotation.R` which does some minor changes on the dataset. Indeed oncokb-annotator needs a `Variant_Classification` feature, which can be computed from the `Consequence` feature as follow:
+* First it calls `prepare_for_annotation.R` which does some minor changes on the dataset. Indeed oncokb-annotator needs a `Variant_Classification` feature, which can be computed from the `Consequence` feature as follow:
 
 | Consequence               | Variant_Classification |
 | ------------------------- | ---------------------- |
@@ -35,10 +35,15 @@ The script `annotate_with_oncokb_annotator.sh` does the following:
 | frameshift_deletion 		| Frame_Shift_Del		 |
 | synonymous_SNV 			| Silent				 |	
 
-* Create a python2.7 virtualenv named `oncokb-annotator`:
+* It creates a python2.7 virtualenv named `oncokb-annotator-env` and install matplotlib (needed by oncokb-annotator). This virtualenv will be removed at the end of the script:
 ```bash
-mkvirtualenv --python=python2.7 oncokb-annotator
-source activate oncokb-annotator
+mkvirtualenv --python=python2.7 oncokb-annotator_env
+pip install matplotlib
+
+# ... further
+
+deactivate
+rmvirtualenv oncokb-annotator_env
 ```
 
-* Runs oncokb-annotator on the cluster.
+* Runs oncokb-annotator.

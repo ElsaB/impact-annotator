@@ -1,5 +1,5 @@
 impact <- read.table("../cleaned_IMPACT_mutations_180508.txt",
-					 sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+					 sep = "\t", stringsAsFactors = FALSE, header = TRUE, nrows = 1000)
 
 selected_mutation_types = c("stopgain_SNV",
                              "splicing",
