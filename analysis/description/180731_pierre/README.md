@@ -5,7 +5,7 @@ First look at the raw data `all_IMPACT_mutations_180508.txt`. This notebook is c
 feature, and on the different filters applied on the dataset to clean it. The fifth part only will mix different features to
 study the relation between them.
 
-* **[`unsolved_questions.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/unsolved_questions.ipynb)**  
+* **[`first_analysis_unsolved_issues.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/first_analysis_unsolved_issues.ipynb)**  
 List of all the unsolved questions/issues found in the raw data `all_IMPACT_mutations_180508.txt`, this notebook should be read
 in the context of `first_analysis.ipynb` which periodically refers to it.  
 
