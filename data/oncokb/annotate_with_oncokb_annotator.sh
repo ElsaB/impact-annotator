@@ -1,5 +1,5 @@
 #!/bin/bash
-
+: <<'COMMENT'
 # prepare the impact dataset for impact-annotator
 printf "\n-> Annotate the cleaned IMPACT mutation data 'cleaned_IMPACT_mutations_180508' with oncokb-annotator\n"
 printf "WARNING: this shell script has to be run in the cluster \n"
@@ -19,4 +19,12 @@ python oncokb-annotator/MafAnnotator.py -i 'ready_to_annotate_cleaned_IMPACT_mut
 
 # remove the temporary .txt output of prepare_for_annotation.R
 rm 'ready_to_annotate_cleaned_IMPACT_mutations_180508.txt'
+# remove the oncokb-annotator virtualenv
+deactivate
+rmvirtualenv oncokb-annotator
+COMMENT
+
+mkvirtualenv --python=python2.7 oncokb-annotator
+pip install matplotlib
+deactivate
 rmvirtualenv oncokb-annotator
