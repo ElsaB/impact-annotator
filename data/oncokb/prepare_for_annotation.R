@@ -1,6 +1,3 @@
-source("../../src/utils/custom_tools.R")
-setup_environment()
-
 impact <- read.table("../cleaned_IMPACT_mutations_180508.txt",
 					 sep = "\t", stringsAsFactors = FALSE, header = TRUE, nrows = 3000)
 
