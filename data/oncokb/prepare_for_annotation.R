@@ -1,5 +1,5 @@
 impact <- read.table("../cleaned_IMPACT_mutations_180508.txt",
-					 sep = "\t", stringsAsFactors = FALSE, header = TRUE, nrows = 2000)
+					 sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
 selected_mutation_types = c("stopgain_SNV",
                              "splicing",
@@ -25,4 +25,4 @@ get_variant_classification <- function(Consequence) {
 
 impact$Variant_Classification <- sapply(impact$Consequence, get_variant_classification)
 
-write.table(impact[1:2000,], "./ready_to_annotate_cleaned_IMPACT_mutations_180508.txt", sep = "\t", row.names = FALSE)
+write.table(impact, "./ready_to_annotate_cleaned_IMPACT_mutations_180508.txt", sep = "\t", row.names = FALSE)

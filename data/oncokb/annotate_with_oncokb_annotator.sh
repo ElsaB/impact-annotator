@@ -1,9 +1,11 @@
 #!/bin/bash
 
+
+printf "\nWARNING: this shell script has to be run in the cluster \n"
+
+
 # prepare the impact dataset for impact-annotator
 printf "\n-> Annotate the cleaned IMPACT mutation data 'cleaned_IMPACT_mutations_180508' with oncokb-annotator\n"
-printf "WARNING: this shell script has to be run in the cluster \n"
-printf "It might take some time (around 6 minutes)...\n"
 Rscript prepare_for_annotation.R
 
 # create a 2.7 python virtual env
