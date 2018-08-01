@@ -1,3 +1,5 @@
+:construction: *work in progress* :construction:
+  
 # Annotate the mutations with oncokb-annotator
 
 To annotate the cleaned dataset `cleaned_IMPACT_mutations_180508.txt` with the oncokb annotations from [oncokb-annotator](https://github.com/oncokb/oncokb-annotator) run **in the cluster**:
@@ -13,7 +15,7 @@ The CPU time on the cluster was 425.2 seconds.
 
 ## Details
 
-We use [oncokb-annotator](https://github.com/oncokb/oncokb-annotator) to annotate the dataset. We cloned the repository at https://github.com/oncokb/oncokb-annotator and permanently added it to the repository `data/oncokb` folder:
+We use [oncokb-annotator](https://github.com/oncokb/oncokb-annotator) to annotate the dataset. We cloned the repository at https://github.com/oncokb/oncokb-annotator and permanently added it to the repository in `data/oncokb` folder:
 ```shell
 $ git clone https://github.com/oncokb/oncokb-annotator.git
 ```
