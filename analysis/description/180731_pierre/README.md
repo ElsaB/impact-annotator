@@ -1,3 +1,5 @@
+# Pierre's analysis 
+
 List of all the notebooks present in this directory:
 
 * **[`first_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/first_analysis.ipynb)**   
@@ -10,15 +12,13 @@ List of all the unsolved questions/issues found in the raw data `all_IMPACT_muta
 in the context of `first_analysis.ipynb` which periodically refers to it.  
 
 * **[`coding_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/coding_analysis.ipynb)**  
-Further analysis on the raw data `all_IMPACT_mutations_180508.txt` using the filtered dataset obtained at the end of
-`first_analysis.ipynb`, enriched with the annotations from the `add_features()` function obtained at the end of 
-`annotating.ipynb`.
+:construction: *work in progress* :construction:
 
 * **[`synonymous_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/synonymous_analysis.ipynb)**  
-*Work in progress...*
+:construction: *work in progress* :construction:
 
 * **[`oncokb_annotations.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/oncokb_annotations.ipynb)**  
-*Work in progress...*
+:construction: *work in progress* :construction:
 
 * **[`comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb)**  
-*Work in progress...*
+:construction: *work in progress* :construction:
