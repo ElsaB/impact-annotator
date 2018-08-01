@@ -7,6 +7,7 @@ printf "WARNING: this shell script has to be run in the cluster \n"
 printf "It might take some time (around 6 minutes)...\n"
 Rscript prepare_for_annotation.R
 
+printf "Create a python 2.7 virtual env\n"
 mkvirtualenv --python=python2.7 oncokb-annotator
 source activate oncokb-annotator
 
