@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # prepare the impact dataset for impact-annotator
-printf "\n-> Annotate the cleaned IMPACT mutation data 'cleaned_IMPACT_mutations_180508' with oncokb-annotator...\n"
+printf "\n-> Prepare the cleaned IMPACT mutation data 'cleaned_IMPACT_mutations_180508.txt' for oncokb-annotator...\n"
 Rscript prepare_for_annotation.R
 
 # create a 2.7 python virtual env

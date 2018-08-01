@@ -4,12 +4,12 @@
 
 To annotate the cleaned dataset `cleaned_IMPACT_mutations_180508.txt` with the oncokb annotations from [oncokb-annotator](https://github.com/oncokb/oncokb-annotator) run **in the cluster**:
 ```shell
-$ bsub -I -We 20 -R select[internet] "bash annotate_with_oncokb_annotator.sh"
+$ bsub -I -We 10 -R select[internet] "bash annotate_with_oncokb_annotator.sh"
 ```
 
 The output file `oncokb_annotated_cleaned_IMPACT_mutations_180508.txt` is the annotated version.
 
-The CPU time on the cluster was 495.6 seconds.
+The CPU time on the cluster was 495.6 seconds (≈ 8 minutes).
 
 ***
 
