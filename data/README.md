@@ -21,6 +21,5 @@ This folder is used to annotate the dataset `cleaned_IMPACT_mutations_180508.txt
 #### other_databases
 Download other databases used in the notebook ...
 
-
 ### utils
 Useful scripts and files

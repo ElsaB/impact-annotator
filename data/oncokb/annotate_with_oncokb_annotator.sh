@@ -9,7 +9,6 @@ Rscript prepare_for_annotation.R
 # create a 2.7 virtual env
 printf "Create a python 2.7 virtual env\n"
 mkvirtualenv --python=python2.7 oncokb-annotator
-source activate oncokb-annotator
 
 # launch a job oncokb-annotator
 #bsub -I -We 59 -R select[internet] 'python oncokb-annotator/MafAnnotator.py -i "ready_to_annotate_cleaned_IMPACT_mutations_180508.txt" -o "oncokb_annotated_cleaned_IMPACT_mutations_180508.txt'
@@ -18,3 +17,4 @@ python oncokb-annotator/MafAnnotator.py -i 'ready_to_annotate_cleaned_IMPACT_mut
 
 # remove the temporary .txt output of prepare_for_annotation.R
 rm 'ready_to_annotate_cleaned_IMPACT_mutations_180508.txt'
+rmvirtualenv oncokb-annotator

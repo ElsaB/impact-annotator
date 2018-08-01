@@ -258,83 +258,84 @@ get_cosmic_count <- function(cosmic_string) {
 
 
 # Need the given impact dataset to be the output of get_cleaned_impact()
-add_features <- function(impact, annotations = FALSE, oncokb = FALSE, gene_type = FALSE) {
+add_features <- function(data_folder_name, impact, annotations = FALSE, oncokb = FALSE, gene_type = FALSE) {
     
     if (annotations) {
-        # 1. Get the raw data
-        impact_annotated <- read.table("../../../data/all_IMPACT_mutations_180508.simple.hg19_multianno.txt",
-                                       sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+      # 1. Get the raw data
+      impact_annotated <- read.table(paste0(data_folder_name, "/dominik/all_IMPACT_mutations_180508.simple.hg19_multianno.txt"),
+                                     sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
 
-        # 2. Create keys to join the two dataframes and extract the features
-        impact_annotated$join_key <- paste(impact_annotated$Chr,
-                                   impact_annotated$Start,
-                                   impact_annotated$Ref,
-                                   impact_annotated$Alt,
-                                   sep = '_')
-        impact_annotated <- unique(impact_annotated[, c("join_key", "Kaviar_AF", "cosmic70")])
-        impact[, c("Kaviar_AF", "cosmic70")] <- left_join(impact,
-                                                  impact_annotated,
-                                                  by = c("mut_key" = "join_key"))[, c("Kaviar_AF", "cosmic70")]
+      # 2. Create keys to join the two dataframes and extract the features
+      impact_annotated$join_key <- paste(impact_annotated$Chr,
+                                         impact_annotated$Start,
+                                         impact_annotated$Ref,
+                                         impact_annotated$Alt,
+                                         sep = '_')
+      impact_annotated <- unique(impact_annotated[, c("join_key", "Kaviar_AF", "cosmic70")])
+      impact[, c("Kaviar_AF", "cosmic70")] <- left_join(impact, impact_annotated,
+                                                        by = c("mut_key" = "join_key"))[, c("Kaviar_AF", "cosmic70")]
 
 
-        # 3. Process the raw features
-        ## Kaviar_AF
-        impact$Kaviar_AF[(impact$Kaviar_AF == '.')] <- list('0')
-        impact$Kaviar_AF <- sapply(impact$Kaviar_AF, function(s) as.double(s))
+      # 3. Process the raw features
+      ## Kaviar_AF
+      impact$Kaviar_AF[(impact$Kaviar_AF == '.')] <- list('0')
+      impact$Kaviar_AF <- sapply(impact$Kaviar_AF, function(s) as.double(s))
 
-        ## cosmic_count
-        impact$cosmic70[(impact$cosmic70 == '.')] <- list('OCCURENCE=0')
-        impact$cosmic_count <- sapply(impact$cosmic70, get_cosmic_count)
-        impact$cosmic70 <- NULL
+      ## cosmic_count
+      impact$cosmic70[(impact$cosmic70 == '.')] <- list('OCCURENCE=0')
+      impact$cosmic_count <- sapply(impact$cosmic70, get_cosmic_count)
+      impact$cosmic70 <- NULL
     }
+    
                                    
     if(oncokb) {
-        # 1. Get the raw data
-        impact_oncokb <- read.table("../../../data/selected_IMPACT_mutations_180508_oncokb_annotator.txt",
-                                    sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+      # 1. Get the raw data
+      impact_oncokb <- read.table(paste0(data_folder_name, "/oncokb/oncokb_annotated_cleaned_IMPACT_mutations_180508.txt"),
+                                  sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
 
-        # 2. Create keys to join the two dataframes and extract the features
-        impact_oncokb <- unique(impact_oncokb[, c("mut_key", "is.a.hotspot", "is.a.3d.hotspot", "oncogenic")])
-        impact[, c("is_a_hotspot", "is_a_3d_hotspot", "oncogenic")] <- left_join(impact, impact_oncokb,
-                                                                                 by = c("mut_key" = "mut_key"))[, c("is.a.hotspot",
-                                                                                                                    "is.a.3d.hotspot",
-                                                                                                                    "oncogenic")]
+      # 2. Create keys to join the two dataframes and extract the features
+      impact_oncokb <- unique(impact_oncokb[, c("mut_key", "is.a.hotspot", "is.a.3d.hotspot", "oncogenic")])
+      impact[, c("is_a_hotspot", "is_a_3d_hotspot", "oncogenic")] <- left_join(impact, impact_oncokb,
+                                                                               by = c("mut_key" = "mut_key"))[, c("is.a.hotspot",
+                                                                                                                  "is.a.3d.hotspot",
+                                                                                                                  "oncogenic")]
 
 
-        # 3. Process the raw features
-        ## is_a_hostpot
-        impact$is_a_hotspot[impact$is_a_hotspot == "Y"  ] <- "yes"
-        impact$is_a_hotspot[impact$is_a_hotspot != "yes"] <- "unknown"
+      # 3. Process the raw features
+      ## is_a_hostpot
+      impact$is_a_hotspot[impact$is_a_hotspot == "Y"  ] <- "yes"
+      impact$is_a_hotspot[impact$is_a_hotspot != "yes"] <- "unknown"
 
-        ## is_a_3d_hostpot
-        impact$is_a_3d_hotspot[impact$is_a_3d_hotspot == "Y"  ] <- "yes"
-        impact$is_a_3d_hotspot[impact$is_a_3d_hotspot != "yes"] <- "unknown"
+      ## is_a_3d_hostpot
+      impact$is_a_3d_hotspot[impact$is_a_3d_hotspot == "Y"  ] <- "yes"
+      impact$is_a_3d_hotspot[impact$is_a_3d_hotspot != "yes"] <- "unknown"
 
-        ## oncogenic
-        impact$oncogenic[impact$oncogenic == ""] <- "Unknown"
+      ## oncogenic
+      impact$oncogenic[impact$oncogenic == ""] <- "Unknown"
     }
 
+
     if(gene_type) {
-        # 1. Get the raw data
-        cancer_genes_list <- read.table("../../../data/CancerGenesList.txt",
-                                        sep = "\t", stringsAsFactors = FALSE, header = TRUE, comment.char = '')
+      # 1. Get the raw data
+      cancer_genes_list <- read.table(paste0(data_folder_name, "/oncokb/CancerGenesList.txt"),
+                                      sep = "\t", stringsAsFactors = FALSE, header = TRUE, comment.char = '')
 
 
-        # 2. Create keys to join the two dataframes and extract the features
-        impact[, c("OncoKB.Oncogene", "OncoKB.TSG")] <- left_join(impact, cancer_genes_list, 
-                                                                  by = c("Hugo_Symbol" = "Hugo.Symbol"))[,c("OncoKB.Oncogene", "OncoKB.TSG")]
+      # 2. Create keys to join the two dataframes and extract the features
+      impact[, c("OncoKB.Oncogene", "OncoKB.TSG")] <- left_join(impact, cancer_genes_list,
+                                                                by = c("Hugo_Symbol" = "Hugo.Symbol"))[,c("OncoKB.Oncogene", "OncoKB.TSG")]
 
 
-        # 3. Process the raw features
-        ## gene_type
-        impact$gene_type <- "unknown"
-        impact$gene_type[impact$OncoKB.Oncogene == "Yes"] <- "oncogene"
-        impact$gene_type[impact$OncoKB.TSG == "Yes"]      <- "tsg"
+      # 3. Process the raw features
+      ## gene_type
+      impact$gene_type <- "unknown"
+      impact$gene_type[impact$OncoKB.Oncogene == "Yes"] <- "oncogene"
+      impact$gene_type[impact$OncoKB.TSG == "Yes"]      <- "tsg"
 
-        impact$OncoKB.Oncogene <- NULL
-        impact$OncoKB.TSG      <- NULL
+      impact$OncoKB.Oncogene <- NULL
+      impact$OncoKB.TSG      <- NULL
     }
                                
     return (impact)

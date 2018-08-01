@@ -1,6 +1,6 @@
 # Pierre's analysis 
 
-List of all the notebooks present in this directory:
+List of all the notebooks present in this folder:
 
 * **[`first_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/first_analysis.ipynb)**   
 First look at the raw data `all_IMPACT_mutations_180508.txt`. This notebook is centered on the analysis of the data feature per
