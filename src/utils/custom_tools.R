@@ -117,10 +117,10 @@ is_frameshift <- function(Tumor_Seq_Allele2, Reference_Allele) {
 
 # Returns a cleaned IMPACT dataset (see notebook first_analysis.ipynb)
 # ~ stands for "modify"
-get_cleaned_impact <- function() {
+get_cleaned_impact <- function(data_folder_name) {
 
   # [+35 features, +588,547 rows] get the original dataset
-  impact <- read.table("../../../data/all_IMPACT_mutations_180508.txt", sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+  impact <- read.table(paste0(data_folder_name, "/all_IMPACT_mutations_180508.txt"), sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
 
   # [-7 features] remove the unique-value features
@@ -179,7 +179,6 @@ get_cleaned_impact <- function() {
                       'ELOC', 'NSD2', 'NSD3', 'CCNQ', 'KMT5A', 'KMT2B')
   old_symbols <- which(impact$Hugo_Symbol %in% old_Hugo_Symbol)
   impact$Hugo_Symbol[old_symbols] <- new_Hugo_Symbol[match(impact$Hugo_Symbol[old_symbols], old_Hugo_Symbol)]
-
   # [~1334 rows] replace "CDKN2Ap16INK4A" by "CDKN2A"
   impact$Hugo_Symbol[impact$Hugo_Symbol == "CDKN2Ap16INK4A"] <- "CDKN2A"
   # [-808 rows] delete the "CDKN2Ap14ARF" already read in the classic read frame (in "CDKN2Ap16INK4A")
@@ -236,13 +235,13 @@ get_cleaned_impact <- function() {
 
 
   # [-148 rows] remove the mutations impossible to reclassify according to their Variant_Type and HGVSp_Short
-  #impact <- impact[! impact$sample_mut_key %in% read.table("sample_mut_keys_to_remove.txt" , sep = "\t")[[1]],]
-  # [~32 rows] correct the HGVSp_Short typos
-  #HGVSp_Short_typos <- read.table("sample_mut_keys_HGVSp_Short.txt", sep = "\t")
-  #impact$HGVSp_Short[impact$sample_mut_key %in% HGVSp_Short_typos[[1]]] <- HGVSp_Short_typos[[2]]
+  impact <- impact[! impact$sample_mut_key %in% read.table(paste0(data_folder_name, "/utils/sample_mut_keys_to_remove.txt" ), sep = "\t")[[1]],]
   # [~1004 rows] reclassify the mutations `Consequence` based on HGVSp_Short
-  #Consequence_to_reclassify <- read.table("sample_mut_keys_Consequence.txt", sep = "\t")
-  #impact$HGVSp_Short[impact$sample_mut_key %in% Consequence_to_reclassify[[1]]] <- Consequence_to_reclassify[[2]]
+  Consequence_to_reclassify <- read.table(paste0(data_folder_name, "/utils/sample_mut_keys_replace_Consequence.txt"), sep = "\t")
+  impact$HGVSp_Short[impact$sample_mut_key %in% Consequence_to_reclassify[[1]]] <- Consequence_to_reclassify[[2]]
+  # [~32 rows] correct the HGVSp_Short typos
+  HGVSp_Short_typos <- read.table(paste0(data_folder_name, "/utils/sample_mut_keys_replace_HGVSp_Short.txt"), sep = "\t")
+  impact$HGVSp_Short[impact$sample_mut_key %in% HGVSp_Short_typos[[1]]] <- HGVSp_Short_typos[[2]]
   
   
   return (impact)
