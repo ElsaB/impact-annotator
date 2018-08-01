@@ -120,7 +120,7 @@ is_frameshift <- function(Tumor_Seq_Allele2, Reference_Allele) {
 get_cleaned_impact <- function() {
 
   # [+35 features, +588,547 rows] get the original dataset
-  impact <- read.table("data/all_IMPACT_mutations_180508.txt", sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+  impact <- read.table("../../../data/all_IMPACT_mutations_180508.txt", sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
 
   # [-7 features] remove the unique-value features
@@ -236,13 +236,13 @@ get_cleaned_impact <- function() {
 
 
   # [-148 rows] remove the mutations impossible to reclassify according to their Variant_Type and HGVSp_Short
-  impact <- impact[! impact$sample_mut_key %in% read.table("sample_mut_keys_to_remove.txt" , sep = "\t")[[1]],]
+  #impact <- impact[! impact$sample_mut_key %in% read.table("sample_mut_keys_to_remove.txt" , sep = "\t")[[1]],]
   # [~32 rows] correct the HGVSp_Short typos
-  HGVSp_Short_typos <- read.table("sample_mut_keys_HGVSp_Short.txt", sep = "\t")
-  impact$HGVSp_Short[impact$sample_mut_key %in% HGVSp_Short_typos[[1]]] <- HGVSp_Short_typos[[2]]
+  #HGVSp_Short_typos <- read.table("sample_mut_keys_HGVSp_Short.txt", sep = "\t")
+  #impact$HGVSp_Short[impact$sample_mut_key %in% HGVSp_Short_typos[[1]]] <- HGVSp_Short_typos[[2]]
   # [~1004 rows] reclassify the mutations `Consequence` based on HGVSp_Short
-  Consequence_to_reclassify <- read.table("sample_mut_keys_Consequence.txt", sep = "\t")
-  impact$HGVSp_Short[impact$sample_mut_key %in% Consequence_to_reclassify[[1]]] <- Consequence_to_reclassify[[2]]
+  #Consequence_to_reclassify <- read.table("sample_mut_keys_Consequence.txt", sep = "\t")
+  #impact$HGVSp_Short[impact$sample_mut_key %in% Consequence_to_reclassify[[1]]] <- Consequence_to_reclassify[[2]]
   
   
   return (impact)
@@ -263,7 +263,7 @@ add_features <- function(impact, annotations = FALSE, oncokb = FALSE, gene_type 
     
     if (annotations) {
         # 1. Get the raw data
-        impact_annotated <- read.table("data/all_IMPACT_mutations_180508.simple.hg19_multianno.txt",
+        impact_annotated <- read.table("../../../data/all_IMPACT_mutations_180508.simple.hg19_multianno.txt",
                                        sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
 
@@ -292,7 +292,7 @@ add_features <- function(impact, annotations = FALSE, oncokb = FALSE, gene_type 
                                    
     if(oncokb) {
         # 1. Get the raw data
-        impact_oncokb <- read.table("data/selected_IMPACT_mutations_180508_oncokb_annotator.txt",
+        impact_oncokb <- read.table("../../../data/selected_IMPACT_mutations_180508_oncokb_annotator.txt",
                                     sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
 
@@ -319,7 +319,7 @@ add_features <- function(impact, annotations = FALSE, oncokb = FALSE, gene_type 
 
     if(gene_type) {
         # 1. Get the raw data
-        cancer_genes_list <- read.table("data/CancerGenesList.txt",
+        cancer_genes_list <- read.table("../../../data/CancerGenesList.txt",
                                         sep = "\t", stringsAsFactors = FALSE, header = TRUE, comment.char = '')
 
 
