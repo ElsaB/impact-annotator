@@ -24,6 +24,7 @@ deactivate
 rmvirtualenv oncokb-annotator
 COMMENT
 
+source `which virtualenvwrapper.sh`
 mkvirtualenv --python=python2.7 oncokb-annotator
 pip install matplotlib
 deactivate
