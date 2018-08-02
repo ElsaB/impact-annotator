@@ -1,44 +1,39 @@
+:construction: *work in progress* :construction:
+
 # impact-annotator
 
 **Build an automatic annotator of driver mutations from IMPACT data.**
 
-The structure of the repo is the following:
+***
 
-- **data**
+The structure of the repository is the following:
 
-raw data and main processed data.
+### data
+Raw data and main processed data.
 
-this should not be versionned.
+This should not be versionned.
 
-processed data should be reproducible from raw data.
+Processed data should be reproducible from raw data.
 
-- **doc**
+### doc
+Useful documentation, biblio, slides for talks...
 
-usefull documentation, biblo, slides for talks...
+### src
+Main scripts that are used across analysis eg: predictors, cross-validation scripts, evaluation scripts.
 
-- **src**
+### analysis
+Folder where you design and run analysis.
 
-main scripts that are used across analysis.
-
-eg: predictors, cross-validation scripts, evaluation scripts.
-
-- **analysis**
-
-folder where you design and run analysis.
-
-this should be split into several sub-folders.
-
-eg:
-
-	- description
-	- prediction
-	- validation
+This should be split into several sub-folders:
+* description
+* prediction
+* validation
 
 I suggest that within those sub-folders we create entry folder in the form YYMMDD.
 
 
-- **results**
+### results
 
-folder where we summarize the main results in a mardown (notebook.md).
+Folder where we summarize the main results in a mardown (notebook.md).
 
-the markdown should have entries in the form YYMMDD that can point to other markdowns from the analysis part.
+The markdown should have entries in the form YYMMDD that can point to other markdowns from the analysis part.
