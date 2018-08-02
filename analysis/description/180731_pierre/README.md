@@ -9,7 +9,13 @@ First look at the raw data `all_IMPACT_mutations_180508.txt`. This notebook is c
 List of all the unsolved questions/issues found in the raw data `all_IMPACT_mutations_180508.txt`, this notebook should be read in the context of `first_analysis.ipynb` which periodically refers to it.  
 
 * **[`annotate_cleaned_dataset.ipynb.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/annotate_cleaned_dataset.ipynb.ipynb)**  
-:construction: *work in progress* :construction:
+Enrich the cleaned data `cleaned_IMPACT_mutations_180508.txt` by adding some features:
+	* `Kaviar_AF`
+	* `cosmic_count`
+	* `is_a_hotspot`
+	* `is_a_3d_hotspot`
+	* `oncogenic`
+	* `gene_type`
 
 * **[`coding_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/coding_analysis.ipynb)**  
 :construction: *work in progress* :construction:

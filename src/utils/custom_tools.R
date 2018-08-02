@@ -267,7 +267,7 @@ get_cosmic_count <- function(cosmic_string) {
 }
 
 
-# Need the given impact dataset to be the output of get_cleaned_impact()
+
 add_features <- function(data_folder_name, impact, annotations = FALSE, oncokb = FALSE, gene_type = FALSE) {
     
     if (annotations) {
@@ -343,6 +343,7 @@ add_features <- function(data_folder_name, impact, annotations = FALSE, oncokb =
       impact$gene_type <- "unknown"
       impact$gene_type[impact$OncoKB.Oncogene == "Yes"] <- "oncogene"
       impact$gene_type[impact$OncoKB.TSG == "Yes"]      <- "tsg"
+      impact$gene_type[impact$OncoKB.Oncogene == "Yes" & impact$OncoKB.TSG == "Yes"] <- "oncogene_and_tsg"
 
       impact$OncoKB.Oncogene <- NULL
       impact$OncoKB.TSG      <- NULL
