@@ -243,7 +243,17 @@ get_cleaned_impact <- function(data_folder_name) {
   HGVSp_Short_typos <- read.table(paste0(data_folder_name, "/utils/sample_mut_keys_replace_HGVSp_Short.txt"), sep = "\t")
   impact$HGVSp_Short[impact$sample_mut_key %in% HGVSp_Short_typos[[1]]] <- HGVSp_Short_typos[[2]]
   
+
+  #[~ 12 rows] temporary
+  # Correct weird <- impact_oncokb %>% group_by(mut_key) %>% filter(length(unique(is.a.hotspot)) > 1 | length(unique(is.a.3d.hotspot)) > 1 | length(unique(oncogenic)) > 1) not empty
+  # See OTHER/weird_oncokb
+  impact$HGVSp_Short[impact$mut_key %in% c("13_48937070_GAACATGAATGTAATATAGATGAG_-")] <- ""
+  impact$HGVSp_Short[impact$mut_key %in% c("9_139400334_C_T")] <- "p.X1339_splice"
+  impact$HGVSp_Short[impact$mut_key %in% c("9_139412203_C_T")] <- "p.X481_splice"
+  impact$HGVSp_Short[impact$mut_key %in% c("X_20148726_C_T" )] <- "p.X113_splice"
+  impact$HGVSp_Short[impact$mut_key %in% c("X_20148727_T_A" )] <- "p.X113_splice"
   
+
   return (impact)
 }
 
