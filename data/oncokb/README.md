@@ -1,10 +1,8 @@
-:construction: *work in progress* :construction:
-  
 # Annotate the mutations with oncokb-annotator
 
 To annotate the cleaned dataset `cleaned_IMPACT_mutations_180508.txt` with the oncokb annotations from [oncokb-annotator](https://github.com/oncokb/oncokb-annotator) run **in the cluster**:
 ```shell
-$ bsub -I -We 10 -R select[internet] "bash annotate_with_oncokb_annotator.sh"
+$ bsub -I -We 20 -R select[internet] "bash annotate_with_oncokb_annotator.sh"
 ```
 
 The output file `oncokb_annotated_cleaned_IMPACT_mutations_180508.txt` is the annotated version.
@@ -20,9 +18,9 @@ We use [oncokb-annotator](https://github.com/oncokb/oncokb-annotator) to annotat
 $ git clone https://github.com/oncokb/oncokb-annotator.git
 ```
 
-The script `annotate_with_oncokb_annotator.sh` does the following:
+The script [`annotate_with_oncokb_annotator.sh`](https://github.com/ElsaB/impact-annotator/blob/master/data/oncokb/annotate_with_oncokb_annotator.sh) does the following:
 
-* First it calls `prepare_for_annotation.R` which does some minor changes on the dataset. Indeed oncokb-annotator needs a `Variant_Classification` feature, which can be computed from the `Consequence` feature as follow:
+* First it calls [`prepare_for_annotation.R`](https://github.com/ElsaB/impact-annotator/blob/master/data/oncokb/prepare_for_annotation.R) which does some minor changes on the dataset. Indeed oncokb-annotator needs a `Variant_Classification` feature, which can be computed from the `Consequence` feature as follow:
 
 | Consequence               | Variant_Classification |
 | ------------------------- | ---------------------- |
