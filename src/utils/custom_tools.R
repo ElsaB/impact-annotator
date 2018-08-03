@@ -83,6 +83,17 @@ get_possible_correlations <- function(data) {
 }
 
 
+plot_density <- function(data, feature_name, fill_feature_name = NULL, adjust = 1, width = 10, height = 3, lines = NULL) {
+    notebook_plot_size(width, height)
+                             
+    plot <- ggplot(data) + geom_density(aes_string(feature_name, fill = fill_feature_name), adjust = adjust, alpha = 0.2) +
+                           scale_fill_manual(values = c("blue", "green"))
+    
+    for (value in lines)
+        plot <- plot + geom_vline(aes_(xintercept = value), linetype = "dashed", color = "red")
+        
+    return (plot)
+}
 
 
 plot_histogram_top <- function(data, feature_name, number) {
