@@ -1,6 +1,6 @@
 # Pierre's analysis 
 
-List of all the notebooks present in this folder:
+### List of all the notebooks present in this folder:
 
 * **[`first_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/first_analysis.ipynb)**   
 First look at the raw data `all_IMPACT_mutations_180508.txt`. This notebook is centered on the analysis of the data feature per feature, and on the different filters applied on the dataset to clean it. The fifth part only will mix different features to study the relation between them.
@@ -28,3 +28,11 @@ Further analysis on the cleaned dataset `cleaned_IMPACT_mutations_180508.txt`, e
 
 * **[`comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb)**  
 :construction: *work in progress* :construction:
+
+
+### Details on the notebooks:
+All notebooks will begin with the following lines, which load a set of custom function designed by us, and setup the R environment by loading the appropriate libraries:
+```R
+source("../../../src/utils/custom_tools.R")
+setup_environment()
+```
