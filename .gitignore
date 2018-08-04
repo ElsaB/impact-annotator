@@ -8,7 +8,7 @@ data/dominik/all_IMPACT_mutations_180508.simple.hg19_multianno.txt
 data/oncokb/oncokb_annotated_cleaned_IMPACT_mutations_180508.txt
 data/other_databases/CIViC_01-Jul-2018-VariantSummaries.tsv
 data/other_databases/CGI_catalog_of_validated_oncogenic_mutations.tsv
-
+data/other_databases/allAnnotatedVariants.txt
 
 
 data/other_databases/IPM_Knowledgebase_Interpretations_Complete_20180802-1538.csv
