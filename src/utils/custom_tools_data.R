@@ -46,7 +46,7 @@ get_cleaned_impact <- function(data_folder_name) {
              "Strand",
              "dbSNP_RS",
              "Matched_Norm_Sample_Barcode",
-             "variant_status")] <- NULL
+             "variant_status")] <- list(NULL)
 
 
   # [-3 features] remove the redundant features
