@@ -50,7 +50,7 @@ get_cleaned_impact <- function(data_folder_name) {
 
 
   # [-3 features] remove the redundant features
-  impact[, c("Match_Norm_Seq_Allele1", "Match_Norm_Seq_Allele2", "Tumor_Seq_Allele1")] <- NULL
+  impact[, c("Match_Norm_Seq_Allele1", "Match_Norm_Seq_Allele2", "Tumor_Seq_Allele1")] <- list(NULL)
 
 
   # [-322,796 rows] remove the non-interesting mutations
