@@ -12,7 +12,7 @@ notebook_plot_size <- function(width = 6, height = 3) {
 plot_side_by_side <- function(plot1, plot2, width = 10, height = 2) {
   notebook_plot_size(width, height)
 
-  plot_grid(plot1, plot2, ncol = 2, nrow = 1)
+  grid.arrange(plot1, plot2, ncol = 2)
 }
 
 
@@ -20,7 +20,7 @@ plot_side_by_side <- function(plot1, plot2, width = 10, height = 2) {
 plot_side_by_side_3 <- function(plot1, plot2, plot3, width = 10, height = 3) {
   notebook_plot_size(width, height)
 
-  plot_grid(plot1, plot2, plot3, ncol = 3, nrow = 1)
+  grid.arrange(plot1, plot2, plot3, ncol = 3)
 }
 
 

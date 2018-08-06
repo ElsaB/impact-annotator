@@ -7,7 +7,8 @@ setup_environment <- function(utils_folder_name) {
   source(paste0(utils_folder_name, "/custom_tools_data.R"))   # tools to handle the data
 
   suppressPackageStartupMessages(library("tidyverse"))
-  suppressPackageStartupMessages(library("cowplot")) # used to plot ggplots side-by-side
+  suppressPackageStartupMessages(library("gridExtra")) # used to plot ggplots side-by-side
+
   theme_set(theme_minimal())
 
   options(repr.plot.res = 300) # set a high-definition resolution (DPI)
