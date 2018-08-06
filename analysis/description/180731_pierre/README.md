@@ -20,10 +20,10 @@ Enrich the cleaned data `cleaned_IMPACT_mutations_180508.txt` by adding some fea
 * **[`coding_mutations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/coding_mutations_analysis.ipynb)**  
 Further analysis on the cleaned dataset `cleaned_IMPACT_mutations_180508.txt`, enriched with the annotations from the `add_features()` function obtained at the end of [`annotate_cleaned_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/annotate_cleaned_dataset.ipynb). The `synonymous_SNV` are excluded from this study, which only focus on the coding mutations.
 
-* **[`synonymous_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/synonymous_analysis.ipynb)**  
+* **[`synonymous_mutations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/synonymous_mutations_analysis.ipynb)**  
 :construction: *work in progress* :construction:
 
-* **[`oncokb_annotations.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/oncokb_annotations.ipynb)**  
+* **[`oncokb_annotations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/oncokb_annotations_analysis.ipynb)**  
 :construction: *work in progress* :construction:
 
 * **[`comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb)**  
@@ -34,5 +34,5 @@ Further analysis on the cleaned dataset `cleaned_IMPACT_mutations_180508.txt`, e
 All notebooks will begin with the following lines, which load a set of custom function designed by us, and setup the R environment by loading the appropriate libraries:
 ```R
 source("../../../src/utils/custom_tools.R")
-setup_environment()
+setup_environment("../../../src/utils")
 ```
