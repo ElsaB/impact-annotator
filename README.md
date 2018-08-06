@@ -8,14 +8,14 @@
 
 ### Working with this repository
 You can clone this repository using:
-```bash
+```shell
 $ git clone https://github.com/ElsaB/impact-annotator.git
 ```
 
 The repository was written and tested under `R 3.5.1` and `R 3.2.3`. To work with this repository please:
 
 * Make sure to download the data in the `data` and `data/other_databases` folders, the instructions are detailed there.
-```bash
+```shell
 $ bash data/get_data.sh your_cluster_username
 $ bash data/other_databases/get_data.sh
 ```
