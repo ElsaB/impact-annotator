@@ -7,10 +7,14 @@
 ***
 
 ### Working with this repository
-The repository was written and tested under `R 3.5.1` and `R 3.2.3`.
-To work with this repository please:
+You can clone this repository using:
+```bash
+$ git clone https://github.com/ElsaB/impact-annotator.git
+```
 
-* Make sure to download the data in the `data` and `data/other_databases` folder, the instructions are detailed there.
+The repository was written and tested under `R 3.5.1` and `R 3.2.3`. To work with this repository please:
+
+* Make sure to download the data in the `data` and `data/other_databases` folders, the instructions are detailed there.
 ```bash
 $ bash data/get_data.sh your_cluster_username
 $ bash data/other_databases/get_data.sh
@@ -19,6 +23,7 @@ $ bash data/other_databases/get_data.sh
 	* `tidyverse`
 	* `gridExtra`
 ```R
+# to execute in an R console
 install.packages("tidyverse", repos="http://cran.us.r-project.org")
 install.packages("gridExtra", repos="http://cran.us.r-project.org")
 ```
