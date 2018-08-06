@@ -23,7 +23,7 @@ $ bash data/other_databases/get_data.sh
 	* `tidyverse`
 	* `gridExtra`
 ```R
-# to execute in an R console
+# execute in an R console
 install.packages("tidyverse", repos="http://cran.us.r-project.org")
 install.packages("gridExtra", repos="http://cran.us.r-project.org")
 ```

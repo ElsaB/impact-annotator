@@ -13,3 +13,9 @@ setup_environment <- function(utils_folder_name) {
 
   options(repr.plot.res = 300) # set a high-definition resolution (DPI)
 }
+
+
+# Print a string like "63603 over 248350 (25.61%)"
+print_count_and_proportion <- function(extracted_data, original_data) {
+    sprintf("%d over %d (%.2f%%)", nrow(extracted_data), nrow(original_data), 100 * nrow(extracted_data) / nrow(original_data))
+}
