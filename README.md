@@ -11,17 +11,13 @@ The repository was written and tested under `R 3.5.1` and `R 3.2.3`.
 To work with this repository please:
 
 * Make sure to download the data in the `data` and `data/other_databases` folder, the instructions are detailed there.
-
 ```bash
 $ bash data/get_data.sh your_cluster_username
 $ bash data/other_databases/get_data.sh
 ```
-
 * Make sure to have the following R packages installed:
 	* `tidyverse`
 	* `gridExtra`
-
-
 ```R
 install.packages("tidyverse", repos="http://cran.us.r-project.org")
 install.packages("gridExtra", repos="http://cran.us.r-project.org")
