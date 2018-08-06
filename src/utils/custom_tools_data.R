@@ -209,7 +209,7 @@ add_features <- function(data_folder_name, impact, annotations = FALSE, oncokb =
                                    
     if(oncokb) {
       # 1. Get the raw data
-      impact_oncokb <- read.table(paste0(data_folder_name, "/oncokb/oncokb_annotated_cleaned_IMPACT_mutations_180508.txt"),
+      impact_oncokb <- read.table(paste0(data_folder_name, "/oncokb_annotate/oncokb_annotated_cleaned_IMPACT_mutations_180508.txt"),
                                   sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
 
@@ -237,7 +237,7 @@ add_features <- function(data_folder_name, impact, annotations = FALSE, oncokb =
 
     if(gene_type) {
       # 1. Get the raw data
-      cancer_genes_list <- read.table(paste0(data_folder_name, "/oncokb/CancerGenesList.txt"),
+      cancer_genes_list <- read.table(paste0(data_folder_name, "/other_databases/CancerGenesList.txt"),
                                       sep = "\t", stringsAsFactors = FALSE, header = TRUE, comment.char = '')
 
 
