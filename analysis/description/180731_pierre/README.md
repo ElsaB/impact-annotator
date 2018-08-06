@@ -26,6 +26,7 @@ This study will focus only on the `synonymous_SNV` mutations, trying first to fi
 :construction: *work in progress* :construction:
 
 * **[`oncokb_annotations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/oncokb_annotations_analysis.ipynb)**  
+This notebook studies the OncoKB annotations added with oncokb-annotator and via the [`annotate_cleaned_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/annotate_cleaned_dataset.ipynb) notebook.  
 :construction: *work in progress* :construction:
 
 * **[`comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb)**  
