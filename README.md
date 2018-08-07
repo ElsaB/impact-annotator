@@ -14,11 +14,6 @@ $ git clone https://github.com/ElsaB/impact-annotator.git
 
 The repository was written and tested under `R 3.5.1` and `R 3.2.3`. To work with this repository please:
 
-* Make sure to download the data in the `data` and `data/other_databases` folders, the instructions are detailed there.
-```shell
-$ bash data/get_data.sh your_cluster_username
-$ bash data/other_databases/get_data.sh
-```
 * Make sure to have the following R packages installed:
 	* `tidyverse`
 	* `gridExtra`
@@ -28,6 +23,19 @@ install.packages("tidyverse", repos="http://cran.us.r-project.org")
 install.packages("gridExtra", repos="http://cran.us.r-project.org")
 ```
 
+* Make sure to download the data in the `data` and `data/other_databases` folders, the instructions are detailed there.
+```shell
+$ cd data
+$ bash get_data.sh your_cluster_username
+$ cd other_databases
+$ bash get_data.sh
+```
+
+* If you want to annotate the data with OncoKB, please run oncokb-annotator in the `data/oncokb_annotate` folder, the instructions are detailed there.
+```shell
+$ cd data/oncokb_annotate
+$ bsub -I -We 20 -R select[internet] "bash annotate_with_oncokb_annotator.sh"
+```
 
 ### Structure of the repository
 

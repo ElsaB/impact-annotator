@@ -2,7 +2,7 @@
 
 # Get the raw and cleaned dataset
 
-To get the data run **in the cluster**:
+To get the data run in the cluster or on your working computer:
 ```shell
 $ bash get_data.sh your_cluster_username
 ```
