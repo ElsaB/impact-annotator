@@ -1,6 +1,6 @@
 :construction: *work in progress* :construction:
 
-# Similar projects
+# Machine learning variant annotation projects
 
 **TODO:**
 
@@ -11,13 +11,19 @@
 * ENCODE dataset
 * HGMD, PolyPhen2, SIFT, CADD, DANN, FATHMM-MKL, FunSeq2, MutationAssesor
 * http://www.cravat.us/CRAVAT/help.jsp?chapter=analysis_tools&article=vest
- 
-## CHASM:
+
+
+**Table of contents**
+
+* [CHASM](##chasm)
+* [CScape](##cscape)
+
+
+
+## CHASM
 **Website:** http://wiki.chasmsoftware.org/index.php/CHASM_Overview  
-**Paper:** Carter H, Chen S, Isik L, Tyekucheva S, Velculescu VE, Kinzler KW, Vogelstein B, Karchin R.(2009) Cancer-specific high-throughput annotation of somatic mutations: computational prediction of driver missense mutations.Cancer Research. 69(16):6660-7 [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/19654296?ordinalpos=2&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum)  
-**Author:** Karchin Lab (Johns Hopkins University)   
-**Date:** August 2009   
-**Details:**
+**Paper:** [link](https://www.ncbi.nlm.nih.gov/pubmed/19654296?ordinalpos=2&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum) Carter H, Chen S, Isik L, Tyekucheva S, Velculescu VE, Kinzler KW, Vogelstein B, Karchin R.(2009)Cancer-specific high-throughput annotation of somatic mutations: computational prediction of driver missense mutations.Cancer Research. 69(16):6660-7  
+**Date:** August 2009  
 
 * Somatic and missense mutations only
 * Discriminate between known driver missense mutations and randomly generated missense mutations
@@ -39,12 +45,11 @@
 * Now included in CRAVAT online.
 
 
-## CScape:
+
+## CScape
 **Website:** http://cscape.biocompute.org.uk  
-**Paper:** Rogers MF, Shihab H, Gaunt TR, Campbell C (2017). CScape: a tool for predicting oncogenic single-point mutations in the cancer genome. Nature Scientific Reports [Nature](https://www.nature.com/articles/s41598-017-11746-4)  
-**Author:** University of Bristols 
+**Paper:** [link](https://www.nature.com/articles/s41598-017-11746-4) Rogers MF, Shihab H, Gaunt TR, Campbell C (2017). CScape: a tool for predicting oncogenic single-point mutations in the cancer genome. Nature Scientific Reports  
 **Date:** September 2017   
-**Details:**
 
 * Predicts the oncogenic status (disease-driver or neutral)
 * Somatic and point mutations only
