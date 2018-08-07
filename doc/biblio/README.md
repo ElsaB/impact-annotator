@@ -11,7 +11,7 @@ Summary of the following variant annotation databases:
 	* CIViC
 	* Cancer Genome Interpreter
 	* Precision Medicine Knowledgebase
-	* Others: ...
+	* Other: ...
 
 * [`machine_learning_variant_annotation_projects.md`](https://github.com/ElsaB/impact-annotator/tree/master/doc/biblio/machine_learning_variant_annotation_projects.md)  
 Summary of the following projects on machine learning classification of driver/passenger mutations:

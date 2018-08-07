@@ -5,11 +5,10 @@
 **TODO:**
 
 * CHASM feature supplementary materials
-* Cscape feature supplementary materials
 * Publications that have used CHASM (http://wiki.chasmsoftware.org/index.php/Publications)
-* CanPredict
+* Cscape feature supplementary materials
 * ENCODE dataset
-* HGMD, PolyPhen2, SIFT, CADD, DANN, FATHMM-MKL, FunSeq2, MutationAssesor
+* HGMD, PolyPhen2, SIFT, CADD, DANN, FATHMM-MKL, FunSeq2, MutationAssesor, CanPredict
 * http://www.cravat.us/CRAVAT/help.jsp?chapter=analysis_tools&article=vest
 
 
