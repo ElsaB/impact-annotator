@@ -4,7 +4,7 @@
 # get the raw IMPACT mutation data
 printf "\n-> Get the raw IMPACT mutation data\n"
 # if in cluster we just copy the file, otherwise we scp
-if echo "$HOSTNAME" | grep -q "selene"
+if (echo "$HOSTNAME" | grep -q "selene") || (echo "$HOSTNAME" | grep -q "luna")
 then
 	cp /ifs/work/leukgen/home/eb2/impact_mutations/all_IMPACT_mutations_180508.txt .
 else
