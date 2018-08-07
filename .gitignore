@@ -17,3 +17,6 @@ data/other_databases/CancerGenesList.txt
 data/other_databases/IPM_Knowledgebase_Interpretations_Complete_20180802-1538.csv
 data/other_databases/IPM_Knowledgebase_Interpretations_Complete_20180802-1538.xlsx
 data/other_databases/candl.csv
+
+data/oncokb_annotate/oncokb_annotated_cleaned_IMPACT_mutations_180508.txt
+data/other_databases/PMK_IPM_Knowledgebase_Interpretations_Complete_20180807-1922.xlsx

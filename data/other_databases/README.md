@@ -15,3 +15,6 @@ Downloaded from https://www.cancergenomeinterpreter.org/mutations
 
 * `allAnnotatedVariants.txt`: [OncoKB](http://oncokb.org) dataset (up-to-date version)  
 Downloaded from http://oncokb.org/api/v1/utils/allAnnotatedVariants.txt
+
+* `PMK_IPM_Knowledgebase_Interpretations_Complete_20180807-1922.xlsx`: [Precision Medecine Knowledgebase](https://pmkb.weill.cornell.edu) dataset (up-to-date version)  
+Downloaded from https://pmkb.weill.cornell.edu/therapies/download.xlsx
