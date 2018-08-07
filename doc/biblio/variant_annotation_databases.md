@@ -2,6 +2,8 @@
 
 # Variant annotation databases
 
+See the notebook [`analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb) for direct comparison between these databases and OncoKB.
+
 **TODO:**
 
 * Read CIViC paper page 1 par on the right.
