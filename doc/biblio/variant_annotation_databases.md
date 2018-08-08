@@ -68,7 +68,6 @@ Pierre - *"It's a crowdsourcing OncoKB."*
 
 **Paper:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5875005/) Tamborero D, Rubio-Perez C, Deu-Pons J, et al. Cancer Genome Interpreter annotates the biological and clinical relevance of tumor alterations. Genome Medicine. 2018;10:25. doi:10.1186/s13073-018-0531-8.  
 **Publication date:** March 2018  
-**Data:** available publicly  
 
 Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
@@ -103,7 +102,6 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 **Article:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5391733/) Huang L, Fernandes H, Zia H, et al. The cancer precision medicine knowledge base for structured clinical-grade mutations and interpretations. Journal of the American Medical Informatics Association : JAMIA. 2017;24(3):513-519. doi:10.1093/jamia/ocw148.  
 **Publication date:** October 2016    
-**Data:** available publicly  
 
 *Pierre - "It's a more controlled CIViC."*
 
@@ -125,7 +123,6 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 **Paper:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4121886/) Yeh P, Chen H, Andrews J, Naser R, Pao W, Horn L. DNA-Mutation Inventory to Refine and Enhance Cancer Treatment (DIRECT): A Catalog of Clinically Relevant Cancer Mutations to Enable Genome-Directed Anticancer Therapy. Clinical cancer research : an official journal of the American Association for Cancer Research. 2013;19(7):1894-1901.  doi:10.1158/1078-0432.CCR-12-1894.  
 **Publication date:** January 2013  
-**Data:** not public  
 
 *Pierre - "It's an old OncoKB."*
 
@@ -144,7 +141,6 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 **Paper:** [link](https://www.ncbi.nlm.nih.gov/pubmed/26772741) Patterson SE, Liu R, Statz CM, Durkin D, Lakshminarayana A, Mockus SM. The clinical trial landscape in oncology and connectivity of somatic mutational profiles to targeted therapies. Human Genomics. 2016;10:4. doi:10.1186/s40246-016-0061-7.  
 **Publication date:** January 2016  
-**Data:** not public  
 
 *Pierre - "It's an OncoKB with only variants that have a targeted therapy available."*
 
@@ -164,7 +160,6 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 **Paper:** [link](http://cancerres.aacrjournals.org/content/77/21/e123.full-text.pdf) Katherine C. Kurnit, Ann M. Bailey, Jia Zeng, Amber M. Johnson, Md. Abu Shufean, Lauren Brusco, Beate C. Litzenburger, Nora S. Sánchez, Yekaterina B. Khotskaya, Vijaykumar Holla, Amy Simpson, Gordon B. Mills, John Mendelsohn, Elmer Bernstam, Kenna Shaw and Funda Meric-Bernstam “Personalized Cancer Therapy”: A Publicly Available Precision Oncology Resource Cancer Res November 1 2017 (77) (21) e123-e126; DOI: 10.1158/0008-5472.CAN-17-0341  
 **Publication date:** November 2017  
-**Data:** not public  
 
 *Pierre - "Same as JAX-CKB."*
 
