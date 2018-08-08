@@ -15,7 +15,6 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
     * ClinGen [CIViC]
     * PharmKGB [CIViC]
     * Cancer Driver Log [CIViC]
-    * Jax-Clinical Knowledgebase [CIViC, CGI]
     * DoCM [CGI]
     * Condel
 * Supplementary table 1 [CIViC]
@@ -30,6 +29,7 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
 * [Cancer Genome Interpreter](#cancer-genome-interpreter)
 * [Precision Medicine Knowledgebase](#precision-medicine-knowledgebase)
 * [MyCancerGenome](#mycancergenome)
+* [JAX-Clinical Knowledgebase](#jax-clinical-knowledgebase)
 * [Other](#other)
 	* ..
 	* ..
@@ -41,7 +41,8 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
 | CIViC                            | 1936     | 358   | 08/08/18 | :white_check_mark: |
 | Cancer Genome Interpreter        | 5601     | 765   | 08/08/18 | :white_check_mark: |
 | Precision Medicine Knowledgebase | 2168     | 606   | 08/08/18 | :white_check_mark: |
-| MyCancerGenome                   | ?        | ?     | 08/08/18 | :x:                |
+| MyCancerGenome                   | ?        | ?     |          | :x:                |
+| JAX-Clinical Knowledgebase       | ?        | 82    | 08/08/18 | :x:                |
 
 
 ## CIViC
@@ -115,7 +116,7 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 
 
-### MyCancerGenome
+## MyCancerGenome
 **Website:** https://www.mycancergenome.org  
 **Paper:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4121886/) Yeh P, Chen H, Andrews J, Naser R, Pao W, Horn L. DNA-Mutation Inventory to Refine and Enhance Cancer Treatment (DIRECT): A Catalog of Clinically Relevant Cancer Mutations to Enable Genome-Directed Anticancer Therapy. Clinical cancer research : an official journal of the American Association for Cancer Research. 2013;19(7):1894-1901.  doi:10.1158/1078-0432.CCR-12-1894.  
 **Date:** January 2013  
@@ -129,6 +130,19 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 * **Other informations**
     * Focused on "patient focus content".
 
+
+## JAX-Clinical Knowledgebase
+**Website:** https://ckb.jax.org  
+**Paper:** [link](https://www.ncbi.nlm.nih.gov/pubmed/26772741) Patterson SE, Liu R, Statz CM, Durkin D, Lakshminarayana A, Mockus SM. The clinical trial landscape in oncology and connectivity of somatic mutational profiles to targeted therapies. Human Genomics. 2016;10:4. doi:10.1186/s40246-016-0061-7.  
+**Date:** January 2016  
+**Data:** not public  
+
+* **What is it?** Identification and annotation of clinically relevant cancer variants.  
+* **Where does the data comes from?** FDA-approved therapy or targeted therapy in clinical trials. Data dynamically curated by experts. In-house databse (the JAX Clinical Knowledgebase JAX-CKB): semi-automated/manually curated database of gene/variant annotations, therapy knowledge, diagnostic/prognostic information, and clinical trials related to oncology.  
+* **Size of the database?** January 2016, from the article: 358 genes, 1108 targeted therapies.
+* **Other informations**
+    * Filtering to ensure the high-quality somatic variations: low coverage, vaf, silent mutations, likely germline, outside of coding regions
+    * All types of mutations
 
 
 ## Other
