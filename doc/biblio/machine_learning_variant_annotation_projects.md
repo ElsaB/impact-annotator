@@ -2,6 +2,7 @@
 
 # Machine learning variant annotation projects
 
+<!---
 **TODO:**
 
 * CHASM feature supplementary materials
@@ -14,6 +15,15 @@
 * CADD, MA. FATHMM cf. supplementary figure 2 of CancerGenomeInterpreter paper
 * http://www.cravat.us/CRAVAT/help.jsp?chapter=analysis_tools&article=vest
 * https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5610688/
+* http://cadd.gs.washington.edu/home
+* http://fathmm.biocompute.org.uk/about.html
+* http://wiki.chasmsoftware.org/index.php/CHASM_Overview
+* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3813554/
+* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5860356/
+* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3558800/
+* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3673218/
+* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4083756/
+--->
 
 **Table of contents**
 
