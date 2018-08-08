@@ -8,14 +8,18 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
 **TODO:**
 
 * To study:
-    * OncoKB
+    * OncoKB [all]
+    * ClinVar [CIViC, CGI, PMK]
     * Gene Drug Knwoledge Database [CIViC]
     * Database of Curated Mutations [CIViC]
-    * ClinVar [CIViC, CGI, PMK]
     * ClinGen [CIViC]
     * PharmKGB [CIViC]
     * Cancer Driver Log [CIViC]
     * DoCM [CGI]
+    * Candl.osu.edu [Elli]
+    * Bccancer.bc.ca [Elli]
+    * Drug gene interaction database [pct]
+    * Precision cancer medecine [pct]
     * Condel
 * Supplementary table 1 [CIViC]
 * Additional file 1: Table S1 [CGI]
@@ -30,9 +34,7 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
 * [Precision Medicine Knowledgebase](#precision-medicine-knowledgebase)
 * [MyCancerGenome](#mycancergenome)
 * [JAX-Clinical Knowledgebase](#jax-clinical-knowledgebase)
-* [Other](#other)
-	* ..
-	* ..
+* [Personalized Cancer Therapy](#personalized-cancer-therapy)
 
 **Summary**
 
@@ -43,12 +45,13 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
 | Precision Medicine Knowledgebase | 2168     | 606   | 08/08/18 | :white_check_mark: |
 | MyCancerGenome                   | ?        | ?     |          | :x:                |
 | JAX-Clinical Knowledgebase       | ?        | 82    | 08/08/18 | :x:                |
+| Personalized Cancer Therapy      | ?        | ?     |          | :x:                |
 
 
 ## CIViC
 **Website:** https://civicdb.org/  
 **Paper:** [link](https://www.nature.com/articles/ng.3774) Griffith M\*,†, Spies NC\*, Krysiak K\*, McMichael JF, Coffman AC, Danos AM, Ainscough BJ, Ramirez CA, Rieke DT, Kujan L, Barnell EK, Wagner AH, Skidmore ZL, Wollam A, Liu CJ, Jones MR, Bilski RL, Lesurf R, Feng YY, Shah NM, Bonakdar M, Trani L, Matlock M, Ramu A, Campbell KM, Spies GC, Graubert AP, Gangavarapu K, Eldred JM, Larson DE, Walker JR, Good BM, Wu C, Su AI, Dienstmann R, Margolin AA, Tamborero D, Lopez-Bigas N, Jones SJ, Bose R, Spencer DH Wartman LD, Wilson RK, Mardis ER, Griffith OL†. 2016. CIViC is a community knowledgebase for expert crowdsourcing the clinical interpretation of variants in cancer. Nat Genet. 49, 170–174 (2017); doi: http://dx.doi.org/10.1038/ng.3774. \*These authors contributed equally to this work. †Corresponding author.  
-**Date:** January 2017  
+**Publication date:** January 2017  
 **Data:** available publicly  
 
 Pierre - *"It's a crowdsourcing OncoKB."*
@@ -68,7 +71,7 @@ Pierre - *"It's a crowdsourcing OncoKB."*
 ## Cancer Genome Interpreter
 **Website:** https://www.cancergenomeinterpreter.org/home  
 **Paper:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5875005/) Tamborero D, Rubio-Perez C, Deu-Pons J, et al. Cancer Genome Interpreter annotates the biological and clinical relevance of tumor alterations. Genome Medicine. 2018;10:25. doi:10.1186/s13073-018-0531-8.  
-**Date:** March 2018  
+**Publication date:** March 2018  
 **Data:** available publicly  
 
 Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
@@ -99,8 +102,8 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 ## Precision Medicine Knowledgebase
 **Website:** https://pmkb.weill.cornell.edu  
-**Article:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5391733/) Huang L, Fernandes H, Zia H, et al. The cancer precision medicine knowledge base for structured clinical-grade mutations and interpretations. Journal of the American Medical Informatics Association : JAMIA. 2017;24(3):513-519. doi:10.1093/jamia/ocw148.    
-**Date:** October 2016    
+**Article:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5391733/) Huang L, Fernandes H, Zia H, et al. The cancer precision medicine knowledge base for structured clinical-grade mutations and interpretations. Journal of the American Medical Informatics Association : JAMIA. 2017;24(3):513-519. doi:10.1093/jamia/ocw148.  
+**Publication date:** October 2016    
 **Data:** available publicly  
 
 *Pierre - "It's a more controlled CIViC."*
@@ -119,7 +122,7 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 ## MyCancerGenome
 **Website:** https://www.mycancergenome.org  
 **Paper:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4121886/) Yeh P, Chen H, Andrews J, Naser R, Pao W, Horn L. DNA-Mutation Inventory to Refine and Enhance Cancer Treatment (DIRECT): A Catalog of Clinically Relevant Cancer Mutations to Enable Genome-Directed Anticancer Therapy. Clinical cancer research : an official journal of the American Association for Cancer Research. 2013;19(7):1894-1901.  doi:10.1158/1078-0432.CCR-12-1894.  
-**Date:** January 2013  
+**Publication date:** January 2013  
 **Data:** not public  
 
 *Pierre - "It's an old OncoKB."*
@@ -131,11 +134,14 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
     * Focused on "patient focus content".
 
 
+
 ## JAX-Clinical Knowledgebase
 **Website:** https://ckb.jax.org  
 **Paper:** [link](https://www.ncbi.nlm.nih.gov/pubmed/26772741) Patterson SE, Liu R, Statz CM, Durkin D, Lakshminarayana A, Mockus SM. The clinical trial landscape in oncology and connectivity of somatic mutational profiles to targeted therapies. Human Genomics. 2016;10:4. doi:10.1186/s40246-016-0061-7.  
-**Date:** January 2016  
+**Publication date:** January 2016  
 **Data:** not public  
+
+*Pierre - "It's an OncoKB with only variants that have a targeted therapy available."*
 
 * **What is it?** Identification and annotation of clinically relevant cancer variants.  
 * **Where does the data comes from?** FDA-approved therapy or targeted therapy in clinical trials. Data dynamically curated by experts. In-house databse (the JAX Clinical Knowledgebase JAX-CKB): semi-automated/manually curated database of gene/variant annotations, therapy knowledge, diagnostic/prognostic information, and clinical trials related to oncology.  
@@ -145,16 +151,18 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
     * All types of mutations
 
 
-## Other
 
-### candl
-**Website:** http://candl.osu.edu  
-The current version number is 1.1 - Mar2015. The most recent update to data was on 5:15pm, July 31st, 2015.
+## Personalized Cancer Therapy
+**Website:** https://pct.mdanderson.org  
+**Paper:** [link](http://cancerres.aacrjournals.org/content/77/21/e123.full-text.pdf) Katherine C. Kurnit, Ann M. Bailey, Jia Zeng, Amber M. Johnson, Md. Abu Shufean, Lauren Brusco, Beate C. Litzenburger, Nora S. Sánchez, Yekaterina B. Khotskaya, Vijaykumar Holla, Amy Simpson, Gordon B. Mills, John Mendelsohn, Elmer Bernstam, Kenna Shaw and Funda Meric-Bernstam “Personalized Cancer Therapy”: A Publicly Available Precision Oncology Resource Cancer Res November 1 2017 (77) (21) e123-e126; DOI: 10.1158/0008-5472.CAN-17-0341  
+**Publication date:** November 2017  
+**Data:** not public  
 
+*Pierre - "Same as JAX-CKB."*
 
-### pct
-**Website:** https://pct.mdanderson.org/home  
-Modified on Fri, 12 Sep 2014 16:46:06 GMT  
-Data not public.
-
+* **What is it?** Information on the function of common genomic alterations and their therapeutic implications. Clinical significance and actionability of genomic alterations and identification of matched targeted therapies.
+* **Where does the data comes from?** High-throughput litterature from the MEDLINE database + manually reviewed litterature by a precision oncology decision support (team including oncologists, geneticists, molecular biologists, computational scientists, ...). They validate and record the functional implication in tumorigenesis of each alteration. Genes registered must 1) be cancer-associated, 2) have evidence that targeting the gene may result in tumor suppression, 3) drugs either FDA-approved or clinically investigated. Then a systematic scientific literrature review is performed. Functional annotation of variants: cBIO, COSMIC, published findings.
+* **Size of the database?** Unknown.
+* **Other informations**
+    * Comparison with OncoKB: clinical trials availables
 
