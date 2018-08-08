@@ -27,29 +27,20 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
 --->
 
 
-**Table of contents**
+**Summary and table of contents**
 
-* [CIViC](#civic)
-* [Cancer Genome Interpreter](#cancer-genome-interpreter)
-* [Precision Medicine Knowledgebase](#precision-medicine-knowledgebase)
-* [MyCancerGenome](#mycancergenome)
-* [JAX-Clinical Knowledgebase](#jax-clinical-knowledgebase)
-* [Personalized Cancer Therapy](#personalized-cancer-therapy)
-
-**Summary**
-
-| Database name                    | Variants | Genes | Date     | Public             |
-| -------------------------------- | -------- | ----- | -------- | :----------------: |
-| CIViC                            | 1936     | 358   | 08/08/18 | :white_check_mark: |
-| Cancer Genome Interpreter        | 5601     | 765   | 08/08/18 | :white_check_mark: |
-| Precision Medicine Knowledgebase | 2168     | 606   | 08/08/18 | :white_check_mark: |
-| MyCancerGenome                   | ?        | ?     |          | :x:                |
-| JAX-Clinical Knowledgebase       | ?        | 82    | 08/08/18 | :x:                |
-| Personalized Cancer Therapy      | ?        | ?     |          | :x:                |
+| Database name                                                         | Variants | Genes | Date     | Public             | Website                                      |
+| --------------------------------------------------------------------- | -------- | ----- | -------- | :----------------: | -------------------------------------------- |
+| [CIViC](#civic)                                                       | 1936     | 358   | 08/08/18 | :white_check_mark: | https://civicdb.org/home                     |
+| [Cancer Genome Interpreter](#cancer-genome-interpreter)               | 5601     | 765   | 08/08/18 | :white_check_mark: | https://www.cancergenomeinterpreter.org/home |
+| [Precision Medicine Knowledgebase](#precision-medicine-knowledgebase) | 2168     | 606   | 08/08/18 | :white_check_mark: | https://pmkb.weill.cornell.edu               |
+| [MyCancerGenome](#mycancergenome)                                     | ?        | ?     |          | :x:                | https://www.mycancergenome.org               |
+| [JAX-Clinical Knowledgebase](#jax-clinical-knowledgebase)             | ?        | 82    | 08/08/18 | :x:                | https://ckb.jax.org                          |
+| [Personalized Cancer Therapy](#personalized-cancer-therapy)           | ?        | ?     |          | :x:                | https://pct.mdanderson.org                   |
 
 
 ## CIViC
-**Website:** https://civicdb.org/  
+**Website:** https://civicdb.org/home   
 **Paper:** [link](https://www.nature.com/articles/ng.3774) Griffith M\*,†, Spies NC\*, Krysiak K\*, McMichael JF, Coffman AC, Danos AM, Ainscough BJ, Ramirez CA, Rieke DT, Kujan L, Barnell EK, Wagner AH, Skidmore ZL, Wollam A, Liu CJ, Jones MR, Bilski RL, Lesurf R, Feng YY, Shah NM, Bonakdar M, Trani L, Matlock M, Ramu A, Campbell KM, Spies GC, Graubert AP, Gangavarapu K, Eldred JM, Larson DE, Walker JR, Good BM, Wu C, Su AI, Dienstmann R, Margolin AA, Tamborero D, Lopez-Bigas N, Jones SJ, Bose R, Spencer DH Wartman LD, Wilson RK, Mardis ER, Griffith OL†. 2016. CIViC is a community knowledgebase for expert crowdsourcing the clinical interpretation of variants in cancer. Nat Genet. 49, 170–174 (2017); doi: http://dx.doi.org/10.1038/ng.3774. \*These authors contributed equally to this work. †Corresponding author.  
 **Publication date:** January 2017  
 **Data:** available publicly  
