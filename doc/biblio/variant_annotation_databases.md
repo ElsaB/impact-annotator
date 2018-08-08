@@ -11,13 +11,12 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
     * OncoKB
     * Gene Drug Knwoledge Database [CIViC]
     * Database of Curated Mutations [CIViC]
-    * ClinVar [CIViC, CGI]
+    * ClinVar [CIViC, CGI, PMK]
     * ClinGen [CIViC]
     * PharmKGB [CIViC]
     * Cancer Driver Log [CIViC]
     * Jax-Clinical Knowledgebase [CIViC, CGI]
     * DoCM [CGI]
-    * PCT [CGI]
     * Condel
 * Supplementary table 1 [CIViC]
 * Additional file 1: Table S1 [CGI]
@@ -35,18 +34,29 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
 	* ..
 	* ..
 
+**Summary**
+
+| Database name                    | Variants | Genes | Date     | Public             |
+| -------------------------------- | -------- | ----- | -------- | :----------------: |
+| CIViC                            | 1936     | 358   | 08/08/18 | :white_check_mark: |
+| Cancer Genome Interpreter        | 5601     | 765   | 08/08/18 | :white_check_mark: |
+| Precision Medicine Knowledgebase | 2168     | 606   | 08/08/18 | :white_check_mark: |
+| MyCancerGenome                   | ?        | ?     | 08/08/18 | :x:                |
 
 
 ## CIViC
 **Website:** https://civicdb.org/  
 **Paper:** [link](https://www.nature.com/articles/ng.3774) Griffith M\*,†, Spies NC\*, Krysiak K\*, McMichael JF, Coffman AC, Danos AM, Ainscough BJ, Ramirez CA, Rieke DT, Kujan L, Barnell EK, Wagner AH, Skidmore ZL, Wollam A, Liu CJ, Jones MR, Bilski RL, Lesurf R, Feng YY, Shah NM, Bonakdar M, Trani L, Matlock M, Ramu A, Campbell KM, Spies GC, Graubert AP, Gangavarapu K, Eldred JM, Larson DE, Walker JR, Good BM, Wu C, Su AI, Dienstmann R, Margolin AA, Tamborero D, Lopez-Bigas N, Jones SJ, Bose R, Spencer DH Wartman LD, Wilson RK, Mardis ER, Griffith OL†. 2016. CIViC is a community knowledgebase for expert crowdsourcing the clinical interpretation of variants in cancer. Nat Genet. 49, 170–174 (2017); doi: http://dx.doi.org/10.1038/ng.3774. \*These authors contributed equally to this work. †Corresponding author.  
 **Date:** January 2017  
+**Data:** available publicly  
 
 Pierre - *"It's a crowdsourcing OncoKB."*
 
 * **What is it?** CIViC is a community expert-crowdsourced knowledgebase for clinical interpretation of variants in cancer. It describes the therapeutic, prognostic, diagnosic and predisposing relevance of inherited and somatic variants of all types.
 * **Where does the data comes from?** National team of experts collaborating remotely within a centralized curation interface. Agreement between at least two independant contributors (and at least one must be an expert editor) before acceptance of new evidence or revisions of existing content. Validated curators can add a variant description if there is evidence link to cancer with some clinical relevance.
-* **Size of the database?** 1,678 curated interpretations of clinical relevance for 713 variants affecting 283 genes (in January 2017, from the article).
+* **Size of the database?**
+    * In January 2017, from the article: 1,678 curated interpretations of clinical relevance for 713 variants affecting 283 genes
+    * 08/08/18, from the website: 1936 variants for 358 genes
 * **Other informations**  
     * Scoring system of the variants.
     * Present itself as more open and transparent that the concurrency.
@@ -58,12 +68,15 @@ Pierre - *"It's a crowdsourcing OncoKB."*
 **Website:** https://www.cancergenomeinterpreter.org/home  
 **Paper:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5875005/) Tamborero D, Rubio-Perez C, Deu-Pons J, et al. Cancer Genome Interpreter annotates the biological and clinical relevance of tumor alterations. Genome Medicine. 2018;10:25. doi:10.1186/s13073-018-0531-8.  
 **Date:** March 2018  
+**Data:** available publicly  
 
 Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 * **What is it?** Cancer Genome Interpreter is a platform that systematizes the interpretation of cancer genomes, the main hallmark of which is streamlining and automatization of the whole process. It identifies all known and likely tumorigenic genomic alterations and annotate all variants that constitutes biomarkers.
 * **Where does the data comes from?** Employs existing or newly developed resources and computational methods. Alterations that are clinically or experimentally validated to drive tumor phenotypes –previously culled from public sources– are identified by the CGI, whereas the effect of the remaining alterations of uncertain significance are predicted using in silico approaches, such as OncodriveMUT (for mutations). Validated oncogenic mutations catalog: DoCM, ClinVar and OncoKB + results of several published experimental assays.
-* **Size of the database?** 837 genes in 193 different cancer types, 5314 validated mutations (March 2018, from the article).
+* **Size of the database?**
+    * March 2018, from the article: 5314 validated mutations
+    * * 08/08/18, from the website: 765 genes in 246 different cancer types, 5601 validated mutations
 * **Other informations**  
     * Automatically recognizes the format, remaps the variants as needed and standardized the annotation for downstream compatibility. 
     * All analysis are cancer-specific and thus the tumor type of the samples to analyze is required.
@@ -87,21 +100,26 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 **Website:** https://pmkb.weill.cornell.edu  
 **Article:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5391733/) Huang L, Fernandes H, Zia H, et al. The cancer precision medicine knowledge base for structured clinical-grade mutations and interpretations. Journal of the American Medical Informatics Association : JAMIA. 2017;24(3):513-519. doi:10.1093/jamia/ocw148.    
 **Date:** October 2016    
+**Data:** available publicly  
 
-*Pierre - "Bla"*
+*Pierre - "It's a more controlled CIViC."*
 
-* **What is it?** Bla
-* **Where does the data comes from?** Bla
-* **Size of the database?** Bla
+* **What is it?** Interactive online application for collaborative editing, maintenance, and sharing of structured clinical-grade cancer mutations interpretations.
+* **Where does the data comes from?** All interpretations written or approved by board-certificate molecular pathologists (PMKB's employees). All interpretations must be supported by at least 1 litterature citation
+* **Size of the database?**
+    * October 2016, from the article: 457 variants descriptions with 281 clinical-grade interpretations
+    * 08/08/18, from the website: 2168 variants for 606 genes
 * **Other informations**  
-    * Bla
+    * Support of all major variant types: small localized mutations (SNV, indels, ...), copy number alterations and gene fusions
+    * Distinct user roles including high-level approvers
 
 
 
 ### MyCancerGenome
 **Website:** https://www.mycancergenome.org  
-**Paper:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4121886/)Yeh P, Chen H, Andrews J, Naser R, Pao W, Horn L. DNA-Mutation Inventory to Refine and Enhance Cancer Treatment (DIRECT): A Catalog of Clinically Relevant Cancer Mutations to Enable Genome-Directed Anticancer Therapy. Clinical cancer research : an official journal of the American Association for Cancer Research. 2013;19(7):1894-1901.  doi:10.1158/1078-0432.CCR-12-1894.
+**Paper:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4121886/) Yeh P, Chen H, Andrews J, Naser R, Pao W, Horn L. DNA-Mutation Inventory to Refine and Enhance Cancer Treatment (DIRECT): A Catalog of Clinically Relevant Cancer Mutations to Enable Genome-Directed Anticancer Therapy. Clinical cancer research : an official journal of the American Association for Cancer Research. 2013;19(7):1894-1901.  doi:10.1158/1078-0432.CCR-12-1894.  
 **Date:** January 2013  
+**Data:** not public  
 
 *Pierre - "It's an old OncoKB."*
 
