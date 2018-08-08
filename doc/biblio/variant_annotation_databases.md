@@ -6,10 +6,18 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
 
 **TODO:**
 
-* Read CIViC paper page 1 par on the right.
 * OncoKB
+* CIViC:
+    * Gene Drug Knwoledge Database
+    * Database of Curated Mutations
+    * ClinVar
+    * ClinGen
+    * PharmKGB
+    * Cancer Driver Log
+    * My Cancer Genome
+    * Jax-Clinical Knowledgebase
+    * Supplementary table 1
 * Read CancerGenomeInterpreter paper page 1 par on the right. 2 first lines 2nd page
-* CHASM, CanDrA, CADD, MA. FATHMM cf. supplementary figure 2 of CancerGenomeInterpreter paper
 * http://cadd.gs.washington.edu/home
 * http://fathmm.biocompute.org.uk/about.html
 * http://wiki.chasmsoftware.org/index.php/CHASM_Overview

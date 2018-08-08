@@ -11,6 +11,7 @@
 * https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0484-1
 * ENCODE dataset
 * HGMD, PolyPhen2, SIFT, CADD, DANN, FATHMM-MKL, FunSeq2, MutationAssesor, CanPredict
+* CADD, MA. FATHMM cf. supplementary figure 2 of CancerGenomeInterpreter paper
 * http://www.cravat.us/CRAVAT/help.jsp?chapter=analysis_tools&article=vest
 * https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5610688/
 
