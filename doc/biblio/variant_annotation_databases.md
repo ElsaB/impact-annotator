@@ -25,15 +25,15 @@
 
 **Summary and table of contents**
 
-| Database name                                                         | Variants | Genes | Date     | Public             | Website                                      |
-| --------------------------------------------------------------------- | -------- | ----- | :------: | :----------------: | -------------------------------------------- |
-| [CIViC](#civic)                                                       | 1936     | 358   | 08/08/18 | :white_check_mark: | https://civicdb.org/home                     |
-| [Cancer Genome Interpreter](#cancer-genome-interpreter)               | 5601     | 765   | 08/08/18 | :white_check_mark: | https://www.cancergenomeinterpreter.org/home |
-| [Precision Medicine Knowledgebase](#precision-medicine-knowledgebase) | 2168     | 606   | 08/08/18 | :white_check_mark: | https://pmkb.weill.cornell.edu               |
-| [MyCancerGenome](#mycancergenome)                                     | ?        | ?     | -        | :x:                | https://www.mycancergenome.org               |
-| [JAX-Clinical Knowledgebase](#jax-clinical-knowledgebase)             | ?        | 82    | 08/08/18 | :x:                | https://ckb.jax.org                          |
-| [Personalized Cancer Therapy](#personalized-cancer-therapy)           | ?        | ?     | -        | :x:                | https://pct.mdanderson.org                   |
-| [CanDL](#candl)                                                       |          |       |          |                    | https://candl.osu.edu                        |
+| Database name                                                         | Variants | Genes | Date     | Public             | Results in the notebook | Website                                      |
+| --------------------------------------------------------------------- | -------- | ----- | :------: | :----------------: | :---------------------: | -------------------------------------------- |
+| [CIViC](#civic)                                                       | 1936     | 358   | 08/08/18 | :white_check_mark: | :white_check_mark:      | https://civicdb.org/home                     |
+| [Cancer Genome Interpreter](#cancer-genome-interpreter)               | 5601     | 765   | 08/08/18 | :white_check_mark: | :white_check_mark:      | https://www.cancergenomeinterpreter.org/home |
+| [Precision Medicine Knowledgebase](#precision-medicine-knowledgebase) | 2168     | 606   | 08/08/18 | :white_check_mark: | :x:                     | https://pmkb.weill.cornell.edu               |
+| [MyCancerGenome](#mycancergenome)                                     | ?        | ?     | -        | :x:                | :x:                     | https://www.mycancergenome.org               |
+| [JAX-Clinical Knowledgebase](#jax-clinical-knowledgebase)             | ?        | 82    | 08/08/18 | :x:                | :x:                     | https://ckb.jax.org                          |
+| [Personalized Cancer Therapy](#personalized-cancer-therapy)           | ?        | ?     | -        | :x:                | :x:                     | https://pct.mdanderson.org                   |
+| [CanDL](#candl)                                                       | 330      | 56    | 2015     | :white_check_mark: | :white_check_mark:      | https://candl.osu.edu                        |
 
 See the notebook [`analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb) for direct comparison between some of these databases (when the data was available and usable) and OncoKB.
 
@@ -51,9 +51,6 @@ Pierre - *"It's a crowdsourcing OncoKB."*
 
 * **What is it?** CIViC is a community expert-crowdsourced knowledgebase for clinical interpretation of variants in cancer. It describes the therapeutic, prognostic, diagnosic and predisposing relevance of inherited and somatic variants of all types.
 * **Where does the data comes from?** National team of experts collaborating remotely within a centralized curation interface. Agreement between at least two independant contributors (and at least one must be an expert editor) before acceptance of new evidence or revisions of existing content. Validated curators can add a variant description if there is evidence link to cancer with some clinical relevance.
-* **Size of the database?**
-    * In January 2017, from the article: 1,678 curated interpretations of clinical relevance for 713 variants affecting 283 genes
-    * 08/08/18, from the website: 1936 variants for 358 genes
 * **Other informations**  
     * Scoring system of the variants.
     * Present itself as more open and transparent that the concurrency.
@@ -73,9 +70,6 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 * **What is it?** Cancer Genome Interpreter is a platform that systematizes the interpretation of cancer genomes, the main hallmark of which is streamlining and automatization of the whole process. It identifies all known and likely tumorigenic genomic alterations and annotate all variants that constitutes biomarkers.
 * **Where does the data comes from?** Employs existing or newly developed resources and computational methods. Alterations that are clinically or experimentally validated to drive tumor phenotypes –previously culled from public sources– are identified by the CGI, whereas the effect of the remaining alterations of uncertain significance are predicted using in silico approaches, such as OncodriveMUT (for mutations). Validated oncogenic mutations catalog: DoCM, ClinVar and OncoKB + results of several published experimental assays.
-* **Size of the database?**
-    * March 2018, from the article: 5314 validated mutations
-    * * 08/08/18, from the website: 765 genes in 246 different cancer types, 5601 validated mutations
 * **Other informations**  
     * Automatically recognizes the format, remaps the variants as needed and standardized the annotation for downstream compatibility. 
     * All analysis are cancer-specific and thus the tumor type of the samples to analyze is required.
@@ -107,9 +101,6 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 * **What is it?** Interactive online application for collaborative editing, maintenance, and sharing of structured clinical-grade cancer mutations interpretations.
 * **Where does the data comes from?** All interpretations written or approved by board-certificate molecular pathologists (PMKB's employees). All interpretations must be supported by at least 1 litterature citation
-* **Size of the database?**
-    * October 2016, from the article: 457 variants descriptions with 281 clinical-grade interpretations
-    * 08/08/18, from the website: 2168 variants for 606 genes
 * **Other informations**  
     * Support of all major variant types: small localized mutations (SNV, indels, ...), copy number alterations and gene fusions
     * Distinct user roles including high-level approvers
@@ -128,7 +119,6 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 * **What is it?** My Cancer Genome is a precision cancer medicine knowledge resource for physicians, patients, caregivers and researchers. It gives information on what mutations make cancers grow and related therapeutic implications, including available clinical trials.
 * **Where does the data comes from?** A database (DIRECT: 'DNA-mutation Inventory to Refine and Enhance Cancer Treatment') has been established, it contains information about the potential clinical significance of specific tumor mutations. To compile the information in DIRECT, the PCMI team used a retrospective PubMed medical subject heading (MeSH) search to identify patient-level, mutation-specific, drug response data from different studies in NSCLC. The initial goal of the DIRECT database was to catalogue clinically relevant somatic mutations in lung cancer. The project began by cataloguing data from patients with EGFR mutations but will be expanding to incorporate data on all known mutations with potential clinical significance in various types of cancer.  Not sure if DIRECT is the only database used, the website says "Currently, DIRECT catalogues drug response data from patients with non-small cell lung cancer (NSCLC) whose tumors harbor mutations in EGFR", but maybe the website is not up-to-date. Indeed, we can find other cancer type variants on the website.
-* **Size of the database?** Unknown.
 * **Other informations**
     * Focused on "patient focus content".
 
@@ -146,7 +136,6 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 * **What is it?** Identification and annotation of clinically relevant cancer variants.  
 * **Where does the data comes from?** FDA-approved therapy or targeted therapy in clinical trials. Data dynamically curated by experts. In-house databse (the JAX Clinical Knowledgebase JAX-CKB): semi-automated/manually curated database of gene/variant annotations, therapy knowledge, diagnostic/prognostic information, and clinical trials related to oncology.  
-* **Size of the database?** January 2016, from the article: 358 genes, 1108 targeted therapies.
 * **Other informations**
     * Filtering to ensure the high-quality somatic variations: low coverage, vaf, silent mutations, likely germline, outside of coding regions
     * All types of mutations
@@ -165,7 +154,6 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 
 * **What is it?** Information on the function of common genomic alterations and their therapeutic implications. Clinical significance and actionability of genomic alterations and identification of matched targeted therapies.
 * **Where does the data comes from?** High-throughput litterature from the MEDLINE database + manually reviewed litterature by a precision oncology decision support (team including oncologists, geneticists, molecular biologists, computational scientists, ...). They validate and record the functional implication in tumorigenesis of each alteration. Genes registered must 1) be cancer-associated, 2) have evidence that targeting the gene may result in tumor suppression, 3) drugs either FDA-approved or clinically investigated. Then a systematic scientific literrature review is performed. Functional annotation of variants: cBIO, COSMIC, published findings.
-* **Size of the database?** Unknown.
 * **Other informations**
     * Comparison with OncoKB: clinical trials availables
 
@@ -174,15 +162,17 @@ Pierre - *"It's OncoKB + an heuristic rule to sort the unknown variants"*
 ## CanDL
 | Database name                                                         | Variants | Genes | Date     | Public             | Website                                      |
 | --------------------------------------------------------------------- | -------- | ----- | :------: | :----------------: | -------------------------------------------- |
-| [CanDL](#candl)                                                       |          |       |          |                    | https://candl.osu.edu                        |
+| [CanDL](#candl)                                                       | 330      | 56    | 2015     | :white_check_mark: | https://candl.osu.edu                        |
 
 **Paper:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4597274/) Damodaran S, Miya J, Kautto E, et al. Cancer Driver Log (CanDL): Catalog of Potentially Actionable Cancer Mutations. The Journal of Molecular Diagnostics : JMD. 2015;17(5):554-559. doi:10.1016/j.jmoldx.2015.05.002.  
 **Publication date:** September 2015  
 
-*Pierre - "Bla"*
+*Pierre - "It's an old OncoKB with a bit of CIViC."*
 
-* **What is it?** Bla
-* **Where does the data comes from?** Bla
-* **Size of the database?** Bla
+* **What is it?** Expert-curated database of potentially actionnable driver mutations.
+* **Where does the data comes from?** Review scientific literature to identify variants that have been functionnaly characterized in vitro and in vivo as driver mutations. Mechanism for third-party contributions. Curated mutations from the list of genes from the Sanger Cancer Gene Census. Requirements to qualify as a driver mutation: include in vivo or in vitro experimentation. No update made to the database without manual expert review.
 * **Other informations**
-    * Bla
+    * The most recent update to data was on 5:15pm, July 31st, 2015.
+    * Only single-nucleotide substitutions in oncogenes
+
+
