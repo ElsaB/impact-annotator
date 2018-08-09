@@ -109,13 +109,19 @@ plot_histogram_top <- function(data, feature_name, number) {
 
 
 # custom density 2d plot
-plot_density_2d <- function(data, x_name, y_name, width = 10, height = 4, to_add = NULL) {
+plot_density_2d <- function(data, x_name, y_name, width = 12, height = 4, to_add = NULL) {
     
-    plot1 <- ggplot(data) + geom_hex(aes_string(x_name, y_name)) +
-             scale_fill_gradient(low = "#FFEDA0", high = "#F03B20") + to_add
-    plot2 <- ggplot(data) + stat_density_2d(aes_string(x_name, y_name, fill = "..level.."), geom = "polygon") +
-             scale_fill_gradientn(colors = c("#FFEDA0", "#FEB24C", "#F03B20")) + to_add
+  data$density <- densCols(data[,x_name], 
+                           data[,y_name],
+                           colramp = colorRampPalette(rev(rainbow(10, end = 4/6))))
+
+  plot1 <- ggplot(data) + geom_point(aes_string(x_name, y_name, color = "density"), alpha = 0.1) +
+           scale_color_identity() + to_add
+  plot2 <- ggplot(data) + geom_hex(aes_string(x_name, y_name)) +
+           scale_fill_gradient(low = "#FFEDA0", high = "#F03B20") + theme(legend.position = "none") + to_add
+  plot3 <- ggplot(data) + stat_density_2d(aes_string(x_name, y_name, fill = "..level.."), geom = "polygon") +
+           scale_fill_gradientn(colors = c("#FFEDA0", "#FEB24C", "#F03B20")) + theme(legend.position = "none") + to_add
     
-    plot_side_by_side(plot1, plot2, width, height)
+  plot_side_by_side_3(plot1, plot2, plot3, width, height)
 }
 
