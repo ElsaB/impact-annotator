@@ -23,7 +23,7 @@ install.packages("tidyverse", repos="http://cran.us.r-project.org")
 install.packages("gridExtra", repos="http://cran.us.r-project.org")
 ```
 
-* Make sure to download the data in the `data` and `data/other_databases` folders, the instructions are detailed there.
+* Make sure to download the data in the `/data` and `/data/other_databases` folders, the instructions are detailed there.
 ```shell
 $ cd data
 $ bash get_data.sh your_cluster_username
