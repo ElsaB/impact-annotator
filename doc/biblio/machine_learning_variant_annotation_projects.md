@@ -4,25 +4,13 @@
 
 <!---
 **TODO:**
-
-* CHASM feature supplementary materials
-* CanDra feature supplementary materials
-* Cscape feature supplementary materials
 * Publications that have used CHASM (http://wiki.chasmsoftware.org/index.php/Publications)
-* https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0484-1
-* ENCODE dataset
-* HGMD, PolyPhen2, SIFT, CADD, DANN, FATHMM-MKL, FunSeq2, MutationAssesor, CanPredict
-* CADD, MA. FATHMM cf. supplementary figure 2 of CancerGenomeInterpreter paper
-* http://www.cravat.us/CRAVAT/help.jsp?chapter=analysis_tools&article=vest
-* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5610688/
-* http://cadd.gs.washington.edu/home
-* http://fathmm.biocompute.org.uk/about.html
-* http://wiki.chasmsoftware.org/index.php/CHASM_Overview
-* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3813554/
-* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5860356/
-* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3558800/
-* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3673218/
-* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4083756/
+* Banchmarking article:
+	* https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0484-1
+	* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5610688/
+
+* DANN (Quand et al)
+* GAVIN
 --->
 
 **Table of contents**
@@ -30,6 +18,10 @@
 * [CHASM](#chasm)
 * [CanDrA](#candra)
 * [CScape](#cscape)
+* [FATHMM](#fathmm)
+* [FATHMM-XF](#fathmm-xf)
+* [Other](#other)
+
 
 
 ## CHASM
@@ -90,6 +82,7 @@
 * Last update: 2013
 
 
+
 ## CScape
 **Website:** http://cscape.biocompute.org.uk  
 **Paper:** [link](https://www.nature.com/articles/s41598-017-11746-4) Rogers MF, Shihab H, Gaunt TR, Campbell C (2017). CScape: a tool for predicting oncogenic single-point mutations in the cancer genome. Nature Scientific Reports  
@@ -116,7 +109,57 @@
 
 
 
+## FATHMM
+**Website:** http://fathmm.biocompute.org.uk/index.html  
+**Paper:** [link](https://www.ncbi.nlm.nih.gov/pubmed/23033316) Shihab HA, Gough J, Cooper DN, et al. Predicting the Functional, Molecular, and Phenotypic Consequences of Amino Acid Substitutions using Hidden Markov Models. Human Mutation. 2013;34(1):57-65. doi:10.1002/humu.22225.  
+**Date:** October 2012 
 
+* Algorithm:
+	* Hidden Markov Models
+	* Weighted/species-dependent or unweighted/species-independent
+	* "Capable of predicting the functional effects of protein missense mutations by combining sequence conservation within hidden Markov models (HMMs), representing the alignment of homologous sequences and conserved protein domains, with "pathogenicity weights", representing the overall tolerance of the protein/domain to mutations."
+	* Other article in May 2013 describing an adaptation to the FATHMM algorithm in which a cancer-specific weighting scheme was incorporated to potentiate the functional analysis of driver mutations. Improved odds in identifying driver/passenger mutations using a cancer-specific weighting scheme.
+* Features: -
+* Dataset:
+	* HGMD: 49,532 AAs -> training
+	* UniProt: 36,928 AAs -> training
+	* VariBench: 40,740 AAs -> existing benchmarking
+	* Hicks et al.2011: 267 AAs -> existing benchmarking
+	* SwissVar: 59,976 AAs -> independent benckmarking
+* Nonsynonymous SNP
+* A lot of benchmarking
+
+
+## FATHMM-XF
+**Website:** http://fathmm.biocompute.org.uk/fathmm-xf/  
+**Paper:** [link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5860356/) Rogers MF, Shihab HA, Mort M, Cooper DN, Gaunt TR, Campbell C. FATHMM-XF: accurate prediction of pathogenic point mutations via extended features. Hancock J, ed. Bioinformatics. 2018;34(3):511-513. doi:10.1093/bioinformatics/btx536.  
+**Date:** February 2018 
+
+* Algorithm:
+	* Supervised machine learning.
+	* Non-coding regions: 92.3% accuracy (using 5 features groups)
+	* Coding regions: 88% accuracy (using 6 features groups)
+* Features:
+	* 27 data sets (ENCODE, MIH Roadmap Epigenomics) + 4 additional features groups from conservation scores, the VEP, annotated gene models and the DNA sequence itself.
+	* Leave-one-chromosome-out-cross-validation.
+	* Platt scaling.
+* Dataset:
+	* 156,775 positive example: HGMD
+	* 25,720 neutral examples: the 1000 Genomes Project, only SNVs with a global minor VAF <= 1%, remove X and Y
+* Point mutations only
+
+
+
+## Other
+
+The following algorithm haven't been studied in-depth, usually because they are old, don't rely on a publication or are not cancer-specific.
+
+| Algorithm name   | Publication date | website                         | paper                                                   |
+| ---------------- | :--------------: | ------------------------------- | ------------------------------------------------------- |
+| CADD             | 2014             | http://cadd.gs.washington.edu   | https://www.ncbi.nlm.nih.gov/pubmed/24487276            |
+| MutationAssessor | 2011             | http://mutationassessor.org/r3/ | https://academic.oup.com/nar/article/39/17/e118/2411278 |
+| MutPred          | 2009             | http://mutpred.mutdb.org        | https://www.ncbi.nlm.nih.gov/pubmed/19734154            |
+| CanPredict       | 2007             | not available anymore           | https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1933186/   |
 
 
 
