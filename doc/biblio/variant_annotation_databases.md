@@ -6,7 +6,6 @@
 **TODO:**
 
 * To study:
-    * OncoKB [all]
     * ClinVar [CIViC, CGI, PMK]
     * Gene Drug Knwoledge Database [CIViC]
     * Database of Curated Mutations [CIViC]
@@ -54,7 +53,7 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
 * **What is it?** Expert-guided precision oncology knowledge base. It annotates the biologic and oncongenic effects and prognostic and predictive significance of somatic molecular alterations.
 * **Where does the data comes from?** Dedicated panel of physicians and cancer biologists who review and edit biomarker-associated investigational therapeutic strategis. "Continual dialogue with the scientific and medical community". Informtaions curated from multiple unstructured information resources including guidelines and recommendations from FDA labeling, NCCN guidelines, other disease-specific expert and advocacy group recommendations, and the medical literature. Panel of 22 MSK clinicians and physician scientists recognized as disease or gene experts in their field. 3.5 full time staff and 9 part-time curators (20h per week).
 * **Other informations**  
-    * > 90% of alterations have curated biologic effects and are classified as oncogenic but are not associated with actionability.
+    * More than 90% of alterations have curated biologic effects and are classified as oncogenic but are not associated with actionability.
     * Scoring system of clinical actionability.
 
 
