@@ -17,6 +17,10 @@ Summary of the following variant annotation databases:
 
 * [`machine_learning_variant_annotation_projects.md`](https://github.com/ElsaB/impact-annotator/tree/master/doc/biblio/machine_learning_variant_annotation_projects.md)  
 Summary of the following projects on machine learning classification of driver/passenger mutations:
+	* CanPredict
 	* CHASM
+	* MutationAssessor
 	* CanDrA
+	* FATHMM
+	* FATHMM-XF
 	* CScape
