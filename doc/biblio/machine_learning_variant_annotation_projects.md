@@ -21,7 +21,8 @@
 | [rDriver](#rdriver)                   | 2018             | :x:                                                    |
 
 
-**Every algorithm works for nsSNVs only.**
+**Every algorithm works for nsSNVs only.**  
+**This is not an exhaustive list.**
 
 ***
 
