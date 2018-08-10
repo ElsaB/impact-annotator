@@ -1,5 +1,3 @@
-:construction: *work in progress* :construction:  
-
 # Biblio
  
 * IMPACT main paper: https://www.ncbi.nlm.nih.gov/pubmed/28481359

@@ -11,7 +11,7 @@ The CPU time on the cluster was 495.6 seconds (≈ 8 minutes).
 
 ***
 
-## Details
+### Details
 
 We use [oncokb-annotator](https://github.com/oncokb/oncokb-annotator) to annotate the dataset. We cloned the repository at https://github.com/oncokb/oncokb-annotator and permanently added it to the repository in `data/oncokb` folder:
 ```shell

@@ -1,5 +1,3 @@
-:construction: *work in progress* :construction:
-
 # Get the raw and cleaned dataset
 
 To get the data run in the cluster or on your working computer:
@@ -15,11 +13,12 @@ The output files are:
 
 ***
 
-#### oncokb
-This folder is used to annotate the dataset `cleaned_IMPACT_mutations_180508.txt` with oncokb-annotator.
+### Structure
 
-#### other_databases
-Download other databases used in the notebook ...
+* **`/dominik`**: :construction: *work in progress* :construction:
 
-#### utils
-Useful scripts and files.
+* **`/oncokb`**: this folder is used to annotate the dataset `cleaned_IMPACT_mutations_180508.txt` with oncokb-annotator.
+
+* **`/other_databases`**: work with other databases than OncoKB.
+
+* **`/utils`**: useful data-related scripts and files.

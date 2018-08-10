@@ -1,14 +1,5 @@
 # Machine learning variant annotation projects
 
-<!---
-**TODO:**
-* Benchmarking article:
-	* https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0484-1
-	* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5610688/
-
-* rDriver: http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0196939
---->
-
 | Methode name                          | Publication date | Website                                                |
 | ------------------------------------- | :--------------: | ------------------------------------------------------ |
 | [CanPredict](#canpredict)             | 2007             | :x: (not available anymore)                            |
