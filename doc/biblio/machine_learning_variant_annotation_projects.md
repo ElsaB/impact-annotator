@@ -20,9 +20,9 @@
 | [FATHMM-XF](#fathmm-xf)               | 2018             | http://fathmm.biocompute.org.uk/fathmm-xf/             |
 | [rDriver](#rdriver)                   | 2018             | :x:                                                    |
 
+*This is not an exhaustive list.*  
 
 **Every algorithm works for nsSNVs only.**  
-**This is not an exhaustive list.**
 
 ***
 
