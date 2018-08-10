@@ -9,8 +9,6 @@
 * rDriver: http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0196939
 --->
 
-**Summary and table of contents**
-
 | Methode name                          | Publication date | Website                                                |
 | ------------------------------------- | :--------------: | ------------------------------------------------------ |
 | [CanPredict](#canpredict)             | 2007             | :x: (not available anymore)                            |
