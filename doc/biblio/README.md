@@ -2,16 +2,23 @@
  
 * IMPACT main paper: https://www.ncbi.nlm.nih.gov/pubmed/28481359
 
+
+
 * [**`variant_annotation_databases.md`**](https://github.com/ElsaB/impact-annotator/tree/master/doc/biblio/variant_annotation_databases.md)  
 Summary of the following variant annotation databases:
-	* OncoKB
-	* CIViC
-	* Cancer Genome Interpreter
-	* Precision Medicine Knowledgebase
-	* MyCancerGenome
-	* JAX-Clinical Knowledgebase
-	* Personalized Cancer Therapy
-	* CanDL
+
+| Database name                    | Website                                      |
+| -------------------------------- | -------------------------------------------- |
+| MyCancerGenome                   | https://www.mycancergenome.org               |
+| CanDL                            | https://candl.osu.edu                        |
+| JAX-Clinical Knowledgebase       | https://ckb.jax.org                          |
+| Precision Medicine Knowledgebase | https://pmkb.weill.cornell.edu               |
+| CIViC                            | https://civicdb.org/home                     |
+| OncoKB                           | http://oncokb.org/#/                         |
+| Personalized Cancer Therapy      | https://pct.mdanderson.org                   |
+| Cancer Genome Interpreter        | https://www.cancergenomeinterpreter.org/home |
+
+
 
 * [**`machine_learning_variant_annotation_projects.md`**](https://github.com/ElsaB/impact-annotator/tree/master/doc/biblio/machine_learning_variant_annotation_projects.md)  
 Summary of the following projects on machine learning classification of driver/passenger mutations:
