@@ -74,7 +74,7 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
 **Paper:** [link](https://www.nature.com/articles/nmeth.4000) Ainscough BJ, Griffith M, Coffman AC, et al. DoCM: a database of curated mutations in cancer. Nature methods. 2016;13(10):806-807. doi:10.1038/nmeth.4000.
 
 * **What is it?** Highly curated database of known, disease-causing mutations that provides easily explorable variant lists with direct links to source citations for easy verification.
-* **Where does the data comes from?** Curation of the litterature, CIViC, ClinVar, ICGC, COSMIC, TCGA. Through community contributions.
+* **Where does the data comes from?** Curation of the litterature, CIViC, Drug Gene Knowledge Base, My Cancer Genome, ... by disease experts. Criteria for inclusion: clinical relevance (drug targets associated with the mutation, diagnostic or prognostic markers associated with the mutation), functional evidence (disease function described in cell lines, disease function described in animal models, extremely recurrent mutation coupled with expert opinion of the significance of the mutation). Batches can be submitted by anyone.
 
 
 
