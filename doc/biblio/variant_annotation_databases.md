@@ -14,6 +14,8 @@
 | [Personalized Cancer Therapy](#personalized-cancer-therapy)           | ?        | ?     | -        | :x:                | :x:                     | 2017             | https://pct.mdanderson.org                   |
 | [Cancer Genome Interpreter](#cancer-genome-interpreter)               | 5,601    | 765   | 08/08/18 | :white_check_mark: | :white_check_mark:      | 2018             | https://www.cancergenomeinterpreter.org/home |
 
+*This is not an exhaustive list.*  
+
 See the notebook [`analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb) for direct comparison between some of these databases and OncoKB (when the data was available and usable, cf. "results in the notebook" column in the above table).
 
 
