@@ -7,16 +7,16 @@
 * [**`variant_annotation_databases.md`**](https://github.com/ElsaB/impact-annotator/tree/master/doc/biblio/variant_annotation_databases.md)  
 Summary of the following variant annotation databases:
 
-| Database name                    | Website                                      |
-| -------------------------------- | -------------------------------------------- |
-| MyCancerGenome                   | https://www.mycancergenome.org               |
-| CanDL                            | https://candl.osu.edu                        |
-| JAX-Clinical Knowledgebase       | https://ckb.jax.org                          |
-| Precision Medicine Knowledgebase | https://pmkb.weill.cornell.edu               |
-| CIViC                            | https://civicdb.org/home                     |
-| OncoKB                           | http://oncokb.org/#/                         |
-| Personalized Cancer Therapy      | https://pct.mdanderson.org                   |
-| Cancer Genome Interpreter        | https://www.cancergenomeinterpreter.org/home |
+| Database name                    | Publication date | Website                                      |
+| -------------------------------- | :--------------: | -------------------------------------------- |
+| MyCancerGenome                   | 2013             | https://www.mycancergenome.org               |
+| CanDL                            | 2015             | https://candl.osu.edu                        |
+| JAX-Clinical Knowledgebase       | 2016             | https://ckb.jax.org                          |
+| Precision Medicine Knowledgebase | 2016             | https://pmkb.weill.cornell.edu               |
+| CIViC                            | 2017             | https://civicdb.org/home                     |
+| OncoKB                           | 2017             | http://oncokb.org/#/                         |
+| Personalized Cancer Therapy      | 2017             | https://pct.mdanderson.org                   |
+| Cancer Genome Interpreter        | 2018             | https://www.cancergenomeinterpreter.org/home |
 
 
 
