@@ -12,6 +12,7 @@ Summary of the following variant annotation databases:
 | MyCancerGenome                   | 2013             | https://www.mycancergenome.org               |
 | CanDL                            | 2015             | https://candl.osu.edu                        |
 | JAX-Clinical Knowledgebase       | 2016             | https://ckb.jax.org                          |
+| DoCM                             | 2016             | http://www.docm.info                         |
 | Precision Medicine Knowledgebase | 2016             | https://pmkb.weill.cornell.edu               |
 | CIViC                            | 2017             | https://civicdb.org/home                     |
 | OncoKB                           | 2017             | http://oncokb.org/#/                         |

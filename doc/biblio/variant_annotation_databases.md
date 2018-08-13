@@ -7,11 +7,12 @@
 | [MyCancerGenome](#mycancergenome)                                     | ?        | ?     | -        | :x:                | :x:                     | 2013             | https://www.mycancergenome.org               |
 | [CanDL](#candl)                                                       | 330      | 56    | 2015     | :white_check_mark: | :white_check_mark:      | 2015             | https://candl.osu.edu                        |
 | [JAX-Clinical Knowledgebase](#jax-clinical-knowledgebase)             | ?        | 82    | 08/08/18 | :x:                | :x:                     | 2016             | https://ckb.jax.org                          |
-| [Precision Medicine Knowledgebase](#precision-medicine-knowledgebase) | 2168     | 606   | 08/08/18 | :white_check_mark: | :x:                     | 2016             | https://pmkb.weill.cornell.edu               |
-| [CIViC](#civic)                                                       | 1936     | 358   | 08/08/18 | :white_check_mark: | :white_check_mark:      | 2017             | https://civicdb.org/home                     |
-| [OncoKB](#oncokb)                                                     | 3971     | 477   | 09/08/18 | :white_check_mark: | -                       | 2017             | http://oncokb.org/#/                         |
+| [DoCM](#docm)                                                         | 1,364    | 132   | 13/08/18 | :white_check_mark: | :white_check_mark:      | 2016             | http://www.docm.info                         |
+| [Precision Medicine Knowledgebase](#precision-medicine-knowledgebase) | 2,168    | 606   | 08/08/18 | :white_check_mark: | :x:                     | 2016             | https://pmkb.weill.cornell.edu               |
+| [CIViC](#civic)                                                       | 1,936    | 358   | 08/08/18 | :white_check_mark: | :white_check_mark:      | 2017             | https://civicdb.org/home                     |
+| [OncoKB](#oncokb)                                                     | 3,971    | 477   | 09/08/18 | :white_check_mark: | -                       | 2017             | http://oncokb.org/#/                         |
 | [Personalized Cancer Therapy](#personalized-cancer-therapy)           | ?        | ?     | -        | :x:                | :x:                     | 2017             | https://pct.mdanderson.org                   |
-| [Cancer Genome Interpreter](#cancer-genome-interpreter)               | 5601     | 765   | 08/08/18 | :white_check_mark: | :white_check_mark:      | 2018             | https://www.cancergenomeinterpreter.org/home |
+| [Cancer Genome Interpreter](#cancer-genome-interpreter)               | 5,601    | 765   | 08/08/18 | :white_check_mark: | :white_check_mark:      | 2018             | https://www.cancergenomeinterpreter.org/home |
 
 See the notebook [`analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb) for direct comparison between some of these databases and OncoKB (when the data was available and usable, cf. "results in the notebook" column in the above table).
 
@@ -62,6 +63,18 @@ See the notebook [`analysis/description/180731_pierre/comparison_between_variant
 * **Other informations**
     * Filtering to ensure the high-quality somatic variations: low coverage, vaf, silent mutations, likely germline, outside of coding regions
     * All types of mutations
+
+
+
+## DoCM
+| Database name                                                         | Variants | Genes | Date     | Public             | Results in the notebook | Publication date | Website                                      |
+| --------------------------------------------------------------------- | -------- | ----- | :------: | :----------------: | :---------------------: | :--------------: | -------------------------------------------- |
+| [DoCM](#docm)                                                         | 1,364    | 132   | 13/08/18 | :white_check_mark: | :white_check_mark:      | 2016             | http://www.docm.info                         |
+
+**Paper:** [link](https://www.nature.com/articles/nmeth.4000) Ainscough BJ, Griffith M, Coffman AC, et al. DoCM: a database of curated mutations in cancer. Nature methods. 2016;13(10):806-807. doi:10.1038/nmeth.4000.
+
+* **What is it?** Highly curated database of known, disease-causing mutations that provides easily explorable variant lists with direct links to source citations for easy verification.
+* **Where does the data comes from?** Curation of the litterature, CIViC, ClinVar, ICGC, COSMIC, TCGA. Through community contributions.
 
 
 
