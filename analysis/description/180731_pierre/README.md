@@ -30,6 +30,7 @@ This notebook studies the OncoKB annotations added with oncokb-annotator and via
 :construction: *work in progress* :construction:
 
 * **[`comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb)**  
+This notebook is directly linked to [`doc/biblio/variant_annotation_databases.md`](https://github.com/ElsaB/impact-annotator/blob/master/doc/biblio/variant_annotation_databases.md) which compares and describes different variant annotation databases. The aim of this notebook is to compare the annotations of some of the databases studied in the markdown with OncoKB annotations.  
 :construction: *work in progress* :construction:
 
 
