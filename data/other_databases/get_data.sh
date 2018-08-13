@@ -28,3 +28,10 @@ curl http://oncokb.org/api/v1/utils/allAnnotatedVariants.txt --output "./allAnno
 # Data downloaded from https://pmkb.weill.cornell.edu/therapies/download.xlsx, up-to-date version
 printf "\n-> Get the raw Precision Medecine Knowledge data\n"
 curl https://pmkb.weill.cornell.edu/therapies/download.xlsx --output "./PMK_IPM_Knowledgebase_Interpretations_Complete_20180807-1922.xlsx"
+
+
+# get data from DoCM
+# Data downloaded from from http://www.docm.info/api/v1/variants.tsv?versions=3.2, version 3.2 (13/08/17)
+printf "\n-> Get the raw DoCM data\n"
+curl http://www.docm.info/api/v1/variants.tsv?versions=3.2 --output "./DoCM_variants.tsv"
+

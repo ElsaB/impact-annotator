@@ -18,6 +18,8 @@ data/other_databases/CIViC_01-Jul-2018-VariantSummaries.tsv
 data/other_databases/CGI_catalog_of_validated_oncogenic_mutations.tsv
 data/other_databases/allAnnotatedVariants.txt
 data/other_databases/PMK_IPM_Knowledgebase_Interpretations_Complete_20180807-1922.xlsx
+data/other_databases/DoCM_variants.tsv
+
 
 # to handle
 data/other_databases/CancerGenesList.txt
