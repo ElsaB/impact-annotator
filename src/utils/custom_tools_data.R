@@ -150,13 +150,13 @@ get_cleaned_impact <- function(data_folder_name) {
 
 
   # [-148 rows] remove the mutations impossible to reclassify according to their Variant_Type and HGVSp_Short
-  impact <- impact[! impact$sample_mut_key %in% read.table(paste0(data_folder_name, "/utils/sample_mut_keys_to_remove.txt" ), sep = "\t")[[1]],]
+  impact <- impact[! impact$sample_mut_key %in% read.table("../../../data/utils/sample_mut_keys_to_remove.txt" , sep = "\t")[[1]],]
   # [~1004 rows] reclassify the mutations `Consequence` based on HGVSp_Short
-  Consequence_to_reclassify <- read.table(paste0(data_folder_name, "/utils/sample_mut_keys_replace_Consequence.txt"), sep = "\t")
-  impact$HGVSp_Short[impact$sample_mut_key %in% Consequence_to_reclassify[[1]]] <- Consequence_to_reclassify[[2]]
+  Consequence_to_reclassify <- read.table("../../../data/utils/sample_mut_keys_replace_Consequence.txt", sep = "\t")
+  impact$Consequence[impact$sample_mut_key %in% Consequence_to_reclassify[[1]]] <- as.vector(Consequence_to_reclassify[[2]])
   # [~32 rows] correct the HGVSp_Short typos
-  HGVSp_Short_typos <- read.table(paste0(data_folder_name, "/utils/sample_mut_keys_replace_HGVSp_Short.txt"), sep = "\t")
-  impact$HGVSp_Short[impact$sample_mut_key %in% HGVSp_Short_typos[[1]]] <- HGVSp_Short_typos[[2]]
+  HGVSp_Short_typos <- read.table("../../../data/utils/sample_mut_keys_replace_HGVSp_Short.txt", sep = "\t")
+  impact$HGVSp_Short[impact$sample_mut_key %in% HGVSp_Short_typos[[1]]] <- as.vector(HGVSp_Short_typos[[2]])
   
 
   #[~ 12 rows] temporary
