@@ -1,6 +1,11 @@
 # ggplot tools
 ###################################################################################
 
+# tilt the x labels by 45 degrees on any plot
+tilt_x_label_45 <- function() {
+  return (theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+}
+
 
 # set the size of the plot in jupyter notebook
 notebook_plot_size <- function(width = 6, height = 3) {
@@ -45,28 +50,27 @@ plot_contingency_table_as_histograms <- function(data, feature_x_name, feature_y
   data <- sort_histogram(data, feature_y_name, reverse = TRUE)
 
   plot1 <- ggplot(data) + geom_bar(aes_string(x = feature_x_name, fill = feature_y_name), show.legend = FALSE) +
-                          theme(axis.text.x = element_text(angle = 45, hjust = 1))
+                          tilt_x_label_45()
   plot2 <- ggplot(data) + geom_bar(aes_string(x = feature_x_name, fill = feature_y_name), position = "fill") +
-                          theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(y = "frequency")
+                          tilt_x_label_45() + labs(y = "frequency")
 
   plot_side_by_side(plot1, plot2, width, height)               
 }
 
 
-# plots three histograms side-by-side showing the distribution of the features confidence_class, Variant_Type and Consequence
-# for the given dataset
+# plots three histograms side-by-side showing the distribution of the features confidence_class, Variant_Type and Consequence for the given dataset
 # also prints the number of unique genes in the given dataset
 get_possible_correlations <- function(data) {
     print(paste("Number of different genes: ", toString(length(unique(data$Hugo_Symbol)))))
         
     data <- sort_histogram(data, "confidence_class")
-    plot1 <- ggplot(data) + geom_bar(aes(confidence_class)) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    plot1 <- ggplot(data) + geom_bar(aes(confidence_class)) + tilt_x_label_45()
     
     data <- sort_histogram(data, "Variant_Type")
     plot2 <- ggplot(data) + geom_bar(aes(Variant_Type))
     
     data <- sort_histogram(data, "Consequence")
-    plot3 <- ggplot(data) + geom_bar(aes(Consequence)) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    plot3 <- ggplot(data) + geom_bar(aes(Consequence)) + tilt_x_label_45()
 
     plot_side_by_side_3(plot1, plot2, plot3, 10, 3)
 }
@@ -99,7 +103,7 @@ plot_histogram <- function(data, feature_name, fill_name = NULL, print_table = F
 }
 
 
-# plot the max values of an histogram, the argument number regulates the number of values plotted
+# plot the top maximum values of an histogram, the argument number regulates the number of values plotted
 plot_histogram_top <- function(data, feature_name, number) {
 
   data_top <- as.data.frame(rev(sort(table(data[,feature_name])))[1:number])
@@ -124,4 +128,3 @@ plot_density_2d <- function(data, x_name, y_name, width = 12, height = 4, to_add
     
   plot_side_by_side_3(plot1, plot2, plot3, width, height)
 }
-

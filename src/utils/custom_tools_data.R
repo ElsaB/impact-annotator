@@ -1,7 +1,6 @@
 # Tools to handle the data
 ###################################################################################
 
-
 # The selected mutation types from impact
 selected_mutation_types <- c("stopgain_SNV",
                              "splicing",
@@ -174,8 +173,7 @@ get_cleaned_impact <- function(data_folder_name) {
 }
 
 
-
-# add annotations to `cleaned_IMPACT_mutations_180508` (see notebook annotate_cleaned_dataset for the details of the operations)
+# add annotations to `cleaned_IMPACT_mutations_180508` (see notebook annotate_cleaned_dataset.ipynb for the details of the operations)
 add_features <- function(data_folder_name, impact, annotations = FALSE, oncokb = FALSE, gene_type = FALSE) {
     
     if (annotations) {
@@ -259,4 +257,3 @@ add_features <- function(data_folder_name, impact, annotations = FALSE, oncokb =
                                
     return (impact)
 }
-

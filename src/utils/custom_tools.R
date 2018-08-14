@@ -3,20 +3,21 @@
 
 # setup the environnment by loading the appropriate libraries and scripts
 setup_environment <- function(utils_folder_name) {
+
   source(paste0(utils_folder_name, "/custom_tools_ggplot.R")) # ggplot tools
   source(paste0(utils_folder_name, "/custom_tools_data.R"))   # tools to handle the data
 
   suppressPackageStartupMessages(library("tidyverse"))
-  suppressPackageStartupMessages(library("gridExtra")) # used to plot ggplots side-by-side
+  suppressPackageStartupMessages(library("gridExtra")) # used to arrange ggplots in a grid
 
   theme_set(theme_minimal())
 
-  options(repr.plot.res = 300) # set a high-definition resolution (DPI)
+  options(repr.plot.res = 300) # set a high-definition resolution for the jupyter notebooks plots (DPI)
 }
 
 
-# Print a string like "63603 over 248350 (25.61%)"
-# the d_specifier and f_specifier parameters permits to align printing
+# print the count and proportion of a dataset over another dataset, output example: "63603 over 248350 (25.61%)"
+# the d_specifier and f_specifier parameters permits to align printing if the function is used in a for loop
 print_count_and_proportion <- function(extracted_data, original_data, d_specifier = NULL, f_specifier = NULL) {
 
 	if (missing(d_specifier))
