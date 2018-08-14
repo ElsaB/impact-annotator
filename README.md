@@ -19,9 +19,10 @@ The repository was written and tested under `R 3.5.1` and `R 3.2.3`. To work wit
 	* `gridExtra`
 ```R
 # execute in an R console
-install.packages("tidyverse", repos="http://cran.us.r-project.org")
-install.packages("gridExtra", repos="http://cran.us.r-project.org")
-install.packages("utf8",      repos="http://cran.us.r-project.org")
+install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+install.packages("gridExtra", repos = "http://cran.us.r-project.org")
+install.packages("utf8",      repos = "http://cran.us.r-project.org")
+install.packages("readxl",    repos = "http://cran.us.r-project.org")
 ```
 
 * Make sure to download the data in the `/data` and `/data/other_databases` folders, the instructions are detailed there.
