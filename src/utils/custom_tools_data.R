@@ -173,14 +173,14 @@ get_cleaned_impact <- function(data_folder_name) {
   colnames(replace_Consequence) <- c("key", "new")
   replace_HGVSp_Short <- read.table("../../../data/utils/replace_HGVSp_Short_2.txt", sep = "\t")
   colnames(replace_HGVSp_Short) <- c("key", "new")
-  # [-18 rows] remove the mutations having inconsistent and contradictory HGVSp_Short
+  # [-57 rows] remove the mutations having inconsistent and contradictory HGVSp_Short
   impact <- impact[! impact$mut_key %in% to_replace,]
-  # [~6 rows] correct the inconsistent Consequence values
+  # [~41 rows] correct the inconsistent Consequence values
   to_replace <- which(impact$mut_key %in% replace_Consequence$key)
   impact[to_replace,] <- impact[to_replace,] %>%
                          group_by(mut_key) %>%
                          mutate(Consequence = as.vector(replace_Consequence$new[match(mut_key, replace_Consequence$key)]))
-  # [~242 rows] correct the inconsistent HGVSp_Short values
+  # [~1153 rows] correct the inconsistent HGVSp_Short values
   to_replace <- which(impact$mut_key %in% replace_HGVSp_Short$key)
   impact[to_replace,] <- impact[to_replace,] %>%
                          group_by(mut_key) %>%
