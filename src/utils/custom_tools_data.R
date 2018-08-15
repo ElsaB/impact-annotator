@@ -149,10 +149,10 @@ get_cleaned_impact <- function(data_folder_name) {
                      impact$Variant_Type == "DEL"] <- "nonframeshift_deletion"
 
 
-  to_replace <- as.vector(read.table("../../../data/utils/sample_mut_keys_to_remove.txt" , sep = "\t")[[1]])
-  replace_Consequence <- read.table("../../../data/utils/replace_Consequence.txt", sep = "\t")
+  to_replace <- as.vector(read.table(paste0(data_folder_name, "/utils/sample_mut_keys_to_remove.txt"), sep = "\t")[[1]])
+  replace_Consequence <- read.table(paste0(data_folder_name, "/utils/replace_Consequence.txt"), sep = "\t")
   colnames(replace_Consequence) <- c("key", "new")
-  replace_HGVSp_Short <- read.table("../../../data/utils/replace_HGVSp_Short.txt", sep = "\t")
+  replace_HGVSp_Short <- read.table(paste0(data_folder_name, "/utils/replace_HGVSp_Short.txt"), sep = "\t")
   colnames(replace_HGVSp_Short) <- c("key", "new")
   # [-148 rows] remove the mutations impossible to reclassify according to their Variant_Type and HGVSp_Short
   impact <- impact[! impact$sample_mut_key %in% to_replace,]
@@ -168,10 +168,10 @@ get_cleaned_impact <- function(data_folder_name) {
                          mutate(HGVSp_Short = as.vector(replace_HGVSp_Short$new[replace_HGVSp_Short$key == sample_mut_key]))
   
 
-  to_replace <- as.vector(read.table("../../../data/utils/mut_keys_to_remove.txt" , sep = "\t")[[1]])
-  replace_Consequence <- read.table("../../../data/utils/replace_Consequence_2.txt", sep = "\t")
+  to_replace <- as.vector(read.table(paste0(data_folder_name, "/utils/mut_keys_to_remove.txt"), sep = "\t")[[1]])
+  replace_Consequence <- read.table(paste0(data_folder_name, "/utils/replace_Consequence_2.txt"), sep = "\t")
   colnames(replace_Consequence) <- c("key", "new")
-  replace_HGVSp_Short <- read.table("../../../data/utils/replace_HGVSp_Short_2.txt", sep = "\t")
+  replace_HGVSp_Short <- read.table(paste0(data_folder_name, "/utils/replace_HGVSp_Short_2.txt"), sep = "\t")
   colnames(replace_HGVSp_Short) <- c("key", "new")
   # [-57 rows] remove the mutations having inconsistent and contradictory HGVSp_Short
   impact <- impact[! impact$mut_key %in% to_replace,]
