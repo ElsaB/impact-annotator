@@ -1,0 +1,6 @@
+"12_49444377_A_-"	"stopgain_SNV"
+"16_3817720_-_T"	"frameshift_insertion"
+"16_68849662_-_GT"	"splicing"
+"19_50919866_G_-"	"frameshift_deletion"
+"5_67591145_TACTTGATGT_-"	"splicing"
+"7_55224352_-_GA"	"frameshift_insertion"

@@ -149,25 +149,43 @@ get_cleaned_impact <- function(data_folder_name) {
                      impact$Variant_Type == "DEL"] <- "nonframeshift_deletion"
 
 
+  to_replace <- as.vector(read.table("../../../data/utils/sample_mut_keys_to_remove.txt" , sep = "\t")[[1]])
+  replace_Consequence <- read.table("../../../data/utils/replace_Consequence.txt", sep = "\t")
+  colnames(replace_Consequence) <- c("key", "new")
+  replace_HGVSp_Short <- read.table("../../../data/utils/replace_HGVSp_Short.txt", sep = "\t")
+  colnames(replace_HGVSp_Short) <- c("key", "new")
   # [-148 rows] remove the mutations impossible to reclassify according to their Variant_Type and HGVSp_Short
-  impact <- impact[! impact$sample_mut_key %in% read.table("../../../data/utils/sample_mut_keys_to_remove.txt" , sep = "\t")[[1]],]
+  impact <- impact[! impact$sample_mut_key %in% to_replace,]
   # [~1004 rows] reclassify the mutations `Consequence` based on HGVSp_Short
-  Consequence_to_reclassify <- read.table("../../../data/utils/sample_mut_keys_replace_Consequence.txt", sep = "\t")
-  impact$Consequence[impact$sample_mut_key %in% Consequence_to_reclassify[[1]]] <- as.vector(Consequence_to_reclassify[[2]])
+  to_replace <- which(impact$sample_mut_key %in% replace_Consequence$key)
+  impact[to_replace,] <- impact[to_replace,] %>%
+                         group_by(sample_mut_key) %>%
+                         mutate(Consequence = as.vector(replace_Consequence$new[replace_Consequence$key == sample_mut_key]))
   # [~32 rows] correct the HGVSp_Short typos
-  HGVSp_Short_typos <- read.table("../../../data/utils/sample_mut_keys_replace_HGVSp_Short.txt", sep = "\t")
-  impact$HGVSp_Short[impact$sample_mut_key %in% HGVSp_Short_typos[[1]]] <- as.vector(HGVSp_Short_typos[[2]])
+  to_replace <- which(impact$sample_mut_key %in% replace_HGVSp_Short$key)
+  impact[to_replace,] <- impact[to_replace,] %>%
+                         group_by(sample_mut_key) %>%
+                         mutate(HGVSp_Short = as.vector(replace_HGVSp_Short$new[replace_HGVSp_Short$key == sample_mut_key]))
   
 
-  #[~ 12 rows] temporary
-  # Correct weird <- impact_oncokb %>% group_by(mut_key) %>% filter(length(unique(is.a.hotspot)) > 1 | length(unique(is.a.3d.hotspot)) > 1 | length(unique(oncogenic)) > 1) not empty
-  # See OTHER/weird_oncokb
-  impact$HGVSp_Short[impact$mut_key %in% c("13_48937070_GAACATGAATGTAATATAGATGAG_-")] <- ""
-  impact$HGVSp_Short[impact$mut_key %in% c("9_139400334_C_T")] <- "p.X1339_splice"
-  impact$HGVSp_Short[impact$mut_key %in% c("9_139412203_C_T")] <- "p.X481_splice"
-  impact$HGVSp_Short[impact$mut_key %in% c("X_20148726_C_T" )] <- "p.X113_splice"
-  impact$HGVSp_Short[impact$mut_key %in% c("X_20148727_T_A" )] <- "p.X113_splice"
-  
+  to_replace <- as.vector(read.table("../../../data/utils/mut_keys_to_remove.txt" , sep = "\t")[[1]])
+  replace_Consequence <- read.table("../../../data/utils/replace_Consequence_2.txt", sep = "\t")
+  colnames(replace_Consequence) <- c("key", "new")
+  replace_HGVSp_Short <- read.table("../../../data/utils/replace_HGVSp_Short_2.txt", sep = "\t")
+  colnames(replace_HGVSp_Short) <- c("key", "new")
+  # [-18 rows] remove the mutations having inconsistent and contradictory HGVSp_Short
+  impact <- impact[! impact$mut_key %in% to_replace,]
+  # [~6 rows] correct the inconsistent Consequence values
+  to_replace <- which(impact$mut_key %in% replace_Consequence$key)
+  impact[to_replace,] <- impact[to_replace,] %>%
+                         group_by(mut_key) %>%
+                         mutate(Consequence = as.vector(replace_Consequence$new[match(mut_key, replace_Consequence$key)]))
+  # [~242 rows] correct the inconsistent HGVSp_Short values
+  to_replace <- which(impact$mut_key %in% replace_HGVSp_Short$key)
+  impact[to_replace,] <- impact[to_replace,] %>%
+                         group_by(mut_key) %>%
+                         mutate(HGVSp_Short = as.vector(replace_HGVSp_Short$new[match(mut_key, replace_HGVSp_Short$key)]))
+
 
   return (impact)
 }
