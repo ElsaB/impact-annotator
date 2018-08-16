@@ -77,6 +77,7 @@ The following paper was used to complete the informations, we strongly recommend
 	* Specificity of 79%
 * Dataset: UniProt
 * Other:
+	* It products a FIS (functional impact score) (like SIFT, PolyPhen-2, ...)
 	* For any disease type
 	* Applied to COSMIC database
 
@@ -191,8 +192,3 @@ The following paper was used to complete the informations, we strongly recommend
 * Features: Functional impact scores and genome-wide mRNA/protein expression levels
 * Dataset: 3,080 tumor samples from 8 cancer types in the TCGA
 * Other: Compared to other tools: more low frequency mutations 
-
-
-
-
-
