@@ -188,7 +188,7 @@ The following paper was used to complete the informations, we strongly recommend
 **Paper:** [link](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0196939) Wang Z, Ng KS, Chen T, Kim TB, Wang F, et al. (2018) Cancer driver mutation prediction through Bayesian integration of multi-omic data. PLOS ONE 13(5): e0196939. https://doi.org/10.1371/journal.pone.0196939  
 
 * Algorithm: Bayesian hierarchical modeling approach
-* Features: FISs and genome-wide mRNA/protein expression levels
+* Features: Functional impact scores and genome-wide mRNA/protein expression levels
 * Dataset: 3,080 tumor samples from 8 cancer types in the TCGA
 * Other: Compared to other tools: more low frequency mutations 
 
