@@ -192,7 +192,7 @@ get_cleaned_impact <- function(data_folder_name) {
 
 
 # add annotations to `cleaned_IMPACT_mutations_180508` (see notebook annotate_cleaned_dataset.ipynb for the details of the operations)
-add_features <- function(data_folder_name, impact, annotations = FALSE, oncokb = FALSE, gene_type = FALSE) {
+add_features <- function(data_folder_name, impact, annotations = FALSE, oncokb = FALSE, gene_type = FALSE, keys_annotations = FALSE) {
     
   if (annotations) {
     # 1. Get the raw data
