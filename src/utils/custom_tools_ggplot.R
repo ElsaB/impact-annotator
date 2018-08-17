@@ -104,8 +104,9 @@ plot_histogram <- function(data, feature_name, fill_name = NULL, print_table = F
 
 
 # plot the top maximum values of an histogram, the argument number regulates the number of values plotted
-plot_histogram_top <- function(data, feature_name, number) {
-
+plot_histogram_top <- function(data, feature_name, number, width = 10, height = 3) {
+  notebook_plot_size(width, height)
+  
   data_top <- as.data.frame(rev(sort(table(data[,feature_name])))[1:number])
   colnames(data_top) <- c("feature", "count")
   return (ggplot(data_top) + geom_col(aes(feature, count)) + xlab(feature_name))
