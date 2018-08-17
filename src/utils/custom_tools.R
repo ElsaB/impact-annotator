@@ -58,15 +58,19 @@ get_table <- function(data, sum = TRUE, remove_null_values = FALSE) {
 }
 
 
-get_simple_table <- function(data, sum = TRUE) {
-
-	table <- rev(sort(table(data)))
-
-	if (sum)
-		return (addmargins(table))
-	else
-		return (table)
+get_simple_table <- function(data, sum = TRUE, min) {
+    
+    table <- rev(sort(table(data)))
+        
+    if (! missing(min))
+        table <- table[as.vector(table >= min)]
+        
+    if (sum)
+        table <- addmargins(table)
+    
+    return (table)
 }
+
 
 
 
