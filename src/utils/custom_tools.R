@@ -34,3 +34,39 @@ print_count_and_proportion <- function(extracted_data, original_data, d_specifie
     sprintf(sprintf_string, nrow(extracted_data),
     	nrow(original_data), 100 * nrow(extracted_data) / nrow(original_data))
 }
+
+
+# print a custom sorted table of a categorical feature (with count and frequency)
+get_table <- function(data, sum = TRUE, remove_null_values = FALSE) {
+    count_table <- rev(sort(table(data)))
+
+    prop_table  <- round(prop.table(count_table) * 100, 1)
+    
+    summary <- data.frame(names(count_table),
+                          as.vector(count_table),
+                          paste0(as.character(prop_table), "%"))
+    
+    colnames(summary) <- c("values", "count", "freq")
+    
+    if (remove_null_values)
+    	summary <- summary[summary$count > 0,]
+
+    if (sum)
+        summary <- rbind(summary, data.frame("values" = "-- total --", "count" = length(data), "freq" = "100%"))
+
+    return (summary)
+}
+
+
+get_simple_table <- function(data, sum = TRUE) {
+
+	table <- rev(sort(table(data)))
+
+	if (sum)
+		return (addmargins(table))
+	else
+		return (table)
+}
+
+
+
