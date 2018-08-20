@@ -16,6 +16,9 @@ Enrich the cleaned data `cleaned_IMPACT_mutations_180508.txt` by adding some fea
 	* `is_a_3d_hotspot`
 	* `oncogenic`
 	* `gene_type`
+	* `BAM_id`
+	* `cancer_code`
+	* `cancer_type`
 
 * **[`coding_mutations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/coding_mutations_analysis.ipynb)**  
 Further analysis on the cleaned dataset `cleaned_IMPACT_mutations_180508.txt`, enriched with the annotations from the `add_features()` function obtained at the end of [`annotate_cleaned_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/annotate_cleaned_dataset.ipynb). The `synonymous_SNV` are excluded from this study, which only focus on the coding mutations.

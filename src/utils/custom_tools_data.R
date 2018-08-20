@@ -282,9 +282,9 @@ add_features <- function(data_folder_name, impact, annotations = FALSE, oncokb =
 
     # 2. Create keys to join the two dataframes and extract the features
     impact[, c("BAM_id", "cancer_code", "cancer_type")] <- left_join(impact, keys,
-                                                              by = "Tumor_Sample_Barcode")[, c("BAM_id",
-                                                                                               "cancer_code",
-                                                                                               "cancer_type")]
+                                                                     by = "Tumor_Sample_Barcode")[, c("BAM_id",
+                                                                                                      "cancer_code",
+                                                                                                      "cancer_type")]
 
     # 3. Process the raw features
     ## BAM_id
