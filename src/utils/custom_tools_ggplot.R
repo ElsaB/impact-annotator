@@ -102,9 +102,9 @@ plot_histogram <- function(data, feature_name, fill_name = NULL, width = 10, hei
   plot <- ggplot(data) + geom_bar(aes_string(feature_name, fill = fill_name))
 
   if (flip)
-    return (plot + coord_flip())
-  else
-    return (plot)
+    plot <- plot + coord_flip()
+  
+  return (plot)
 }
 
 
