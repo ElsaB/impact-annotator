@@ -6,6 +6,7 @@ OTHER/
 # data/
 data/all_IMPACT_mutations_180508.txt
 data/cleaned_IMPACT_mutations_180508.txt
+data/key.txt
 
 # data/dominik
 data/dominik/all_IMPACT_mutations_180508.simple.hg19_multianno.txt
