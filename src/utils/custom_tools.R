@@ -16,23 +16,21 @@ setup_environment <- function(utils_folder_name) {
 }
 
 
-# print the count and proportion of a dataset over another dataset, output example: "63603 over 248350 (25.61%)"
+# print the count and proportion of the numerator over the denominator, output example: "63603 over 248350 (25.61%)"
 # the d_specifier and f_specifier parameters permits to align printing if the function is used in a for loop
-print_count_and_proportion <- function(extracted_data, original_data, d_specifier = NULL, f_specifier = NULL) {
+print_count_and_proportion <- function(numerator, denominator, d_specifier = NULL, f_specifier = NULL) {
 
-	if (missing(d_specifier))
-		sprintf_string <- "%d over %d"
-	else
-		sprintf_string <- paste0("%", d_specifier, "d over %", d_specifier, "d")
+  if (missing(d_specifier))
+    sprintf_string <- "%d over %d"
+  else
+    sprintf_string <- paste0("%", d_specifier, "d over %", d_specifier, "d")
 
-	if (missing(f_specifier))
-		sprintf_string <- paste0(sprintf_string, " (%.2f%%)")
-	else
-		sprintf_string <- paste0(sprintf_string, paste0(" (%", f_specifier, ".2f%%)"))
+  if (missing(f_specifier))
+    sprintf_string <- paste0(sprintf_string, " (%.2f%%)")
+  else
+    sprintf_string <- paste0(sprintf_string, paste0(" (%", f_specifier, ".2f%%)"))
 
-
-    sprintf(sprintf_string, nrow(extracted_data),
-    	nrow(original_data), 100 * nrow(extracted_data) / nrow(original_data))
+  sprintf(sprintf_string, numerator, denominator, 100 * numerator / denominator)
 }
 
 
