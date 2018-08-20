@@ -17,3 +17,15 @@ fi
 printf "\n-> Get the cleaned IMPACT mutation data\n"
 printf "It might take some time (around 2 minutes)...\n"
 Rscript utils/get_cleaned_impact.R > /dev/null
+
+
+
+# get the raw keys data
+printf "\n-> Get the raw key data\n"
+# if in cluster we just copy the file, otherwise we scp
+if (echo "$HOSTNAME" | grep -q "selene") || (echo "$HOSTNAME" | grep -q "luna")
+then
+	cp /ifs/work/leukgen/home/eb2/impact_mutations/key.txt .
+else
+	scp ${username}@luna:/ifs/work/leukgen/home/eb2/impact_mutations/key.txt .
+fi
