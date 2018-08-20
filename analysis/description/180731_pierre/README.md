@@ -28,8 +28,7 @@ This study will focus only on the `synonymous_SNV` mutations, trying first to fi
 :construction: *work in progress* :construction:
 
 * **[`oncokb_annotations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/oncokb_annotations_analysis.ipynb)**  
-This notebook studies the OncoKB annotations added with oncokb-annotator and via the [`annotate_cleaned_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/annotate_cleaned_dataset.ipynb) notebook.  
-:construction: *work in progress* :construction:
+This notebook studies the OncoKB annotations added with oncokb-annotator and via the [`annotate_cleaned_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/annotate_cleaned_dataset.ipynb) notebook. The `synonymous_SNV` will be removed from the study.   
 
 * **[`comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb)**  
 This notebook is directly linked to [`doc/biblio/variant_annotation_databases.md`](https://github.com/ElsaB/impact-annotator/blob/master/doc/biblio/variant_annotation_databases.md) which compares and describes different variant annotation databases. The aim of this notebook is to compare the annotations of some of the databases studied in the markdown with OncoKB annotations.  
