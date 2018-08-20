@@ -16,11 +16,11 @@ fi
 # get the cleaned IMPACT mutation data
 printf "\n-> Get the cleaned IMPACT mutation data\n"
 printf "It might take some time (around 2 minutes)...\n"
-Rscript utils/get_cleaned_impact.R > /dev/null
+Rscript utils/get_cleaned_impact.R
 
 
 
-# get the raw keys data
+# get the raw key data
 printf "\n-> Get the raw key data\n"
 # if in cluster we just copy the file, otherwise we scp
 if (echo "$HOSTNAME" | grep -q "selene") || (echo "$HOSTNAME" | grep -q "luna")
