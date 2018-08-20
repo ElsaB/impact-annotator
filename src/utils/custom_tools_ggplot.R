@@ -91,12 +91,20 @@ plot_density <- function(data, feature_name, fill_feature_name = NULL, adjust = 
 
 
 # custom histogram plot
-plot_histogram <- function(data, feature_name, fill_name = NULL, width = 10, height = 3) {
+plot_histogram <- function(data, feature_name, fill_name = NULL, width = 10, height = 3, flip = FALSE) {
   notebook_plot_size(width, height)
 
-  data <- sort_histogram(data, feature_name)
+  if (flip)
+    data <- sort_histogram(data, feature_name, reverse = TRUE)
+  else
+    data <- sort_histogram(data, feature_name)
 
-  return (ggplot(data) + geom_bar(aes_string(feature_name, fill = fill_name)))
+  plot <- ggplot(data) + geom_bar(aes_string(feature_name, fill = fill_name))
+
+  if (flip)
+    return (plot + coord_flip())
+  else
+    return (plot)
 }
 
 
