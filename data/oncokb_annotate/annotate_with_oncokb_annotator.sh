@@ -1,16 +1,7 @@
 #!/bin/bash
 
-RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
-
-# if not in cluster, we leave
-if ! ((echo "$HOSTNAME" | grep -q "selene") || (echo "$HOSTNAME" | grep -q "luna"))
-then
-	printf "\n${RED}!! Please run this script in the cluster with the following command :${NC}\n\
-bsub -I -We 20 -R select[internet] \"bash annotate_with_oncokb_annotator.sh\"\n"
-	exit 1
-fi
 
 
 # prepare the impact dataset for impact-annotator
