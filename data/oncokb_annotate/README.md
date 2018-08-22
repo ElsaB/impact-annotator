@@ -48,4 +48,4 @@ rmvirtualenv oncokb-annotator_env
 
 * Run oncokb-annotator.
 
-* Do some cleaning (remove temporary file and the `oncokb-annotator` repository)
+* Do some cleaning (remove temporary file and the oncokb-annotator repository)
