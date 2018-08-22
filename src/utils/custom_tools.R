@@ -12,7 +12,9 @@ setup_environment <- function(utils_folder_name) {
 
   theme_set(theme_minimal())
 
-  options(repr.plot.res = 300) # set a high-definition resolution for the jupyter notebooks plots (DPI)
+  options(repr.plot.res = 300,        # set a high-definition resolution for the jupyter notebooks plots (DPI)
+          repr.matrix.max.rows = 600, # set the maximum number of rows displayed
+          repr.matrix.max.cols = 200) # set the maximum number of columns displayed
 }
 
 
