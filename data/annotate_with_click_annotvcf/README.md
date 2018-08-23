@@ -1,3 +1,5 @@
+:construction: *work in progress* :construction:  
+
 # Annotate the mutations with the click_annotvcf pipeline
 
 To annotate the raw dataset `all_IMPACT_mutations_180508.txt` with the [click_annotvcf](https://github.com/leukgen/click_annotvcf/tree/add-normals) pipeline run **in the cluster**:
@@ -23,4 +25,4 @@ The script [`annotate_with_click_annotvcf.sh`](https://github.com/ElsaB/impact-a
 
 * Run click_annotvcf.
 
-* Do some cleaning (remove temporary files).
+* Do some cleaning (remove temporary files)
