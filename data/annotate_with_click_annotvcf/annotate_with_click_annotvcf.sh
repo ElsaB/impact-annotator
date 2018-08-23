@@ -47,8 +47,9 @@ click_annotvcf annotvcf \
 
 
 printf "\n${GREEN}-> Cleaning...${NC}\n"
-mv temp/annotvcf.output.annot.tsv.gz .
-gzip -d annotvcf.output.annot.tsv.gz
+gzip -d temp/annotvcf.output.annot.tsv.gz
+mv temp/annotvcf.output.annot.tsv ./click_annotvcf_IMPACT_mutations_180508.txt
+
 rm -rf temp
 deactivate
 
