@@ -35,9 +35,9 @@ $ cd data/other_databases
 $ bash get_data.sh
 ```
 
-* If you want to annotate the data with OncoKB, please run oncokb-annotator in the `data/oncokb_annotate` folder, the instructions are detailed there.
+* If you want to annotate the data with OncoKB, please run oncokb-annotator in the `data/annotate_with_oncokb` folder, the instructions are detailed there.
 ```shell
-$ cd data/oncokb_annotate
+$ cd data/annotate_with_oncokb
 $ bsub -I -We 20 -R select[internet] "bash annotate_with_oncokb_annotator.sh"
 ```
 
