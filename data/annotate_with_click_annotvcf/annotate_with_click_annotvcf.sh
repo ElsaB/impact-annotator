@@ -24,7 +24,7 @@ gzip $OUTPUT_VCF
 
 
 
-printf "\n${GREEN}-> Activate staging3.6 environment...${NC}\n"
+printf "\n${GREEN}-> Activate python staging3.6 environment...${NC}\n"
 source `which virtualenvwrapper.sh` # find the path to use virtualenvwrapper functions
 workon staging3.6
 

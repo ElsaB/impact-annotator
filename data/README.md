@@ -13,6 +13,15 @@ The output files are:
 
 ***
 
+### Command to `scp` quickly
+
+From your computer you can use the [`easy_scp.sh`] script to `scp` quickly a file, here are a few examples from the `/data` folder:
+```shell
+$ bash easy_scp.sh guilminp data/all_IMPACT_mutations_180508.txt .
+$ bash easy_scp.sh guilminp data/cleaned_IMPACT_mutations_180508.txt .
+$ bash easy_scp.sh guilminp data/annotate_with_oncokb/oncokb_annotated_cleaned_IMPACT_mutations_180508.txt ./annotate_with_oncokb
+```
+
 ### Structure
 
 * **`/dominik`**: :construction: *work in progress* :construction:
