@@ -15,7 +15,7 @@ The output files are:
 
 ### Command to `scp` quickly
 
-From your computer you can use the [`easy_scp.sh`] script to `scp` quickly a file, here are a few examples from the `/data` folder:
+From your computer you can use the [`easy_scp.sh`](https://github.com/ElsaB/impact-annotator/blob/master/data/easy_scp.sh) script to `scp` quickly a file, here are a few examples:
 ```shell
 $ bash easy_scp.sh guilminp data/all_IMPACT_mutations_180508.txt .
 $ bash easy_scp.sh guilminp data/cleaned_IMPACT_mutations_180508.txt .
@@ -24,9 +24,12 @@ $ bash easy_scp.sh guilminp data/annotate_with_oncokb/oncokb_annotated_cleaned_I
 
 ### Structure
 
-* **`/dominik`**: :construction: *work in progress* :construction:
+* **`/annotate_with_click_annotvcf`**: this folder is used to annotate the dataset `all_IMPACT_mutations_180508.txt` with click_annotvcf.  
+:construction: *work in progress* :construction:  
 
-* **`/oncokb`**: this folder is used to annotate the dataset `cleaned_IMPACT_mutations_180508.txt` with oncokb-annotator.
+* **`/annotate_with_oncokb`**: this folder is used to annotate the dataset `cleaned_IMPACT_mutations_180508.txt` with oncokb-annotator.
+
+* **`/dominik`**: :construction: *work in progress* :construction:
 
 * **`/other_databases`**: work with other databases than OncoKB.
 
