@@ -57,4 +57,4 @@ click_annotvcf annotvcf \
 --cosmic /ifs/work/leukgen/ref/homo_sapiens/GRCh37d5/cosmic/81
 ```
 
-* Do some cleaning (remove temporary files)
+* Do some cleaning (remove temporary files).

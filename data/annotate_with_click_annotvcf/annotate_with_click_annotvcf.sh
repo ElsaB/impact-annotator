@@ -50,6 +50,3 @@ printf "\n${GREEN}-> Cleaning...${NC}\n"
 mv temp/annotvcf.output.annot.tsv.gz ./click_annotvcf_IMPACT_mutations_180508.txt.gz
 rm -rf temp
 deactivate
-
-
-
