@@ -15,7 +15,7 @@ The output files are:
 
 ### Command to `scp` quickly
 
-From your computer you can use the [`easy_scp.sh`](https://github.com/ElsaB/impact-annotator/blob/master/data/easy_scp.sh) script to `scp` quickly a file, here are a few examples:
+From your computer you can use the [`easy_scp.sh`](https://github.com/ElsaB/impact-annotator/blob/master/data/easy_scp.sh) script to `scp` quickly a file from the cluster, here are a few examples:
 ```shell
 $ bash easy_scp.sh guilminp data/all_IMPACT_mutations_180508.txt .
 $ bash easy_scp.sh guilminp data/cleaned_IMPACT_mutations_180508.txt .
