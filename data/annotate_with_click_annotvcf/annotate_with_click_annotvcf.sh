@@ -9,7 +9,7 @@ mkdir temp
 
 printf "\n${GREEN}-> Convert .txt to .vcf...${NC}\n"
 
-INPUT_FILE="small_impact_1000.txt"
+INPUT_FILE="small_impact_50000.txt"
 OUTPUT_VCF="temp/small_impact.vcf"
 
 python3 convert_impact_to_vcf.py $INPUT_FILE $OUTPUT_VCF
