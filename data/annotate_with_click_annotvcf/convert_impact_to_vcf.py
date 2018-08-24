@@ -1,9 +1,10 @@
 from pysam import FastaFile
 import pandas as pd
+import sys
 
 ref = FastaFile('/ifs/work/leukgen/ref/homo_sapiens/GRCh37d5/genome/gr37.fasta')
 
-impact = pd.read_csv('small_impact_1000.txt', sep = '\t')
+impact = pd.read_csv(sys.argv[1], sep = '\t')
 impact = impact[['Chromosome', 'Start_Position', 'Reference_Allele', 'Tumor_Seq_Allele2']]
 
 impact['ID'] = '.'
@@ -40,8 +41,4 @@ impact.loc[is_deletion,'ALT'] = impact.loc[is_deletion,].apply(lambda x: get_pre
 impact.loc[is_deletion,]
 
 
-impact.to_csv("temp/small_impact.vcf", sep = "\t", index = False, header = False)
-
-
-
-
+impact.to_csv(sys.argv[2], sep = "\t", index = False, header = False)
