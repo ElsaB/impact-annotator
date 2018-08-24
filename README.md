@@ -17,6 +17,8 @@ The repository was written and tested under `R 3.5.1` and `R 3.2.3`. To work wit
 * Make sure to have the following R packages installed:
 	* `tidyverse`
 	* `gridExtra`
+	* `utf8`
+	* `readxl`
 ```R
 # execute in an R console
 install.packages("tidyverse", repos = "http://cran.us.r-project.org")
