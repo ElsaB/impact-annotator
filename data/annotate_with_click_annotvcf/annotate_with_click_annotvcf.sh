@@ -9,8 +9,8 @@ mkdir temp
 
 printf "\n${GREEN}-> Convert .txt to .vcf...${NC}\n"
 
-INPUT_FILE="small_impact_50000.txt"
-OUTPUT_VCF="temp/small_impact.vcf"
+INPUT_FILE="../all_IMPACT_mutations_180508.txt"
+OUTPUT_VCF="temp/all_IMPACT_mutations_180508.vcf"
 
 python3 convert_impact_to_vcf.py $INPUT_FILE $OUTPUT_VCF
 
@@ -19,7 +19,6 @@ sed -i '2s/^/#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n/' $OUTPUT_V
 
 head $OUTPUT_VCF
 cp $OUTPUT_VCF .
-
 gzip $OUTPUT_VCF
 
 
@@ -32,7 +31,7 @@ workon staging3.6
 
 printf "\n${GREEN}-> Annotate with click_annotvcf annotvcf (Juanes pipeline)...${NC}\n"
 click_annotvcf annotvcf \
---input_vcf temp/small_impact.vcf.gz \
+--input_vcf $OUTPUT_VCF.gz \
 --outdir temp \
 --output_prefix annotvcf \
 --assembly GRCH37D5 \
@@ -46,10 +45,9 @@ click_annotvcf annotvcf \
 --cosmic /ifs/work/leukgen/ref/homo_sapiens/GRCh37d5/cosmic/81
 
 
-printf "\n${GREEN}-> Cleaning...${NC}\n"
-gzip -d temp/annotvcf.output.annot.tsv.gz
-mv temp/annotvcf.output.annot.tsv ./click_annotvcf_IMPACT_mutations_180508.txt
 
+printf "\n${GREEN}-> Cleaning...${NC}\n"
+mv temp/annotvcf.output.annot.tsv ./click_annotvcf_IMPACT_mutations_180508.txt
 rm -rf temp
 deactivate
 
