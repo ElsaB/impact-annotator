@@ -9,7 +9,7 @@ mkdir temp
 
 printf "\n${GREEN}-> Convert .txt to .vcf...${NC}\n"
 
-INPUT_FILE="../all_IMPACT_mutations_180508.txt"
+INPUT_FILE="small_impact_1000.txt"
 OUTPUT_VCF="temp/all_IMPACT_mutations_180508.vcf"
 
 python3 convert_impact_to_vcf.py $INPUT_FILE $OUTPUT_VCF
@@ -47,7 +47,7 @@ click_annotvcf annotvcf \
 
 
 printf "\n${GREEN}-> Cleaning...${NC}\n"
-mv temp/annotvcf.output.annot.tsv ./click_annotvcf_IMPACT_mutations_180508.txt
+mv temp/annotvcf.output.annot.tsv.gz ./click_annotvcf_IMPACT_mutations_180508.txt.gz
 rm -rf temp
 deactivate
 
