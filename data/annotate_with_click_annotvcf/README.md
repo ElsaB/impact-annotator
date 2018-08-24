@@ -12,12 +12,14 @@ The output files are:
 * `all_IMPACT_mutations_180508.vcf`, the `.vcf` file after conversion
 * `job_output.txt` the output of the job
 
+It can happen that click_annotvcf crashes at the "Running filter_noncoding..." part, at this point of the script we already have the output file we are looking for though, so it is not a real matter.
+
 You can use the following to unzip `click_annotvcf_IMPACT_mutations_180508.txt.gz`:
 ```shell
 $ gzip -d click_annotvcf_IMPACT_mutations_180508.txt.gz
 ```
 
-The CPU time on the cluster was !! (≈ !! minutes).
+The CPU time on the cluster was 21278s (≈ 6 hours).
 
 ***
 

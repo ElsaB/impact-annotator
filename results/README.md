@@ -3,10 +3,10 @@
 This markdown gathers the main results from the analysis notebooks.
 
 ### Clean the data and various analysis 
-*13/07/18 - 13/08/18*
+:calendar: *13/07/18 - 13/08/18*
 
-**Data cleaning**
-Creation of a `get_cleaned_impact()` function which:
+**Data cleaning**  
+Creation of the `get_cleaned_impact()` function which:
 
 * removes some useless features (unique value features and redundant features)
 * filter the rows (keep only the selected mutations consequence, filter the rows according to some read features, correct the `Hugo_Symbol` `Consequence` and `HGVSp_Short` features, ...)
@@ -20,8 +20,11 @@ Creation of a `get_cleaned_impact()` function which:
 * 475 genes
 * Mean sample coverage: 722
 
-**Adding some features**
-Creation of a `add_features()` function which adds the following features to the cleaned dataset: `Kaviar_AF`, `cosmic_count`, `is_a_hotspot`, `is_a_3d_hotspot`, `oncogenic`, `gene_type`, `BAM_id`, `cancer_code`, `cancer_type`.
+**Adding new features**
+Creation of the `add_features()` function which adds the following features to the cleaned dataset: `Kaviar_AF`, `cosmic_count`, `is_a_hotspot`, `is_a_3d_hotspot`, `oncogenic`, `gene_type`, `BAM_id`, `cancer_code`, `cancer_type`.
+
+**General analysis**  
+General analysis of the dataset feature per feature, focusing only on the coding mutations or only on the synonymous mutations.
 
 See:
 
@@ -34,6 +37,8 @@ See:
 
 ### Creating the labels
 *23/07/18 - 20/08/18*
+
+
 
 See:
 
