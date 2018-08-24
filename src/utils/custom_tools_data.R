@@ -232,7 +232,7 @@ add_features <- function(data_folder_name, impact, annotations = FALSE, oncokb =
                                    
   if(oncokb) {
     # 1. Get the raw data
-    impact_oncokb <- read.table(paste0(data_folder_name, "/oncokb_annotate/oncokb_annotated_cleaned_IMPACT_mutations_180508.txt"),
+    impact_oncokb <- read.table(paste0(data_folder_name, "/annotate_with_oncokb/oncokb_annotated_cleaned_IMPACT_mutations_180508.txt"),
                                 sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
 
