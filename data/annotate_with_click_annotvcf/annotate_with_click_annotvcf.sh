@@ -7,12 +7,12 @@ NC='\033[0m' # no Color
 mkdir temp
 
 
+
+
 printf "\n${GREEN}-> Convert .txt to .vcf...${NC}\n"
 OUTPUT_VCF="temp/small_impact.vcf"
 
-cat small_impact.txt | grep -v "##" | awk 'BEGIN{FS="\t";OFS="\t"}NR>1{print $5, $6, ".", $11, $13, ".", ".", ".", "."}' > $OUTPUT_VCF
-
-python3 convert_to_vcf.py
+python3 convert_impact_to_vcf.py
 
 sed -i '1s/^/##fileformat=VCFv4.2\n/' $OUTPUT_VCF
 sed -i '2s/^/#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n/' $OUTPUT_VCF
