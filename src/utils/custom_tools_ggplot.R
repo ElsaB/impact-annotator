@@ -119,7 +119,7 @@ plot_histogram_top <- function(data, feature_name, number, width = 10, height = 
 
 
 # custom density 2d plot
-plot_density_2d <- function(data, x_name, y_name, width = 12, height = 4, to_add = NULL) {
+plot_density_2d <- function(data, x_name, y_name, width = 12, height = 4, to_add = NULL, points_only = FALSE) {
     
   data$density <- densCols(data[,x_name], 
                            data[,y_name],
@@ -127,6 +127,10 @@ plot_density_2d <- function(data, x_name, y_name, width = 12, height = 4, to_add
 
   plot1 <- ggplot(data) + geom_point(aes_string(x_name, y_name, color = "density"), alpha = 0.1) +
            scale_color_identity() + to_add
+
+  if (points_only)
+    return (plot1)
+  
   plot2 <- ggplot(data) + geom_hex(aes_string(x_name, y_name)) +
            scale_fill_gradient(low = "#FFEDA0", high = "#F03B20") + theme(legend.position = "none") + to_add
   plot3 <- ggplot(data) + stat_density_2d(aes_string(x_name, y_name, fill = "..level.."), geom = "polygon") +
