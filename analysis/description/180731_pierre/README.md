@@ -23,18 +23,16 @@ Enrich the cleaned data `cleaned_IMPACT_mutations_180508.txt` by adding some fea
 * **[`coding_mutations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/coding_mutations_analysis.ipynb)**  
 Further analysis on the cleaned dataset `cleaned_IMPACT_mutations_180508.txt`, enriched with the annotations from the `add_features()` function obtained at the end of [`annotate_cleaned_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/annotate_cleaned_dataset.ipynb). The `synonymous_SNV` are excluded from this study, which only focus on the coding mutations.
 
-* **[`synonymous_mutations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/synonymous_mutations_analysis.ipynb)**  
+* **[`synonymous_mutations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/synonymous_mutations_analysis.ipynb)** :construction: *work in progress* :construction:   
 This study will focus only on the `synonymous_SNV` mutations, trying first to filter the non-somatic synonymous mutations and then to study the reccurent synonymous mutations. This notebook follows the methodology of the [`coding_mutations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/coding_mutations_analysis.ipynb) notebook.  
-:construction: *work in progress* :construction:
 
 * **[`oncokb_annotations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/oncokb_annotations_analysis.ipynb)**  
 This notebook studies the OncoKB annotations added with oncokb-annotator (see [`/data/annotate_with_oncokb`](https://github.com/ElsaB/impact-annotator/tree/master/data/annotate_with_oncokb)) and via the [`annotate_cleaned_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/annotate_cleaned_dataset.ipynb) notebook. The `synonymous_SNV` will be removed from the study.  
 
-* **[`comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb)**  
+* **[`comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/comparison_between_variant_annotation_databases.ipynb)** :construction: *work in progress* :construction:  
 This notebook is directly linked to [`doc/biblio/variant_annotation_databases.md`](https://github.com/ElsaB/impact-annotator/blob/master/doc/biblio/variant_annotation_databases.md) which compares and describes different variant annotation databases. The aim of this notebook is to compare the annotations of some of the databases studied in the markdown with OncoKB annotations.  
-:construction: *work in progress* :construction:
 
-* **[`click_annotvcf_annotations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/click_annotvcf_annotations_analysis.ipynb)**  
+* **[`click_annotvcf_annotations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/click_annotvcf_annotations_analysis.ipynb)** :construction: *work in progress* :construction:    
 This notebook studies the annotations added with click_annotvcf, see [`/data/annotate_with_click_annotvcf`](https://github.com/ElsaB/impact-annotator/tree/master/data/annotate_with_click_annotvcf).  
 
 
