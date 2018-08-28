@@ -1,5 +1,3 @@
-:construction: *work in progress* :construction:  
-
 # Annotate the mutations with the click_annotvcf pipeline
 
 To annotate the raw dataset `all_IMPACT_mutations_180508.txt` with the [click_annotvcf](https://github.com/leukgen/click_annotvcf/tree/add-normals) pipeline run **in the cluster**:
@@ -51,5 +49,6 @@ click_annotvcf annotvcf \
 --custom /ifs/work/leukgen/ref/homo_sapiens/GRCh37d5/cosmic/81/CosmicMergedVariants.vcf.gz COSMIC GENE,STRAND,CDS,AA,CNT,SNP \
 #--cosmic /ifs/work/leukgen/ref/homo_sapiens/GRCh37d5/cosmic/81
 ```
+The cosmic annotation was removed from the call to click_annotvcf as it made the file grow from ≈ 500 MB to 44 GB.
 
 * Do some cleaning (remove temporary files).
