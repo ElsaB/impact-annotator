@@ -69,7 +69,7 @@ To convert our dataset to `.vcf` we also tried to use the `maf2vcf.pl` script of
 * The resulting `.vcf` was heavy to work on as each mutation is unnecessarily linked to its `Tumor_Sample_Barcode`, thus adding more than 20,000 extra columns to the `.vcf` file (due to our ≈20,000 `Tumor_Sample_Barcode` in impact).
 * The processing to create the `.vcf` file was way longer.
 
-See the script used to clone the vcf2maf repo and apply `maf2vcf.pl` on impact:
+See the script used to clone the vcf2maf repository and apply `maf2vcf.pl` on impact:
 
 ```bash
 GREEN='\033[0;32m'
