@@ -29,6 +29,7 @@ sed -i '1s/^/##fileformat=VCFv4.2\n/' $OUTPUT_VCF
 sed -i '2s/^/#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n/' $OUTPUT_VCF
 ```
 The script [`convert_impact_to_vcf.py`](https://github.com/ElsaB/impact-annotator/blob/master/data/annotate_with_click_annotvcf/convert_impact_to_vcf.py) does the following:
+
 	* Load impact from the given input file and create vcf-like columns
 	* Modify INS and DEL mutations to match VCF format (eg : -/A ⟹ T/TA and A/- ⟹ TA/T)
 	* Remove duplicated rows
