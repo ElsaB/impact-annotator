@@ -12,8 +12,6 @@ The output files are:
 * `all_IMPACT_mutations_180508.vcf`, the `.vcf` file after conversion
 * `job_output.txt` the output of the job
 
-It can happen that click_annotvcf crashes at the "Running filter_noncoding..." part, at this point of the script we already have the output file we are looking for though, so it is not a real matter.
-
 The CPU time on the cluster was 21278s (≈ 6 hours).
 
 ***

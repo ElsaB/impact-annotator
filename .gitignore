@@ -10,7 +10,6 @@ data/key.txt
 
 # data/annotate_with_click_annotvcf
 data/annotate_with_click_annotvcf/all_IMPACT_mutations_180508.vcf
-data/annotate_with_click_annotvcf/click_annotvcf_IMPACT_mutations_180508.txt.gz
 data/annotate_with_click_annotvcf/click_annotvcf_IMPACT_mutations_180508.txt
 data/annotate_with_click_annotvcf/job_output.txt
 
