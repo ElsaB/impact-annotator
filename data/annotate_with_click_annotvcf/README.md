@@ -28,7 +28,7 @@ python3 convert_impact_to_vcf.py $INPUT_FILE $OUTPUT_VCF
 sed -i '1s/^/##fileformat=VCFv4.2\n/' $OUTPUT_VCF
 sed -i '2s/^/#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n/' $OUTPUT_VCF
 ```
-<sup> * </sup> See in next section a quick review of what the script [`convert_impact_to_vcf.py`](https://github.com/ElsaB/i mpact-annotator/blob/master/data/annotate_with_click_annotvcf/convert_impact_to_vcf.py) does and why we chose to create the `.vcf` by hand instead of using the maf2vcf script of the [vcf2maf](https://github.com/mskcc/vcf2maf) repository.
+> See in next section a quick review of what the script [`convert_impact_to_vcf.py`](https://github.com/ElsaB/impact-annotator/blob/master/data/annotate_with_click_annotvcf/convert_impact_to_vcf.py) does and why we chose to create the `.vcf` by hand instead of using the maf2vcf script of the [vcf2maf](https://github.com/mskcc/vcf2maf) repository.
 
 * Activate the python `staging3.6` environment. This virtualenv will be deactivated at the end of the script.
 
