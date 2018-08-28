@@ -6,6 +6,7 @@ ref = FastaFile('/ifs/work/leukgen/ref/homo_sapiens/GRCh37d5/genome/gr37.fasta')
 
 
 impact = pd.read_csv(sys.argv[1], sep = '\t')
+impact = pd.read_csv("../all_IMPACT_mutations_180508.txt", sep = '\t')
 impact = impact[['Chromosome', 'Start_Position', 'Reference_Allele', 'Tumor_Seq_Allele2']]
 
 impact['ID'] = '.'
@@ -38,8 +39,12 @@ def get_precedent_base_deletion(chrom, start):
 
 impact.loc[is_deletion,'REF'] = impact.loc[is_deletion,].apply(lambda x: get_precedent_base_deletion(x.CHROM, x.POS) + x.REF, axis = 1)
 impact.loc[is_deletion,'ALT'] = impact.loc[is_deletion,].apply(lambda x: get_precedent_base_deletion(x.CHROM, x.POS), axis = 1)
+impact.loc[is_deletion,'POS'] -= 1
 
 impact.loc[is_deletion,]
+
+
+impact.drop_duplicates(inplace = True)
 
 
 impact.to_csv(sys.argv[2], sep = "\t", index = False, header = False)
