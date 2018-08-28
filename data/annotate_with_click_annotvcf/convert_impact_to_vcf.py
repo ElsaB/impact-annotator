@@ -6,7 +6,6 @@ ref = FastaFile('/ifs/work/leukgen/ref/homo_sapiens/GRCh37d5/genome/gr37.fasta')
 
 
 impact = pd.read_csv(sys.argv[1], sep = '\t')
-impact = pd.read_csv("../all_IMPACT_mutations_180508.txt", sep = '\t')
 impact = impact[['Chromosome', 'Start_Position', 'Reference_Allele', 'Tumor_Seq_Allele2']]
 
 impact['ID'] = '.'
