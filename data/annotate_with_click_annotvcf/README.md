@@ -30,12 +30,12 @@ sed -i '2s/^/#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n/' $OUTPUT_V
 ```
 The script [`convert_impact_to_vcf.py`](https://github.com/ElsaB/impact-annotator/blob/master/data/annotate_with_click_annotvcf/convert_impact_to_vcf.py) does the following:
 
-	* Load impact from the given input file and create vcf-like columns
-	* Modify INS and DEL mutations to match VCF format (eg : -/A ⟹ T/TA and A/- ⟹ TA/T)
-	* Remove duplicated rows
-	* Save the `.vcf` impact as the given output file
+* Load impact from the given input file and create vcf-like columns
+* Modify INS and DEL mutations to match VCF format (eg for INS: -/A ⟹ T/TA and for DEL: A/- ⟹ TA/T and POS corrected)
+* Remove duplicated rows
+* Save the `.vcf` impact as the given output file
 
-<sup> * </sup> See in next section why we chose to create the `.vcf` by hand instead of using [vcf2maf](https://github.com/mskcc/vcf2maf).
+<sup> * </sup> See in next section why we chose to create the `.vcf` by hand instead of using the maf2vcf script of the [vcf2maf](https://github.com/mskcc/vcf2maf) repository.
 
 * Activate the python `staging3.6` environment. This virtualenv will be deactivated at the end of the script.
 
@@ -60,7 +60,7 @@ The cosmic annotations were removed from the call to click_annotvcf as it made t
 * Do some cleaning (remove temporary files).
 
 ### Use of vcf2maf
-To convert our dataset to `.vcf` we also tried to use [vcf2maf](https://github.com/mskcc/vcf2maf), which contains a maf2vcf function. However, we faced two problems that lead us to do our own script:
+To convert our dataset to `.vcf` we also tried to use the maf2vcf script of the [vcf2maf](https://github.com/mskcc/vcf2maf) repository. However, we faced two problems that lead us to do our own script:
 
 * The resulting `.vcf` was heavy to work on as each mutation is unnecessarily linked to its `Tumor_Sample_Barcode`, thus adding more than 20,000 extra columns to the `.vcf` file (due to our ≈20,000 `Tumor_Sample_Barcode` in impact).
 * The processing to create the `.vcf` file was way longer.
