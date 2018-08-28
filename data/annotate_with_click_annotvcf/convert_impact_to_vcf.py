@@ -5,7 +5,7 @@ import sys
 ref = FastaFile('/ifs/work/leukgen/ref/homo_sapiens/GRCh37d5/genome/gr37.fasta')
 
 
-impact = pd.read_csv(sys.argv[1], sep = '\t')
+impact = pd.read_csv(sys.argv[1], sep = '\t', low_memory = False)
 impact = impact[['Chromosome', 'Start_Position', 'Reference_Allele', 'Tumor_Seq_Allele2']]
 
 impact['ID'] = '.'
@@ -43,7 +43,7 @@ impact.loc[is_deletion,'POS'] -= 1
 impact.loc[is_deletion,]
 
 
+
 impact.drop_duplicates(inplace = True)
 
-
-impact.to_csv(sys.argv[2], sep = "\t", index = False, header = False)
+impact.to_csv(sys.argv[2], sep = '\t', index = False, header = False)
