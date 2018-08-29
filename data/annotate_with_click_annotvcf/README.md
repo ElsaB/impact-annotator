@@ -2,7 +2,7 @@
 
 To annotate the raw dataset `all_IMPACT_mutations_180508.txt` with the [click_annotvcf](https://github.com/leukgen/click_annotvcf/tree/add-normals) pipeline run **in the cluster**:
 ```shell
-$ bsub -M 8 -o job_output.txt "bash annotate_with_click_annotvcf.sh"
+$ bsub -o job_output.txt "bash annotate_with_click_annotvcf.sh"
 ```
 
 The output files are:
@@ -10,7 +10,7 @@ The output files are:
 * `all_IMPACT_mutations_180508.vcf`, the `.vcf` file after conversion
 * `job_output.txt` the output of the job
 
-The CPU time on the cluster was 21278s (≈ 6 hours).
+The CPU time on the cluster was 10815s (≈ 3 hours).
 
 ***
 
