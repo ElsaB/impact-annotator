@@ -4,15 +4,18 @@ BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 NC='\033[0m' # no Color
 
+
+# for each line in "mut_key_dir_name.tsv" (each mutation key folder)
 while IFS= read line
 do
 	printf "\n${GREEN}-> /$line${NC}\n"
 
+	# go to the folder
 	cd $line
 
-	
 	printf "${BLUE}Get .sam with samtools...${NC}\n"
 
+	# create the .sam in /samtools by iterating through "list_BAM.tsv" to get the BAM id path, chromosome and position, and calling each time samtools
 	mkdir -p samtools
 
 	while IFS= read line
@@ -36,6 +39,7 @@ do
 
 	done < "list_BAM.tsv"
 
+	# create the IGV snapchots in /snaps, by giving "list_BAM.tsv" to toil_snapigv
 	mkdir -p snaps
 
 	printf "${BLUE}Get IGV snapshots with toil_snapigv...${NC}\n"
@@ -55,9 +59,3 @@ do
 	cd ..
 
 done < "mut_key_dir_name.tsv"
-
-
-
-
-
-
