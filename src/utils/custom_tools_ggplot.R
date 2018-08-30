@@ -120,6 +120,7 @@ plot_histogram_top <- function(data, feature_name, number, width = 10, height = 
 
 # custom density 2d plot
 plot_density_2d <- function(data, x_name, y_name, width = 12, height = 4, to_add = NULL, points_only = FALSE) {
+  notebook_plot_size(width, height)
     
   data$density <- densCols(data[,x_name], 
                            data[,y_name],
