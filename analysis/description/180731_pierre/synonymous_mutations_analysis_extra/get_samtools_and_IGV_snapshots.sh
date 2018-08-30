@@ -26,8 +26,8 @@ do
 		chr="${array[1]}"
 		pos="${array[2]}"
 
-		OUTPUT_SAM=samtools/${INPUT_BAM##*/}
-		OUTPUT_SAM=${OUTPUT_SAM%.*}.sam
+		OUTPUT_SAM=samtools/${INPUT_BAM##*/} # remove the path name
+		OUTPUT_SAM=${OUTPUT_SAM%.*}.sam 	 # change the file descriptor to .sam
 		pos1=$((pos-50))
 		pos2=$((pos+50))
 
