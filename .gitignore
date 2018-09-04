@@ -26,6 +26,10 @@ data/other_databases/allAnnotatedVariants.txt
 data/other_databases/PMK_IPM_Knowledgebase_Interpretations_Complete_20180807-1922.xlsx
 data/other_databases/DoCM_variants.tsv
 
+# analysis/description/180731_pierre/synonymous_mutations_analysis_extra
+analysis/description/180731_pierre/synonymous_mutations_analysis_extra
+! analysis/description/180731_pierre/synonymous_mutations_analysis_extra/get_samtools_and_IGV_snapshots.sh
+! analysis/description/180731_pierre/synonymous_mutations_analysis_extra/list_irb12_245.txt
 
 # temp
 data/other_databases/cbioportal.txt
