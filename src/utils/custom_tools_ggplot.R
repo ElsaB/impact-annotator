@@ -7,7 +7,7 @@ tilt_x_label_45 <- function() {
 }
 
 
-# set the size of the plot in jupyter notebook
+bash # set the size of the plot in jupyter notebook
 notebook_plot_size <- function(width = 6, height = 3) {
     options(repr.plot.width = width, repr.plot.height = height)
 }
