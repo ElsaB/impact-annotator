@@ -61,6 +61,7 @@ The cosmic annotations were removed from the call to click_annotvcf as it made t
 	* `DEL`: `A/-` ⟹ `TA/T` and `POS` corrected
 * Remove duplicated rows
 * Save the `.vcf` impact as the given output file
+* The old `REF`, `ALT` and `POS` fields are stored in the `INFO` field of the `.vcf`
 
 **`maf2vcf.pl`**
 
