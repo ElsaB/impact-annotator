@@ -38,10 +38,6 @@ vep_add_colnames <- c("VEP_IMPACT",
                        "VEP_COSMIC_CNT")
 
 
-impact <- read.table(paste0(data_path, "/all_IMPACT_mutations_180508.txt"),
-                     sep = "\t", stringsAsFactors = FALSE, header = TRUE)
-
-
 get_impact_annotated <- function() {
     impact_annotated <- read.table(paste0(data_path, "/annotate_with_click_annotvcf/click_annotvcf_IMPACT_mutations_180508.txt"),
                                    sep = "\t", stringsAsFactors = FALSE, header = TRUE, comment = "#")
@@ -179,6 +175,20 @@ filter_impact <- function(impact) {
     return (impact)
 }
 
+
+print("Get raw impact...")
+impact <- read.table(paste0(data_path, "/all_IMPACT_mutations_180508.txt"),
+                     sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+
+print("Get impact_annotated (impact annotated with click_annotvcf)...")
+impact_annotated <- get_impact_annotated()
+
+print("Join impact and impact_annotated...")
+impact <- add_click_annotvcf_annotations(impact, impact_annotated)
+
+print("Filter impact...")
+impact <- filter_impact(impact)
+print(nrow(impact))
 
 
 
