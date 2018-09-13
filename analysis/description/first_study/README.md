@@ -26,10 +26,10 @@ Further analysis on the cleaned dataset `cleaned_IMPACT_mutations_180508.txt`, e
 * **[`oncokb_annotations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/first_study/oncokb_annotations_analysis.ipynb)**  
 This notebook studies the OncoKB annotations added with oncokb-annotator (see [`/data/annotate_with_oncokb`](https://github.com/ElsaB/impact-annotator/tree/master/data/annotate_with_oncokb)) and via the [`annotate_cleaned_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/first_study/annotate_cleaned_dataset.ipynb) notebook. The `synonymous_SNV` will be removed from the study.  
 
-* **[`comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/first_study/comparison_between_variant_annotation_databases.ipynb)** :construction: *work in progress* :construction:  
+* **[`comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/first_study/comparison_between_variant_annotation_databases.ipynb)**  
 This notebook is directly linked to [`doc/biblio/variant_annotation_databases.md`](https://github.com/ElsaB/impact-annotator/blob/master/doc/biblio/variant_annotation_databases.md) which compares and describes different variant annotation databases. The aim of this notebook is to compare the annotations of some of the databases studied in the markdown with OncoKB annotations.  
 
-* **[`click_annotvcf_annotations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/first_study/click_annotvcf_annotations_analysis.ipynb)** :construction: *work in progress* :construction:    
+* **[`click_annotvcf_annotations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/first_study/click_annotvcf_annotations_analysis.ipynb)**  
 This notebook studies the annotations added with click_annotvcf, see [`/data/annotate_with_click_annotvcf`](https://github.com/ElsaB/impact-annotator/tree/master/data/annotate_with_click_annotvcf).  
 
 
