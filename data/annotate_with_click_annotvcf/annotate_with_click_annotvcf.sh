@@ -15,7 +15,8 @@ OUTPUT_VCF="temp/all_IMPACT_mutations_180508.vcf"
 python3 convert_impact_to_vcf.py $INPUT_FILE $OUTPUT_VCF
 
 sed -i '1s/^/##fileformat=VCFv4.2\n/' $OUTPUT_VCF
-sed -i '2s/^/#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n/' $OUTPUT_VCF
+sed -i '2s/^/##INFO=<ID=OLD_REF_ALT_POS,Number=1,Type=String,Description="Old REF\/ALT\/POS values">\n/' $OUTPUT_VCF
+sed -i '3s/^/#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n/' $OUTPUT_VCF
 
 head $OUTPUT_VCF
 cp $OUTPUT_VCF .
