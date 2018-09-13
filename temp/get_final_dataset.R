@@ -54,7 +54,6 @@ get_impact_annotated <- function() {
 
     impact_vcf$join_key <- paste(impact_vcf$CHROM, impact_vcf$POS, impact_vcf$REF, impact_vcf$ALT, sep = '_')
 
-    impact_vcf <- unique(impact_vcf)
     impact_annotated <- unique(impact_annotated)
 
 
@@ -176,19 +175,23 @@ filter_impact <- function(impact) {
 }
 
 
-print("Get raw impact...")
-impact <- read.table(paste0(data_path, "/all_IMPACT_mutations_180508.txt"),
-                     sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+apply <- function() {
+  print("Get raw impact...")
+  impact <- read.table(paste0(data_path, "/all_IMPACT_mutations_180508.txt"),
+                       sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
-print("Get impact_annotated (impact annotated with click_annotvcf)...")
-impact_annotated <- get_impact_annotated()
+  print("Get impact_annotated (impact annotated with click_annotvcf)...")
+  impact_annotated <- get_impact_annotated()
 
-print("Join impact and impact_annotated...")
-impact <- add_click_annotvcf_annotations(impact, impact_annotated)
+  print("Join impact and impact_annotated...")
+  impact <- add_click_annotvcf_annotations(impact, impact_annotated)
 
-print("Filter impact...")
-impact <- filter_impact(impact)
-print(nrow(impact))
+  print("Filter impact...")
+  impact <- filter_impact(impact)
+  print(nrow(impact))
+}
+
+
 
 
 
