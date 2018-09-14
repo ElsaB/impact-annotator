@@ -91,6 +91,19 @@ add_click_annotvcf_annotations <- function(impact, impact_annotated) {
 }
 
 
+is_overlapped_by_dnp_or_tnp <- function(data, tsb, chr, start) {
+    result <- data %>% filter(Tumor_Sample_Barcode == tsb &
+                              Chromosome == chr &
+                              ((Variant_Type == "DNP" & (Start_Position == start | Start_Position == start - 1) |
+                               (Variant_Type == "TNP" & (Start_Position == start | Start_Position == start - 1 | Start_Position == start - 2)))))
+
+    if (nrow(result) == 0)
+        return (FALSE)
+    else
+        return (TRUE)
+}
+
+
 filter_impact <- function(impact) {
     # [-7 features] remove the unique-value features
     impact[, c("Entrez_Gene_Id",
@@ -170,6 +183,19 @@ filter_impact <- function(impact) {
     impact <- impact[! (impact$sample_mut_key %in% impact_redundant_to_delete$sample_mut_key &
                         impact$t_depth %in% impact_redundant_to_delete$t_depth &
                         impact$t_vaf %in% impact_redundant_to_delete$t_vaf),]
+
+    # [-3151 rows] SNV found as DNP or TNP
+    overlapping_risk_dnp_or_tnp <- as.data.frame(impact %>% group_by(Tumor_Sample_Barcode, Hugo_Symbol) %>%
+                                                            filter(n() > 1 &
+                                                                   "SNP" %in% Variant_Type &
+                                                                   ("DNP" %in% Variant_Type |
+                                                                    "TNP" %in% Variant_Type)))
+    overlapping_dnp_or_tnp <- overlapping_risk_dnp_or_tnp %>% filter(Variant_Type == "SNP") %>%
+                                                              group_by(sample_mut_key) %>%
+                                                              filter(is_overlapped_by_dnp_or_tnp(overlapping_risk_dnp_or_tnp, Tumor_Sample_Barcode, Chromosome, Start_Position)) %>%
+                                                              select(sample_mut_key)
+    impact <- impact[! impact$sample_mut_key %in% overlapping_dnp_or_tnp$sample_mut_key,]
+
 
     return (impact)
 }
@@ -257,22 +283,37 @@ process_raw_features <- function(impact) {
 
 
 apply <- function() {
+    old <- Sys.time()
     print("Get raw impact...")
     impact <- read.table(paste0(data_path, "/all_IMPACT_mutations_180508.txt"),
                          sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+    new <- Sys.time() - old
+    print(new)
 
+    old <- Sys.time()
     print("Get impact_annotated (impact annotated with click_annotvcf)...")
     impact_annotated <- get_impact_annotated()
+    new <- Sys.time() - old
+    print(new)
 
+    old <- Sys.time()
     print("Join impact and impact_annotated...")
     impact <- add_click_annotvcf_annotations(impact, impact_annotated)
+    new <- Sys.time() - old
+    print(new)
 
+    old <- Sys.time()
     print("Filter impact...")
     impact <- filter_impact(impact)
     print(nrow(impact))
+    new <- Sys.time() - old
+    print(new)
 
+    old <- Sys.time()
     print("Process raw features...")
     impact <- process_raw_features(impact)
+    new <- Sys.time() - old
+    print(new)
 }
 
 
