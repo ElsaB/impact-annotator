@@ -279,41 +279,44 @@ process_raw_features <- function(impact) {
 
     # [~ every rows] VEP_COSMIC -> readable VEP_COSMIC
     impact$VEP_COSMIC <- sapply(impact$VEP_COSMIC, get_cosmic_count_from_vep)
+
+    return (impact)
 }
 
 
 apply <- function() {
     old <- Sys.time()
-    print("Get raw impact...")
+    cat("Get raw impact...")
     impact <- read.table(paste0(data_path, "/all_IMPACT_mutations_180508.txt"),
                          sep = "\t", stringsAsFactors = FALSE, header = TRUE)
     new <- Sys.time() - old
     print(new)
 
     old <- Sys.time()
-    print("Get impact_annotated (impact annotated with click_annotvcf)...")
+    cat("\nGet impact_annotated (impact annotated with click_annotvcf)...\n")
     impact_annotated <- get_impact_annotated()
     new <- Sys.time() - old
     print(new)
 
     old <- Sys.time()
-    print("Join impact and impact_annotated...")
+    cat("\nJoin impact and impact_annotated...\n")
     impact <- add_click_annotvcf_annotations(impact, impact_annotated)
     new <- Sys.time() - old
     print(new)
 
     old <- Sys.time()
-    print("Filter impact...")
+    cat("\nFilter impact...\n")
     impact <- filter_impact(impact)
-    print(nrow(impact))
     new <- Sys.time() - old
     print(new)
 
     old <- Sys.time()
-    print("Process raw features...")
+    cat("\nProcess raw features...\n")
     impact <- process_raw_features(impact)
     new <- Sys.time() - old
     print(new)
+
+    cat("\n", nrow(impact))
 }
 
 
