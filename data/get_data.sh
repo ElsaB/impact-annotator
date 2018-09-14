@@ -11,7 +11,7 @@ then
 	cp /ifs/work/leukgen/home/eb2/impact_mutations/all_IMPACT_mutations_180508.txt .
 else
 	username=$1 # your luna username
-	scp ${username}@luna:/ifs/work/leukgen/home/eb2/impact_mutations/all_IMPACT_mutations_180508.txt .
+	scp ${username}@selene.mskcc.org:/ifs/work/leukgen/home/eb2/impact_mutations/all_IMPACT_mutations_180508.txt .
 fi
 
 
@@ -27,5 +27,5 @@ if (echo "$HOSTNAME" | grep -q "selene") || (echo "$HOSTNAME" | grep -q "luna")
 then
 	cp /ifs/work/leukgen/home/eb2/impact_mutations/key.txt .
 else
-	scp ${username}@luna:/ifs/work/leukgen/home/eb2/impact_mutations/key.txt .
+	scp ${username}@selene.mskcc.org:/ifs/work/leukgen/home/eb2/impact_mutations/key.txt .
 fi
