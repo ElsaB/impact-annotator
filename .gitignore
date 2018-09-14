@@ -15,6 +15,7 @@ data/annotate_with_click_annotvcf/job_output.txt
 
 # data/annotate_with_oncokb
 data/annotate_with_oncokb/oncokb_annotated_cleaned_IMPACT_mutations_180508.txt
+data/annotate_with_oncokb/job_output.txt
 
 # data/dominik
 data/dominik/all_IMPACT_mutations_180508.simple.hg19_multianno.txt
