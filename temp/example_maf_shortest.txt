@@ -1,0 +1,14 @@
+Hugo_Symbol	Variant_Classification	HGVSp_Short
+CUL1	Missense_Mutation	p.Y466S
+AKT3	Nonsense_Mutation	p.E182*
+PIK3CA	Missense_Mutation	p.E542K
+FGFR3	Missense_Mutation	p.V271M
+EGFR	Missense_Mutation	p.H304Y
+PTEN	Missense_Mutation	p.C136R
+FGFR2	Missense_Mutation	p.Q212K
+ATM	Missense_Mutation	p.L2890R
+KRAS	Missense_Mutation	p.G12C
+RB1	Nonsense_Mutation	p.Q702*
+TP53	Missense_Mutation	p.R248Q
+NF1	Splice_Site	p.X1445_splice
+STK11	Missense_Mutation	p.H168R
