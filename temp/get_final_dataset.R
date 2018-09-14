@@ -175,20 +175,104 @@ filter_impact <- function(impact) {
 }
 
 
+
+replace_na <- function(data, feature_name, replace_value){
+    data[is.na(data[,feature_name]), feature_name] <- replace_value
+    
+    return (data)
+}
+
+get_HGVSp_from_vep <- function(HGVSp_string) {
+    
+    if (HGVSp_string == "unknown")
+        return ("unknown")
+    
+    HGVSp_string <- strsplit(HGVSp_string, ':')[[1]][2]
+    
+    protein_long_name <- c('Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Glu', 'Gln', 'Gly', 'His', 'Ile', 'Leu', 'Lys',
+                           'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val')
+    protein_short_name <- c('A', 'R', 'N', 'D', 'C', 'E', 'Q', 'G', 'H', 'I', 'L', 'K',
+                            'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V')
+    
+    for (name in protein_long_name)
+        HGVSp_string <- gsub(name, protein_short_name[match(name, protein_long_name)], HGVSp_string)
+    
+    HGVSp_string <- gsub('Ter', '*', HGVSp_string)
+    HGVSp_string <- gsub('%3D', '=', HGVSp_string)
+    
+    return (HGVSp_string)
+}
+
+get_cosmic_count_from_vep <- function(cosmic_count_string) {
+    if (cosmic_count_string == "unknown")
+        return (0)
+    else
+        return (sum(as.numeric(strsplit(cosmic_count_string, '&')[[1]])))
+}
+
+process_raw_features <- function(impact) {
+    # replace NA values by unknown or 0.0
+    # [~ every rows] NA -> unknown or 0.0
+    impact <- replace_na(impact, "VAG_GENE"          , "unknown")
+    impact <- replace_na(impact, "VAG_cDNA_CHANGE"   , "unknown")
+    impact <- replace_na(impact, "VAG_PROTEIN_CHANGE", "unknown")
+    impact <- replace_na(impact, "VAG_EFFECT"        , "unknown")
+    impact <- replace_na(impact, "VEP_HGVSc"         , "unknown")
+    impact <- replace_na(impact, "VEP_HGVSp"         , "unknown")
+    impact <- replace_na(impact, "VEP_Amino_acids"   , "unknown")
+    impact <- replace_na(impact, "VEP_CLIN_SIG"      , "unknown")
+    impact <- replace_na(impact, "VEP_AF"            , 0.0)
+    impact <- replace_na(impact, "VEP_MAX_AF"        , 0.0)
+    impact <- replace_na(impact, "VEP_MAX_AF_POPS"   , "unknown")
+    impact <- replace_na(impact, "VEP_gnomAD_AF"     , 0.0)
+    impact <- replace_na(impact, "VEP_SIFT"          , "unknown")
+    impact <- replace_na(impact, "VEP_PolyPhen"      , "unknown")
+    impact <- replace_na(impact, "VEP_COSMIC_CNT"    , "unknown")
+
+    # [~ every rows] occurence_in_normals -> frequency_in_normals
+    impact$occurence_in_normals[impact$occurence_in_normals == '0'] <- "0;0"
+    impact$frequency_in_normals <- sapply(impact$occurence_in_normals,
+                                          function(s) as.double(strsplit(s, split = ';')[[1]][2]))
+    impact$occurence_in_normals <- NULL
+
+    # [~ every rows] VEP_HGVSc -> readable VEP_HGVSc
+    impact$VEP_HGVSc <- sapply(impact$VEP_HGVSc, function(x) strsplit(x, ':')[[1]][2])
+
+    # [~ every rows] VEP_HGVSp -> readable VEP_HGVSp
+    impact$VEP_HGVSp <- sapply(impact$VEP_HGVSp, get_HGVSp_from_vep)
+
+    # [~ every rows] VEP_SIFT -> VEP_SIFT_class & VEP_SIFT_score
+    impact$VEP_SIFT_class <- sapply(impact$VEP_SIFT, function(x) strsplit(x, '\\(')[[1]][1])
+    impact$VEP_SIFT_score <- sapply(impact$VEP_SIFT, function(x) as.numeric(gsub(')', '', strsplit(x, '\\(')[[1]][2])))
+    impact$VEP_SIFT <- NULL
+
+    # [~ every rows] VEP_PolyPhen -> VEP_PolyPhen_class & VEP_PolyPhen_score
+    impact$VEP_PolyPhen_class <- sapply(impact$VEP_PolyPhen, function(x) strsplit(x, '\\(')[[1]][1])
+    impact$VEP_PolyPhen_score <- sapply(impact$VEP_PolyPhen, function(x) as.numeric(gsub(')', '', strsplit(x, '\\(')[[1]][2])))
+    impact$VEP_PolyPhen <- NULL
+
+    # [~ every rows] VEP_COSMIC -> readable VEP_COSMIC
+    impact$VEP_COSMIC <- sapply(impact$VEP_COSMIC, get_cosmic_count_from_vep)
+}
+
+
 apply <- function() {
-  print("Get raw impact...")
-  impact <- read.table(paste0(data_path, "/all_IMPACT_mutations_180508.txt"),
-                       sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+    print("Get raw impact...")
+    impact <- read.table(paste0(data_path, "/all_IMPACT_mutations_180508.txt"),
+                         sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
-  print("Get impact_annotated (impact annotated with click_annotvcf)...")
-  impact_annotated <- get_impact_annotated()
+    print("Get impact_annotated (impact annotated with click_annotvcf)...")
+    impact_annotated <- get_impact_annotated()
 
-  print("Join impact and impact_annotated...")
-  impact <- add_click_annotvcf_annotations(impact, impact_annotated)
+    print("Join impact and impact_annotated...")
+    impact <- add_click_annotvcf_annotations(impact, impact_annotated)
 
-  print("Filter impact...")
-  impact <- filter_impact(impact)
-  print(nrow(impact))
+    print("Filter impact...")
+    impact <- filter_impact(impact)
+    print(nrow(impact))
+
+    print("Process raw features...")
+    impact <- process_raw_features(impact)
 }
 
 
