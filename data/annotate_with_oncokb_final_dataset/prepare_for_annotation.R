@@ -19,7 +19,7 @@ selected_mutation_types = c("missense_variant",
 
 get_variant_classification <- function(Consequence) {
     Variant_Classification = c("Missense_Mutation", 
-                               "In_Frame_Ins", #?
+                               "In_Frame_Ins", # ?
                                "Nonsense_Mutation",
                                "Splice_Site",
                                "In_Frame_Del",

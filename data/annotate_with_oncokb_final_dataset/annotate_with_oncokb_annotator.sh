@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GREEN='\033[0;32m'
-NC='\033[0m' # no Color
+NC='\033[0m' # no color
 
 
 printf "\n${GREEN}-> Get the oncokb-annotator repo...${NC}\n"
