@@ -20,8 +20,7 @@ vep_colnames <- c("VEP_Consequence",
                   "VEP_HGVSc",
                   "VEP_HGVSp",
                   "VEP_Amino_acids", 
-                  "VEP_VARIANT_CLASS",
-                  "VEP_BIOTYPE")
+                  "VEP_VARIANT_CLASS")
 
 vep_add_colnames <- c("VEP_IMPACT",
                       "VEP_CLIN_SIG",
@@ -126,7 +125,7 @@ filter_impact <- function(impact) {
 
     # [~ every rows] select only the most deleterious VEP consequence
     impact$VEP_Consequence <- sapply(impact$VEP_Consequence, function(x) strsplit(x, '&')[[1]][1])
-    # [-375,418 rows] remove the non-interesting VEP_Consequence mutations
+    # [-375,418 rows] keep only the coding and splicing VEP_Consequence mutations
     impact <- impact[impact$VEP_Consequence %in% c("missense_variant",
                                                    "frameshift_variant",
                                                    "stop_gained",
@@ -176,7 +175,7 @@ filter_impact <- function(impact) {
     # [-713 rows] Hugo_Symbol = CDKN2Ap14ARF and CDKN2A in the tumor sample
     dd <- impact %>% group_by(Tumor_Sample_Barcode) %>%
                      summarise(has_both_reading_frame = sum(Hugo_Symbol == "CDKN2Ap14ARF") > 0 &
-                                                          sum(Hugo_Symbol == "CDKN2A") > 0) %>%
+                                                        sum(Hugo_Symbol == "CDKN2A") > 0) %>%
                      filter(has_both_reading_frame)
     impact <- impact[! (impact$Hugo_Symbol == "CDKN2Ap14ARF" &
                         impact$Tumor_Sample_Barcode %in% dd$Tumor_Sample_Barcode),]
@@ -381,10 +380,10 @@ add_new_features <- function(impact) {
 
 
 # #######################################
-# ## apply ##############################
+# ## get_final_dataset ##################
 # #######################################
 
-apply <- function() {
+get_final_dataset <- function() {
     old <- Sys.time()
     cat("Get raw impact...\n")
     impact <- read.table(paste0(data_path, "/all_IMPACT_mutations_180508.txt"),
@@ -424,7 +423,7 @@ apply <- function() {
 
     cat("\n", nrow(impact))
 
-    #write.table(impact_cleaned, paste0(data_path, "/cleaned_IMPACT_mutations_180508.txt"), sep = "\t", row.names = FALSE)
+    write.table(impact, paste0(data_path, "/final_IMPACT_mutations_180508.txt"), sep = "\t", row.names = FALSE)
 }
 
 
