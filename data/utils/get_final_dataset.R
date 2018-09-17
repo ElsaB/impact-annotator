@@ -1,11 +1,3 @@
-data_path <- "../data"
-
-
-
-source("../src/utils/custom_tools.R")
-setup_environment("../src/utils")
-
-
 id_colnames  <- c("ID_VARIANT",
                   "CHR",
                   "START",
@@ -284,6 +276,88 @@ process_raw_features <- function(impact) {
 }
 
 
+add_new_features <- function(impact) {
+    # #######################################
+    # ## Kaviar_AF ##########################
+    # #######################################
+    # 1. Get the raw data
+    impact_kaviar <- read.table(paste0(data_path, "/dominik/all_IMPACT_mutations_180508.simple.hg19_multianno.txt"),
+                                sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+
+
+    # 2. Create keys to join the two dataframes and extract the features
+    impact_kaviar$join_key <- paste(impact_kaviar$Chr,
+                                    impact_kaviar$Start,
+                                    impact_kaviar$Ref,
+                                    impact_kaviar$Alt,
+                                    sep = '_')
+    impact_kaviar <- unique(impact_kaviar[, c("join_key", "Kaviar_AF")])
+    impact[, "Kaviar_AF"] <- left_join(impact, impact_kaviar,
+                                       by = c("mut_key" = "join_key"))[, "Kaviar_AF"]
+
+
+    # 3. Process the raw feature
+    ## Kaviar_AF
+    impact$Kaviar_AF[impact$Kaviar_AF == '.'] <- "0"
+    impact$Kaviar_AF <- sapply(impact$Kaviar_AF, function(s) as.double(s))
+
+
+
+    # #######################################
+    # ## OncoKB #############################
+    # #######################################
+    # 1. Get the raw data
+    # impact_oncokb <- read.table(paste0(data_path, "/annotate_with_oncokb_final_dataset/oncokb_annotated_final_IMPACT_mutations_180508.txt"),
+    #                             sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+
+    # # 2. Create keys to join the two dataframes and extract the features
+    # impact_oncokb <- unique(impact_oncokb[, c("mut_key", "is.a.hotspot", "is.a.3d.hotspot", "oncogenic")])
+    # impact[, c("is_a_hotspot", "is_a_3d_hotspot", "oncogenic")] <- left_join(impact, impact_oncokb,
+    #                                                                          by = c("mut_key" = "mut_key"))[, c("is.a.hotspot",
+    #                                                                                                             "is.a.3d.hotspot",
+    #                                                                                                             "oncogenic")]
+
+    # # 3. Process the raw features
+    # ## is_a_hostpot
+    # impact$is_a_hotspot[impact$is_a_hotspot == "Y"  ] <- "yes"
+    # impact$is_a_hotspot[impact$is_a_hotspot != "yes"] <- "unknown"
+
+    # ## is_a_3d_hostpot
+    # impact$is_a_3d_hotspot[impact$is_a_3d_hotspot == "Y"  ] <- "yes"
+    # impact$is_a_3d_hotspot[impact$is_a_3d_hotspot != "yes"] <- "unknown"
+
+    # ## oncogenic
+    # impact$oncogenic[impact$oncogenic == ""] <- "Unknown"
+
+
+
+    # #######################################
+    # ## gene_type ##########################
+    # #######################################
+    # 1. Get the raw data
+    cancer_genes_list <- read.table(paste0(data_path, "/other_databases/CancerGenesList.txt"),
+                                      sep = "\t", stringsAsFactors = FALSE, header = TRUE, comment.char = '')
+
+
+    # 2. Create keys to join the two dataframes and extract the features
+    impact[, c("OncoKB.Oncogene", "OncoKB.TSG")] <- left_join(impact, cancer_genes_list,
+                                                              by = c("Hugo_Symbol" = "Hugo.Symbol"))[,c("OncoKB.Oncogene", "OncoKB.TSG")]
+
+
+    # 3. Process the raw features
+    ## gene_type
+    impact$gene_type <- "unknown"
+    impact$gene_type[impact$OncoKB.Oncogene == "Yes"] <- "oncogene"
+    impact$gene_type[impact$OncoKB.TSG == "Yes"]      <- "tsg"
+    impact$gene_type[impact$OncoKB.Oncogene == "Yes" & impact$OncoKB.TSG == "Yes"] <- "oncogene_and_tsg"
+
+    impact$OncoKB.Oncogene <- NULL
+    impact$OncoKB.TSG      <- NULL
+
+    return (impact)
+}
+
+
 apply <- function() {
     old <- Sys.time()
     cat("Get raw impact...")
@@ -313,6 +387,12 @@ apply <- function() {
     old <- Sys.time()
     cat("\nProcess raw features...\n")
     impact <- process_raw_features(impact)
+    new <- Sys.time() - old
+    print(new)
+
+    old <- Sys.time()
+    cat("\nAdd new features...\n")
+    impact <- add_new_features(impact)
     new <- Sys.time() - old
     print(new)
 
