@@ -29,13 +29,13 @@ vep_colnames <- c("VEP_Consequence",
 
 vep_add_colnames <- c("VEP_IMPACT",
                       "VEP_CLIN_SIG",
-                       "VEP_AF", 
-                       "VEP_MAX_AF", 
-                       "VEP_MAX_AF_POPS", 
-                       "VEP_gnomAD_AF",
-                       "VEP_SIFT", 
-                       "VEP_PolyPhen", 
-                       "VEP_COSMIC_CNT")
+                      "VEP_AF", 
+                      "VEP_MAX_AF", 
+                      "VEP_MAX_AF_POPS", 
+                      "VEP_gnomAD_AF",
+                      "VEP_SIFT", 
+                      "VEP_PolyPhen", 
+                      "VEP_COSMIC_CNT")
 
 
 get_impact_annotated <- function() {
