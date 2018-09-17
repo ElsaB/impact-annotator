@@ -2,16 +2,10 @@ impact <- read.table("../final_IMPACT_mutations_180508.txt",
 					 sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
 
-impact <- impact[,c("mut_key",
-                    "Chromosome",
-                    "Start_Position",
-                    "End_Position",
-                    "VEP_SYMBOL",
-                    "VEP_Consequence",
-                    "VEP_HGVSp")]
+impact <- impact[,c("mut_key", "VEP_SYMBOL", "VEP_Consequence", "VEP_HGVSp")]
 
-colnames(impact)[colnames(impact) == "VEP_SYMBOL"] <- "Hugo_Symbol"
-colnames(impact)[colnames(impact) == "VEP_HGVSp"] <- "HGVSp_Short"
+colnames(impact) <- c("mut_key", "Hugo_Symbol", "VEP_Consequence", "HGVSp_Short")
+
 
 selected_mutation_types = c("missense_variant",
                             "frameshift_variant",
@@ -25,7 +19,7 @@ selected_mutation_types = c("missense_variant",
 
 get_variant_classification <- function(Consequence) {
     Variant_Classification = c("Missense_Mutation", 
-                               "In_Frame_Ins", # ?
+                               "In_Frame_Del", # ?
                                "Nonsense_Mutation",
                                "Splice_Site",
                                "In_Frame_Del",

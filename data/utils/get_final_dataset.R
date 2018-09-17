@@ -329,27 +329,27 @@ add_new_features <- function(impact) {
 
     # ####################################### Onco_KB
     # 1. Get the raw data
-    # impact_oncokb <- read.table(paste0(data_path, "/annotate_with_oncokb_final_dataset/oncokb_annotated_final_IMPACT_mutations_180508.txt"),
-    #                             sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+    impact_oncokb <- read.table(paste0(data_path, "/annotate_with_oncokb_final_dataset/oncokb_annotated_final_IMPACT_mutations_180508.txt"),
+                                sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
-    # # 2. Create keys to join the two dataframes and extract the features
-    # impact_oncokb <- unique(impact_oncokb[, c("mut_key", "is.a.hotspot", "is.a.3d.hotspot", "oncogenic")])
-    # impact[, c("is_a_hotspot", "is_a_3d_hotspot", "oncogenic")] <- left_join(impact, impact_oncokb,
-    #                                                                          by = c("mut_key" = "mut_key"))[, c("is.a.hotspot",
-    #                                                                                                             "is.a.3d.hotspot",
-    #                                                                                                             "oncogenic")]
+    # 2. Create keys to join the two dataframes and extract the features
+    impact_oncokb <- unique(impact_oncokb[, c("mut_key", "is.a.hotspot", "is.a.3d.hotspot", "oncogenic")])
+    impact[, c("is_a_hotspot", "is_a_3d_hotspot", "oncogenic")] <- left_join(impact, impact_oncokb,
+                                                                             by = c("mut_key" = "mut_key"))[, c("is.a.hotspot",
+                                                                                                                "is.a.3d.hotspot",
+                                                                                                                "oncogenic")]
 
-    # # 3. Process the raw features
-    # ## is_a_hostpot
-    # impact$is_a_hotspot[impact$is_a_hotspot == "Y"  ] <- "yes"
-    # impact$is_a_hotspot[impact$is_a_hotspot != "yes"] <- "unknown"
+    # 3. Process the raw features
+    ## is_a_hostpot
+    impact$is_a_hotspot[impact$is_a_hotspot == "Y"  ] <- "yes"
+    impact$is_a_hotspot[impact$is_a_hotspot != "yes"] <- "unknown"
 
-    # ## is_a_3d_hostpot
-    # impact$is_a_3d_hotspot[impact$is_a_3d_hotspot == "Y"  ] <- "yes"
-    # impact$is_a_3d_hotspot[impact$is_a_3d_hotspot != "yes"] <- "unknown"
+    ## is_a_3d_hostpot
+    impact$is_a_3d_hotspot[impact$is_a_3d_hotspot == "Y"  ] <- "yes"
+    impact$is_a_3d_hotspot[impact$is_a_3d_hotspot != "yes"] <- "unknown"
 
-    # ## oncogenic
-    # impact$oncogenic[impact$oncogenic == ""] <- "Unknown"
+    ## oncogenic
+    impact$oncogenic[impact$oncogenic == ""] <- "Unknown"
 
 
 
