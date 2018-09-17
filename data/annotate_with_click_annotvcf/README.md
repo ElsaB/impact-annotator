@@ -6,8 +6,9 @@ $ bsub -o job_output.txt "bash annotate_with_click_annotvcf.sh"
 ```
 
 The output files are:
-* `click_annotvcf_IMPACT_mutations_180508.txt`, the annotated version.
+* `click_annotvcf_IMPACT_mutations_180508.txt`, the annotated version
 * `all_IMPACT_mutations_180508.vcf`, the `.vcf` file after conversion
+* `header_click_annotvcf.txt` the header of `click_annotvcf_IMPACT_mutations_180508.txt`, explaining the meaning of every column name 
 * `job_output.txt` the output of the job
 
 The CPU time on the cluster was 10815s (≈ 3 hours).

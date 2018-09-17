@@ -52,3 +52,7 @@ mv temp/annotvcf.output.most_severe.tsv.gz ./click_annotvcf_IMPACT_mutations_180
 gzip -d click_annotvcf_IMPACT_mutations_180508.txt.gz
 rm -rf temp
 deactivate
+
+
+printf "\n${GREEN}-> Create header_click_annotvcf.txt...${NC}\n"
+grep '##' click_annotvcf_IMPACT_mutations_180508.txt > header_click_annotvcf.txt
