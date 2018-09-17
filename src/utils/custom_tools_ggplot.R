@@ -127,9 +127,7 @@ plot_histogram_top <- function(data, feature_name, number, width = 10, height = 
 plot_density_2d <- function(data, x_name, y_name, width = 12, height = 4, to_add = NULL, points_only = FALSE) {
     notebook_plot_size(width, height)
         
-    data$density <- densCols(data[,x_name], 
-                                                     data[,y_name],
-                                                     colramp = colorRampPalette(rev(rainbow(10, end = 4/6))))
+    data$density <- densCols(data[,x_name], data[,y_name], colramp = colorRampPalette(rev(rainbow(10, end = 4/6))))
 
     plot1 <- ggplot(data) + geom_point(aes_string(x_name, y_name, color = "density"), alpha = 0.1) +
                      scale_color_identity() + to_add
