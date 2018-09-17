@@ -7,6 +7,7 @@ OTHER/
 data/all_IMPACT_mutations_180508.txt
 data/cleaned_IMPACT_mutations_180508.txt
 data/key.txt
+data/final_IMPACT_mutations_180508.txt
 
 # data/annotate_with_click_annotvcf
 data/annotate_with_click_annotvcf/all_IMPACT_mutations_180508.vcf
@@ -39,4 +40,3 @@ analysis/description/synonymous_study/synonymous_mutations_analysis_extra
 # temp
 data/other_databases/cbioportal.txt
 
-temp/final_IMPACT_mutations_180508.txt

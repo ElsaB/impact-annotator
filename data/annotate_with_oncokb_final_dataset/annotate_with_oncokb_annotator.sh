@@ -18,8 +18,6 @@ printf "\n${GREEN}-> Create a python 2.7 virtual env...${NC}\n"
 mkvirtualenv --python=python2.7 oncokb-annotator_env
 printf "\n${GREEN}-> Install matplotlib and its dependencies...${NC}\n"
 pip install matplotlib
-printf "\n${GREEN}-> Install numpy and its dependencies...${NC}\n"
-pip install numpy
 
 
 printf "\n${GREEN}-> Launch oncokb-annotator...${NC}\n"

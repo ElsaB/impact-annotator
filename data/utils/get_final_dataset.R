@@ -1,3 +1,7 @@
+# #######################################
+# ## get_impact_annotated ###############
+# #######################################
+
 id_colnames  <- c("ID_VARIANT",
                   "CHR",
                   "START",
@@ -57,6 +61,12 @@ get_impact_annotated <- function() {
 }
 
 
+
+
+# #######################################
+# ## add_click_annotvcf_annotations #####
+# #######################################
+
 add_click_annotvcf_annotations <- function(impact, impact_annotated) {
     impact_annotated$join_key <- paste(impact_annotated$CHR,
                                        impact_annotated$OLD_POS,
@@ -83,6 +93,12 @@ add_click_annotvcf_annotations <- function(impact, impact_annotated) {
 }
 
 
+
+
+# #######################################
+# ## filter_impact ######################
+# #######################################
+
 is_overlapped_by_dnp_or_tnp <- function(data, tsb, chr, start) {
     result <- data %>% filter(Tumor_Sample_Barcode == tsb &
                               Chromosome == chr &
@@ -94,7 +110,6 @@ is_overlapped_by_dnp_or_tnp <- function(data, tsb, chr, start) {
     else
         return (TRUE)
 }
-
 
 filter_impact <- function(impact) {
     # [-7 features] remove the unique-value features
@@ -194,6 +209,11 @@ filter_impact <- function(impact) {
 
 
 
+
+# #######################################
+# ## process_raw_features ###############
+# #######################################
+
 replace_na <- function(data, feature_name, replace_value){
     data[is.na(data[,feature_name]), feature_name] <- replace_value
     
@@ -276,10 +296,14 @@ process_raw_features <- function(impact) {
 }
 
 
+
+
+# #######################################
+# ## add_new_features ###################
+# #######################################
+
 add_new_features <- function(impact) {
-    # #######################################
-    # ## Kaviar_AF ##########################
-    # #######################################
+    # ####################################### Kaviar_AF
     # 1. Get the raw data
     impact_kaviar <- read.table(paste0(data_path, "/dominik/all_IMPACT_mutations_180508.simple.hg19_multianno.txt"),
                                 sep = "\t", stringsAsFactors = FALSE, header = TRUE)
@@ -303,9 +327,7 @@ add_new_features <- function(impact) {
 
 
 
-    # #######################################
-    # ## OncoKB #############################
-    # #######################################
+    # ####################################### Onco_KB
     # 1. Get the raw data
     # impact_oncokb <- read.table(paste0(data_path, "/annotate_with_oncokb_final_dataset/oncokb_annotated_final_IMPACT_mutations_180508.txt"),
     #                             sep = "\t", stringsAsFactors = FALSE, header = TRUE)
@@ -331,9 +353,7 @@ add_new_features <- function(impact) {
 
 
 
-    # #######################################
-    # ## gene_type ##########################
-    # #######################################
+    # ####################################### gene_type
     # 1. Get the raw data
     cancer_genes_list <- read.table(paste0(data_path, "/other_databases/CancerGenesList.txt"),
                                       sep = "\t", stringsAsFactors = FALSE, header = TRUE, comment.char = '')
@@ -358,9 +378,15 @@ add_new_features <- function(impact) {
 }
 
 
+
+
+# #######################################
+# ## apply ##############################
+# #######################################
+
 apply <- function() {
     old <- Sys.time()
-    cat("Get raw impact...")
+    cat("Get raw impact...\n")
     impact <- read.table(paste0(data_path, "/all_IMPACT_mutations_180508.txt"),
                          sep = "\t", stringsAsFactors = FALSE, header = TRUE)
     new <- Sys.time() - old
@@ -397,14 +423,8 @@ apply <- function() {
     print(new)
 
     cat("\n", nrow(impact))
+
+    #write.table(impact_cleaned, paste0(data_path, "/cleaned_IMPACT_mutations_180508.txt"), sep = "\t", row.names = FALSE)
 }
-
-
-
-
-
-#write.table(impact_cleaned, "./cleaned_IMPACT_mutations_180508.txt", sep = "\t", row.names = FALSE)
-
-
 
 
