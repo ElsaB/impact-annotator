@@ -264,6 +264,26 @@ get_cosmic_count_from_vep <- function(cosmic_count_string) {
         return (sum(as.numeric(strsplit(cosmic_count_string, '&')[[1]])))
 }
 
+get_simplified_clin_sig <- function(clin_sig_string) {
+    if (clin_sig_string == "unknown")
+        return ("unknown")
+    else {
+        tags <- unique(strsplit(clin_sig_string, '&')[[1]])
+        
+        tags <- gsub('likely_pathogenic', 'pathogenic', tags)
+        tags <- gsub('drug_response'    , 'pathogenic', tags)
+        tags <- gsub('risk_factor'      , 'pathogenic', tags)
+        tags <- gsub('likely_benign'    , 'benign'    , tags)
+        
+        tags <- tags[! tags %in% c("not_provided", "uncertain_significance", "other")]
+        
+        if (length(tags) == 0 || length(tags) > 1)
+            return ("unknown")
+        else
+            return (tags)
+    }
+}
+
 get_gnomAD_total_AC.AN <- function(data, pop_name) {
     genome_AC = as.integer(strsplit(data[paste0("VEP_gnomAD_genome_AC.AN_", pop_name)], ' \\| ')[[1]][1])
     genome_AN = as.integer(strsplit(data[paste0("VEP_gnomAD_genome_AC.AN_", pop_name)], ' \\| ')[[1]][2])
@@ -353,6 +373,10 @@ process_raw_features <- function(impact) {
 
     # [~ every rows] VEP_COSMIC_CNT -> readable VEP_COSMIC_CNT
     impact$VEP_COSMIC_CNT <- sapply(impact$VEP_COSMIC_CNT, get_cosmic_count_from_vep)
+
+
+    # [~ every rows] VEP_CLIN_SIG -> readable VEP_CLIN_SIG
+    impact$VEP_CLIN_SIG <- sapply(impact$VEP_CLIN_SIG, get_simplified_clin_sig)
 
 
     # [~ every rows] vep_gnomad_colnames -> VEP_gnomAD_total_AF_<POP>, VEP_gnomAD_AF_MAX, VEP_gnomAD_AF_MEAN
