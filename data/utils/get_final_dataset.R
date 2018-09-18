@@ -30,14 +30,23 @@ vep_add_colnames <- c("VEP_IMPACT",
                       "VEP_PolyPhen",
                       "VEP_COSMIC_CNT")
 
-vep_gnomad_colnames <- c("VEP_gnomAD_AF", 
-                         "VEP_gnomAD_exome_AF_AFR",
-                         "VEP_gnomAD_exome_AF_AMR",
-                         "VEP_gnomAD_exome_AF_ASJ",
-                         "VEP_gnomAD_exome_AF_EAS",
-                         "VEP_gnomAD_exome_AF_FIN",
-                         "VEP_gnomAD_exome_AF_NFE",
-                         "VEP_gnomAD_exome_AF_OTH")
+vep_gnomad_colnames <- c("VEP_gnomAD_AF",
+
+                         "VEP_gnomAD_genome_AC.AN_AFR",
+                         "VEP_gnomAD_genome_AC.AN_AMR",
+                         "VEP_gnomAD_genome_AC.AN_ASJ",
+                         "VEP_gnomAD_genome_AC.AN_EAS",
+                         "VEP_gnomAD_genome_AC.AN_FIN",
+                         "VEP_gnomAD_genome_AC.AN_NFE",
+                         "VEP_gnomAD_genome_AC.AN_OTH",
+
+                         "VEP_gnomAD_exome_AC.AN_AFR",
+                         "VEP_gnomAD_exome_AC.AN_AMR",
+                         "VEP_gnomAD_exome_AC.AN_ASJ",
+                         "VEP_gnomAD_exome_AC.AN_EAS",
+                         "VEP_gnomAD_exome_AC.AN_FIN",
+                         "VEP_gnomAD_exome_AC.AN_NFE",
+                         "VEP_gnomAD_exome_AC.AN_OTH")
 
 
 get_impact_annotated <- function() {
@@ -255,8 +264,47 @@ get_cosmic_count_from_vep <- function(cosmic_count_string) {
         return (sum(as.numeric(strsplit(cosmic_count_string, '&')[[1]])))
 }
 
+get_gnomAD_total_AC.AN <- function(data, pop_name) {
+    genome_AC = as.integer(strsplit(data[paste0("VEP_gnomAD_genome_AC.AN_", pop_name)], ' \\| ')[[1]][1])
+    genome_AN = as.integer(strsplit(data[paste0("VEP_gnomAD_genome_AC.AN_", pop_name)], ' \\| ')[[1]][2])
+
+    exome_AC = as.integer(strsplit(data[paste0("VEP_gnomAD_exome_AC.AN_", pop_name)], ' \\| ')[[1]][1])
+    exome_AN = as.integer(strsplit(data[paste0("VEP_gnomAD_exome_AC.AN_", pop_name)], ' \\| ')[[1]][2])
+    
+    return (paste(genome_AC + exome_AC, genome_AN + exome_AN, sep = ' | '))
+}
+
+get_gnomAD_total_AF <- function(data, pop_name) {
+        
+    AC = as.integer(strsplit(data[paste0("VEP_gnomAD_total_AC.AN_", pop_name)], ' \\| ')[[1]][1])
+    AN = as.integer(strsplit(data[paste0("VEP_gnomAD_total_AC.AN_", pop_name)], ' \\| ')[[1]][2])
+    
+    if (AN == 0)
+        return (0)
+    else
+        return (AC / AN)
+}
+
+get_gnomAD_AF_MEAN <- function(data) {
+    
+    AC <- c()
+    AN <- c()
+    
+    for (pop in c('AFR', 'AMR', 'ASJ', 'EAS', 'FIN', 'NFE', 'OTH')) {
+        AC <- c(AC, as.integer(strsplit(data[paste0("VEP_gnomAD_total_AC.AN_", pop)], ' \\| ')[[1]][1]))
+        AN <- c(AN, as.integer(strsplit(data[paste0("VEP_gnomAD_total_AC.AN_", pop)], ' \\| ')[[1]][2]))
+    }
+                
+    if (sum(AN) == 0)
+        return (0)
+    else
+        return (sum(AC) / sum(AN))
+}
+
+
+
 process_raw_features <- function(impact) {
-    # [~ every rows] NA -> unknown or 0.0
+    # [~ every rows] NA -> "unknown"
     impact <- replace_na(impact, "VAG_GENE"          , "unknown")
     impact <- replace_na(impact, "VAG_cDNA_CHANGE"   , "unknown")
     impact <- replace_na(impact, "VAG_PROTEIN_CHANGE", "unknown")
@@ -268,8 +316,12 @@ process_raw_features <- function(impact) {
     impact <- replace_na(impact, "VEP_SIFT"          , "unknown")
     impact <- replace_na(impact, "VEP_PolyPhen"      , "unknown")
     impact <- replace_na(impact, "VEP_COSMIC_CNT"    , "unknown")
-    for (c in vep_gnomad_colnames)
-        impact <- replace_na(impact, c, 0.0)
+    
+    # [~ every rows] NA -> 0.0
+    impact <- replace_na(impact, "VEP_gnomAD_AF", 0.0)
+    # [~ every rows] NA -> "0 | 0"
+    for (c in vep_gnomad_colnames[grepl("_AC.AN_", vep_gnomad_colnames)])
+        impact <- replace_na(impact, c, " 0 | 0")
 
 
     # [~ every rows] occurence_in_normals -> frequency_in_normals
@@ -278,24 +330,60 @@ process_raw_features <- function(impact) {
                                           function(s) as.double(strsplit(s, split = ';')[[1]][2]))
     impact$occurence_in_normals <- NULL
 
+
     # [~ every rows] VEP_HGVSc -> readable VEP_HGVSc
     impact$VEP_HGVSc <- sapply(impact$VEP_HGVSc, function(x) strsplit(x, ':')[[1]][2])
 
+
     # [~ every rows] VEP_HGVSp -> readable VEP_HGVSp
     impact$VEP_HGVSp <- sapply(impact$VEP_HGVSp, get_HGVSp_from_vep)
+
 
     # [~ every rows] VEP_SIFT -> VEP_SIFT_class & VEP_SIFT_score
     impact$VEP_SIFT_class <- sapply(impact$VEP_SIFT, function(x) strsplit(x, '\\(')[[1]][1])
     impact$VEP_SIFT_score <- sapply(impact$VEP_SIFT, function(x) as.numeric(gsub(')', '', strsplit(x, '\\(')[[1]][2])))
     impact$VEP_SIFT <- NULL
 
+
     # [~ every rows] VEP_PolyPhen -> VEP_PolyPhen_class & VEP_PolyPhen_score
     impact$VEP_PolyPhen_class <- sapply(impact$VEP_PolyPhen, function(x) strsplit(x, '\\(')[[1]][1])
     impact$VEP_PolyPhen_score <- sapply(impact$VEP_PolyPhen, function(x) as.numeric(gsub(')', '', strsplit(x, '\\(')[[1]][2])))
     impact$VEP_PolyPhen <- NULL
 
+
     # [~ every rows] VEP_COSMIC -> readable VEP_COSMIC
     impact$VEP_COSMIC <- sapply(impact$VEP_COSMIC, get_cosmic_count_from_vep)
+
+
+    # [~ every rows] vep_gnomad_colnames -> VEP_gnomAD_total_AF_<POP>, VEP_gnomAD_AF_MAX, VEP_gnomAD_AF_MEAN
+    ## VEP_gnomAD_total_AC.AN_<POP> -> temp
+    for (pop in c('AFR', 'AMR', 'ASJ', 'EAS', 'FIN', 'NFE', 'OTH'))
+        impact[, paste0("VEP_gnomAD_total_AC.AN_", pop)] <- apply(impact, 1, function(x) get_gnomAD_total_AC.AN(x, pop))
+
+    ## VEP_gnomAD_total_AF_<POP>
+    for (pop in c('AFR', 'AMR', 'ASJ', 'EAS', 'FIN', 'NFE', 'OTH'))
+        impact[, paste0("VEP_gnomAD_total_AF_", pop)] <- apply(impact, 1, function(x) get_gnomAD_total_AF(x, pop))
+
+    ## VEP_gnomAD_AF_MAX
+    total_AF_columns <- colnames(impact)[grepl("VEP_gnomAD_total_AF_", colnames(impact))]
+    impact$VEP_gnomAD_AF_MAX <- apply(impact, 1, function(x) max(as.numeric(x[total_AF_columns])))
+
+    ## VEP_gnomAD_AF_MEAN
+    impact$VEP_gnomAD_AF_MEAN <- apply(impact, 1, get_gnomAD_AF_MEAN)
+
+    impact[, colnames(impact)[grepl("VEP_gnomAD_genome", colnames(impact))]] <- NULL
+    impact[, colnames(impact)[grepl("VEP_gnomAD_exome", colnames(impact))]] <- NULL
+    impact[, colnames(impact)[grepl("VEP_gnomAD_total_AC.AN", colnames(impact))]] <- NULL
+    vep_gnomad_colnames <- c("VEP_gnomAD_AF",
+                             "VEP_gnomAD_total_AC.AN_AFR",
+                             "VEP_gnomAD_total_AC.AN_AMR",
+                             "VEP_gnomAD_total_AC.AN_ASJ",
+                             "VEP_gnomAD_total_AC.AN_EAS",
+                             "VEP_gnomAD_total_AC.AN_FIN",
+                             "VEP_gnomAD_total_AC.AN_NFE",
+                             "VEP_gnomAD_total_AC.AN_OTH",
+                             "VEP_gnomAD_AF_MAX",
+                             "VEP_gnomAD_AF_MEAN")
 
     return (impact)
 }
