@@ -10,7 +10,7 @@ The modifications made to the original version are listed under:
 | Consequence               | Variant_Classification |
 | ------------------------- | ---------------------- |
 | missense_variant 			| Missense_Mutation		 |
-| frameshift_variant 		| ?			             |
+| frameshift_variant 		| <sup>*</sup> see under |
 | stop_gained 		        | Nonsense_Mutation		 |
 | splice_acceptor_variant   | Splice_Site            |
 | inframe_deletion 	        | In_Frame_Del			 |
@@ -18,3 +18,12 @@ The modifications made to the original version are listed under:
 | inframe_insertion 		| In_Frame_Ins		     |
 | start_lost 		        | Start_Codon_Del		 |
 | stop_lost 			    | Nonstop_Mutation		 |	
+
+
+To get the `Variant_Classification` for `frameshift_variant`, the following rules where applied:
+
+* if `VEP_VARIANT_CLASS == "insertion"` → `In_Frame_Ins`
+* if `VEP_VARIANT_CLASS == "deletion"` → `In_Frame_Ins`
+* if `VEP_VARIANT_CLASS == "delins"` → `In_Frame_Del`
+
+Actually these subcases are useless, because oncokb-annotator consider all these variants as `Truncating mutations`.
