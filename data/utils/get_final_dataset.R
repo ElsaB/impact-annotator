@@ -351,8 +351,8 @@ process_raw_features <- function(impact) {
     impact$VEP_PolyPhen <- NULL
 
 
-    # [~ every rows] VEP_COSMIC -> readable VEP_COSMIC
-    impact$VEP_COSMIC <- sapply(impact$VEP_COSMIC, get_cosmic_count_from_vep)
+    # [~ every rows] VEP_COSMIC_CNT -> readable VEP_COSMIC_CNT
+    impact$VEP_COSMIC_CNT <- sapply(impact$VEP_COSMIC_CNT, get_cosmic_count_from_vep)
 
 
     # [~ every rows] vep_gnomad_colnames -> VEP_gnomAD_total_AF_<POP>, VEP_gnomAD_AF_MAX, VEP_gnomAD_AF_MEAN
