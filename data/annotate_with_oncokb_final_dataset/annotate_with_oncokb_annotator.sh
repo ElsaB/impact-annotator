@@ -21,7 +21,7 @@ pip install matplotlib
 
 
 printf "\n${GREEN}-> Launch oncokb-annotator...${NC}\n"
-python oncokb-annotator/MafAnnotator.py -i 'ready_to_annotate_final_IMPACT_mutations_180508.txt' -o 'oncokb_annotated_final_IMPACT_mutations_180508.txt' > /dev/null
+python oncokb-annotator/MafAnnotator.py -i 'ready_to_annotate_final_IMPACT_mutations_180508.txt' -o 'oncokb_annotated_final_IMPACT_mutations_180508.txt' #> /dev/null
 
 
 printf "\n${GREEN}-> Cleaning...${NC}\n"
