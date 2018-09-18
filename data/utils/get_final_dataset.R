@@ -19,25 +19,32 @@ vep_colnames <- c("VEP_Consequence",
                   "VEP_SYMBOL",
                   "VEP_HGVSc",
                   "VEP_HGVSp",
-                  "VEP_Amino_acids", 
-                  "VEP_VARIANT_CLASS")
+                  "VEP_Amino_acids",
+                  "VEP_VARIANT_CLASS",
+                  "VEP_EXON",
+                  "VEP_INTRON")
 
 vep_add_colnames <- c("VEP_IMPACT",
                       "VEP_CLIN_SIG",
-                      "VEP_AF", 
-                      "VEP_MAX_AF", 
-                      "VEP_MAX_AF_POPS", 
-                      "VEP_gnomAD_AF",
-                      "VEP_SIFT", 
-                      "VEP_PolyPhen", 
+                      "VEP_SIFT",
+                      "VEP_PolyPhen",
                       "VEP_COSMIC_CNT")
+
+vep_gnomad_colnames <- c("VEP_gnomAD_AF", 
+                         "VEP_gnomAD_exome_AF_AFR",
+                         "VEP_gnomAD_exome_AF_AMR",
+                         "VEP_gnomAD_exome_AF_ASJ",
+                         "VEP_gnomAD_exome_AF_EAS",
+                         "VEP_gnomAD_exome_AF_FIN",
+                         "VEP_gnomAD_exome_AF_NFE",
+                         "VEP_gnomAD_exome_AF_OTH")
 
 
 get_impact_annotated <- function() {
     impact_annotated <- read.table(paste0(data_path, "/annotate_with_click_annotvcf/click_annotvcf_IMPACT_mutations_180508.txt"),
                                    sep = "\t", stringsAsFactors = FALSE, header = TRUE, comment = "#")
 
-    impact_annotated <- impact_annotated[, c(id_colnames, vag_colnames, vep_colnames, vep_add_colnames)]
+    impact_annotated <- impact_annotated[, c(id_colnames, vag_colnames, vep_colnames, vep_add_colnames, vep_gnomad_colnames)]
 
     impact_vcf <- read.table(paste0(data_path, "/annotate_with_click_annotvcf/all_IMPACT_mutations_180508.vcf"),
                              sep = "\t", stringsAsFactors = FALSE, header = FALSE, comment = "#")
@@ -81,12 +88,13 @@ add_click_annotvcf_annotations <- function(impact, impact_annotated) {
 
     impact_annotated <- unique(impact_annotated)
 
-    colnames_to_keep <- c(vag_colnames, vep_colnames, vep_add_colnames)
+    colnames_to_keep <- c(vag_colnames, vep_colnames, vep_add_colnames, vep_gnomad_colnames)
 
     impact[, colnames_to_keep] <- left_join(impact, impact_annotated,
                                             by = c("mut_key" = "join_key"))[, c(vag_colnames,
                                                                                 vep_colnames,
-                                                                                vep_add_colnames)]
+                                                                                vep_add_colnames,
+                                                                                vep_gnomad_colnames)]
 
     return (impact)
 }
@@ -248,7 +256,6 @@ get_cosmic_count_from_vep <- function(cosmic_count_string) {
 }
 
 process_raw_features <- function(impact) {
-    # replace NA values by unknown or 0.0
     # [~ every rows] NA -> unknown or 0.0
     impact <- replace_na(impact, "VAG_GENE"          , "unknown")
     impact <- replace_na(impact, "VAG_cDNA_CHANGE"   , "unknown")
@@ -258,13 +265,12 @@ process_raw_features <- function(impact) {
     impact <- replace_na(impact, "VEP_HGVSp"         , "unknown")
     impact <- replace_na(impact, "VEP_Amino_acids"   , "unknown")
     impact <- replace_na(impact, "VEP_CLIN_SIG"      , "unknown")
-    impact <- replace_na(impact, "VEP_AF"            , 0.0)
-    impact <- replace_na(impact, "VEP_MAX_AF"        , 0.0)
-    impact <- replace_na(impact, "VEP_MAX_AF_POPS"   , "unknown")
-    impact <- replace_na(impact, "VEP_gnomAD_AF"     , 0.0)
     impact <- replace_na(impact, "VEP_SIFT"          , "unknown")
     impact <- replace_na(impact, "VEP_PolyPhen"      , "unknown")
     impact <- replace_na(impact, "VEP_COSMIC_CNT"    , "unknown")
+    for (c in vep_gnomad_colnames)
+        impact <- replace_na(impact, c, 0.0)
+
 
     # [~ every rows] occurence_in_normals -> frequency_in_normals
     impact$occurence_in_normals[impact$occurence_in_normals == '0'] <- "0;0"
