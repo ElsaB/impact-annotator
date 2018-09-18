@@ -208,7 +208,7 @@ filter_impact <- function(impact) {
                         impact$t_vaf %in% impact_redundant_to_delete$t_vaf),]
 
     # [-3151 rows] SNV found as DNP or TNP
-    overlapping_risk_dnp_or_tnp <- as.data.frame(impact %>% group_by(Tumor_Sample_Barcode, Hugo_Symbol) %>%
+    overlapping_risk_dnp_or_tnp <- as.data.frame(impact %>% group_by(Tumor_Sample_Barcode, VEP_SYMBOL) %>%
                                                             filter(n() > 1 &
                                                                    "SNP" %in% Variant_Type &
                                                                    ("DNP" %in% Variant_Type |
@@ -478,7 +478,7 @@ add_new_features <- function(impact) {
 
     # 2. Create keys to join the two dataframes and extract the features
     impact[, c("OncoKB.Oncogene", "OncoKB.TSG")] <- left_join(impact, cancer_genes_list,
-                                                              by = c("Hugo_Symbol" = "Hugo.Symbol"))[,c("OncoKB.Oncogene", "OncoKB.TSG")]
+                                                              by = c("VEP_SYMBOL" = "Hugo.Symbol"))[,c("OncoKB.Oncogene", "OncoKB.TSG")]
 
 
     # 3. Process the raw features
