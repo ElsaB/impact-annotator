@@ -26,4 +26,4 @@ To get the `Variant_Classification` for `frameshift_variant`, the following rule
 * if `VEP_VARIANT_CLASS == "deletion"` → `In_Frame_Ins`
 * if `VEP_VARIANT_CLASS == "delins"` → `In_Frame_Del`
 
-Actually these subcases are useless, because oncokb-annotator consider all these variants as `Truncating mutations`.
+Actually these subcases are useless, because oncokb-annotator considers all these variants as `Truncating mutations`.
