@@ -13,15 +13,6 @@ The output files are:
 
 ***
 
-### Command to `scp` quickly
-
-From your computer you can use the [`easy_scp.sh`](https://github.com/ElsaB/impact-annotator/blob/master/data/easy_scp.sh) script to `scp` quickly a file from the cluster, here are some examples:
-```shell
-$ bash easy_scp.sh guilminp data/all_IMPACT_mutations_180508.txt .
-$ bash easy_scp.sh guilminp data/cleaned_IMPACT_mutations_180508.txt .
-$ bash easy_scp.sh guilminp data/annotate_with_oncokb/oncokb_annotated_cleaned_IMPACT_mutations_180508.txt ./annotate_with_oncokb
-```
-
 ### Structure
 
 * **`/annotate_with_click_annotvcf`**: this folder is used to annotate the dataset `all_IMPACT_mutations_180508.txt` with click_annotvcf.  
