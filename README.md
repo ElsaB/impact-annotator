@@ -48,10 +48,10 @@ $ bsub -I -We 20 -R select[internet] "bash annotate_with_oncokb_annotator.sh"
 
 * **`/analysis`**: folder to design and run analysis, contains several sub-folders: `/description`, `/prediction`, `/validation`
 
-* **`/data`**: raw data and main processed data, processed data should be reprducible from raw data.  
+* **`/data`**: raw data and main processed data, processed data should be reprducible from raw data 
     :warning: This folder should not be versionned.
 
-* **`/doc`**: useful documentation, bibliography, slides for talks...
+* **`/doc`**: useful documentation, bibliography, slides for talks
 
 * **`/results`**: folder where the main results are summarized in a markdown (entries in the form YYMMDD).
 
