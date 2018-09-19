@@ -60,7 +60,7 @@ $ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_a
 
 * **`/analysis`**: folder to design and run analysis, contains several sub-folders: `/description`, `/prediction`, `/validation`
 
-* **`/data`**: raw data and main processed data, processed data should be reprducible from raw data 
+* **`/data`**: raw data and main processed data, processed data should be reprducible from raw data  
     :warning: This folder should not be versionned.
 
 * **`/doc`**: useful documentation, bibliography, slides for talks
