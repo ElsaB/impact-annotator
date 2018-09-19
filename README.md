@@ -19,6 +19,7 @@ The repository was written and tested under `R 3.5.1` and `R 3.2.3`. To work wit
 	* `gridExtra`
 	* `utf8`
 	* `hexbin`
+
     ```R
     # execute in an R console
     install.packages("tidyverse", repos = "http://cran.us.r-project.org")
