@@ -178,9 +178,6 @@ filter_impact <- function(impact) {
                      filter(has_both_reading_frame)
     impact <- impact[! (impact$Hugo_Symbol == "CDKN2Ap14ARF" & impact$Tumor_Sample_Barcode %in% dd$Tumor_Sample_Barcode),]
 
-    # [~45 rows rows] change VEP_SYMBOL from CDKN2A to CDKN2Ap14ARF for the mutations read in the CDKN2Ap14ARF reading frame only
-    impact$VEP_SYMBOL[impact$Hugo_Symbol == "CDKN2Ap14ARF" & ! impact$Tumor_Sample_Barcode %in% dd$Tumor_Sample_Barcode] <- "CDKN2Ap14ARF"
-
 
     # [-48 rows] duplicated mutation for the same sample_mut_key
     impact_redundant_to_delete <- impact %>% group_by(sample_mut_key) %>%
