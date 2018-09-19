@@ -68,9 +68,7 @@ get_impact_annotated <- function() {
     impact_annotated <- unique(impact_annotated)
 
 
-    impact_annotated <- left_join(impact_annotated,
-                                  impact_vcf[, c("join_key", "OLD_REF", "OLD_ALT", "OLD_POS")],
-                                  by = c("ID_VARIANT" = "join_key"))
+    impact_annotated <- left_join(impact_annotated, impact_vcf[, c("join_key", "OLD_REF", "OLD_ALT", "OLD_POS")], by = c("ID_VARIANT" = "join_key"))
 
     return (impact_annotated)
 }
@@ -99,11 +97,7 @@ add_click_annotvcf_annotations <- function(impact, impact_annotated) {
 
     colnames_to_keep <- c(vag_colnames, vep_colnames, vep_add_colnames, vep_gnomad_colnames)
 
-    impact[, colnames_to_keep] <- left_join(impact, impact_annotated,
-                                            by = c("mut_key" = "join_key"))[, c(vag_colnames,
-                                                                                vep_colnames,
-                                                                                vep_add_colnames,
-                                                                                vep_gnomad_colnames)]
+    impact <- left_join(impact, impact_annotated[,c("join_key", colnames_to_keep)], by = c("mut_key" = "join_key"))
 
     return (impact)
 }
@@ -178,24 +172,14 @@ filter_impact <- function(impact) {
     impact$patient_key <- substr(impact$Tumor_Sample_Barcode, 1, 9)
 
 
-    # [~5696 rows] modify wrong/synonymous Hugo_Symbol
-    old_Hugo_Symbol = c('MLL3', 'PAK7', 'RFWD2', 'MYCL1', 'MLL2', 'MLL', 'FAM46C', 'MRE11A', 'PARK2', 'FAM175A',
-                        'TCEB1', 'WHSC1', 'WHSC1L1', 'FAM58A', 'SETD8', 'MLL4')
-    new_Hugo_Symbol = c('KMT2C', 'PAK5', 'COP1', 'MYCL', 'KMT2D', 'KMT2A', 'TENT5C', 'MRE11', 'PRKN', 'ABRAXAS1',
-                        'ELOC', 'NSD2', 'NSD3', 'CCNQ', 'KMT5A', 'KMT2B')
-    has_old_symbol <- which(impact$Hugo_Symbol %in% old_Hugo_Symbol)
-    impact$Hugo_Symbol[has_old_symbol] <- new_Hugo_Symbol[match(impact$Hugo_Symbol[has_old_symbol], old_Hugo_Symbol)]
-
-    # [~1270 rows] Hugo_Symbol = CDKN2Ap16INK4A -> CDKN2A
-    impact$Hugo_Symbol[impact$Hugo_Symbol == "CDKN2Ap16INK4A"] <- "CDKN2A"
-
     # [-713 rows] Hugo_Symbol = CDKN2Ap14ARF and CDKN2A in the tumor sample
     dd <- impact %>% group_by(Tumor_Sample_Barcode) %>%
-                     summarise(has_both_reading_frame = sum(Hugo_Symbol == "CDKN2Ap14ARF") > 0 &
-                                                        sum(Hugo_Symbol == "CDKN2A") > 0) %>%
+                     summarise(has_both_reading_frame = "CDKN2Ap14ARF" %in% Hugo_Symbol & "CDKN2Ap16INK4A" %in% Hugo_Symbol) %>%
                      filter(has_both_reading_frame)
-    impact <- impact[! (impact$Hugo_Symbol == "CDKN2Ap14ARF" &
-                        impact$Tumor_Sample_Barcode %in% dd$Tumor_Sample_Barcode),]
+    impact <- impact[! (impact$Hugo_Symbol == "CDKN2Ap14ARF" & impact$Tumor_Sample_Barcode %in% dd$Tumor_Sample_Barcode),]
+
+    # [~45 rows rows] change VEP_SYMBOL from CDKN2A to CDKN2Ap14ARF for the mutations read in the CDKN2Ap14ARF reading frame only
+    impact$VEP_SYMBOL[impact$Hugo_Symbol == "CDKN2Ap14ARF" & ! impact$Tumor_Sample_Barcode %in% dd$Tumor_Sample_Barcode] <- "CDKN2Ap14ARF"
 
 
     # [-48 rows] duplicated mutation for the same sample_mut_key
