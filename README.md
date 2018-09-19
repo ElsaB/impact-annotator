@@ -19,42 +19,42 @@ The repository was written and tested under `R 3.5.1` and `R 3.2.3`. To work wit
 	* `gridExtra`
 	* `utf8`
 	* `hexbin`
-```R
-# execute in an R console
-install.packages("tidyverse", repos = "http://cran.us.r-project.org")
-install.packages("gridExtra", repos = "http://cran.us.r-project.org")
-install.packages("utf8",      repos = "http://cran.us.r-project.org")
-install.packages("readxl",    repos = "http://cran.us.r-project.org")
-install.packages("hexbin",    repos = "http://cran.us.r-project.org")
-```
+    ```R
+    # execute in an R console
+    install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+    install.packages("gridExtra", repos = "http://cran.us.r-project.org")
+    install.packages("utf8",      repos = "http://cran.us.r-project.org")
+    install.packages("readxl",    repos = "http://cran.us.r-project.org")
+    install.packages("hexbin",    repos = "http://cran.us.r-project.org")
+    ```
 
 * Make sure to download the data in the `/data` and `/data/other_databases` folders, the instructions are detailed there.
-```shell
-$ cd data
-$ bash get_data.sh your_cluster_username
-```
-```shell
-$ cd data/other_databases
-$ bash get_data.sh
-```
+    ```shell
+    $ cd data
+    $ bash get_data.sh your_cluster_username
+    ```
+    ```shell
+    $ cd data/other_databases
+    $ bash get_data.sh
+    ```
 
 * If you want to annotate the cleaned data with OncoKB, please run oncokb-annotator in the `data/annotate_with_oncokb` folder, the instructions are detailed there.
-```shell
-$ cd data/annotate_with_oncokb
-$ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_annotator.sh"
-```
+    ```shell
+    $ cd data/annotate_with_oncokb
+    $ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_annotator.sh"
+    ```
 
 * If you want to annotate the data with click_annotvcf, please run it in the `data/annotate_with_click_annotvcf` folder, the instructions are detailed there.
-```shell
-$ cd data/annotate_with_click_annotvcf
-$ bsub -o job_output.txt "bash annotate_with_click_annotvcf.sh"
-```
+    ```shell
+    $ cd data/annotate_with_click_annotvcf
+    $ bsub -o job_output.txt "bash annotate_with_click_annotvcf.sh"
+    ```
 
 * If you want to annotate the final data with OncoKB, please run oncokb-annotator in the `data/annotate_with_oncokb_final_dataset` folder, the instructions are detailed there.
-```shell
-$ cd data/annotate_with_oncokb_final_dataset
-$ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_annotator.sh"
-```
+    ```shell
+    $ cd data/annotate_with_oncokb_final_dataset
+    $ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_annotator.sh"
+    ```
 
 ### Structure of the repository
 
