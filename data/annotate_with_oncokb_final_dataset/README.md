@@ -22,8 +22,8 @@ The modifications made to the original version are listed under:
 
 To get the `Variant_Classification` for `frameshift_variant`, the following rules where applied:
 
-* if `VEP_VARIANT_CLASS == "insertion"` → `In_Frame_Ins`
-* if `VEP_VARIANT_CLASS == "deletion"` → `In_Frame_Ins`
-* if `VEP_VARIANT_CLASS == "delins"` → `In_Frame_Del`
+* if `VEP_VARIANT_CLASS == "insertion"` → `Frame_Shift_Ins`
+* if `VEP_VARIANT_CLASS == "deletion"` → `Frame_Shift_Del`
+* if `VEP_VARIANT_CLASS == "delins"` → `Frame_Shift_Del`
 
 Actually these subcases are useless, because oncokb-annotator considers all these variants as `Truncating mutations`.
