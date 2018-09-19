@@ -265,7 +265,7 @@ get_simplified_clin_sig <- function(clin_sig_string) {
     }
 }
 
-get_gnomAD_total_AC.AN <- function(data, pop_name) {
+get_gnomAD_total_AC.AN_pop <- function(data, pop_name) {
     genome_AC = as.integer(strsplit(data[paste0("VEP_gnomAD_genome_AC.AN_", pop_name)], ' \\| ')[[1]][1])
     genome_AN = as.integer(strsplit(data[paste0("VEP_gnomAD_genome_AC.AN_", pop_name)], ' \\| ')[[1]][2])
 
@@ -275,7 +275,7 @@ get_gnomAD_total_AC.AN <- function(data, pop_name) {
     return (paste(genome_AC + exome_AC, genome_AN + exome_AN, sep = ' | '))
 }
 
-get_gnomAD_total_AF <- function(data, pop_name) {
+get_gnomAD_total_AF_pop <- function(data, pop_name) {
         
     AC = as.integer(strsplit(data[paste0("VEP_gnomAD_total_AC.AN_", pop_name)], ' \\| ')[[1]][1])
     AN = as.integer(strsplit(data[paste0("VEP_gnomAD_total_AC.AN_", pop_name)], ' \\| ')[[1]][2])
@@ -286,7 +286,7 @@ get_gnomAD_total_AF <- function(data, pop_name) {
         return (AC / AN)
 }
 
-get_gnomAD_AF_MEAN <- function(data) {
+get_gnomAD_total_AF <- function(data) {
     
     AC <- c()
     AN <- c()
@@ -334,6 +334,7 @@ process_raw_features <- function(impact) {
 
     # [~ every rows] VEP_HGVSc -> readable VEP_HGVSc
     impact$VEP_HGVSc <- sapply(impact$VEP_HGVSc, function(x) strsplit(x, ':')[[1]][2])
+    impact <- replace_na(impact, "VEP_HGVSc", "unknown") # 5 NA values that we need to handle
 
 
     # [~ every rows] VEP_HGVSp -> readable VEP_HGVSp
@@ -362,18 +363,18 @@ process_raw_features <- function(impact) {
 
     # [+7 features] VEP_gnomAD_total_AC.AN_<POP> (temporary feature)
     for (pop in c('AFR', 'AMR', 'ASJ', 'EAS', 'FIN', 'NFE', 'OTH'))
-        impact[, paste0("VEP_gnomAD_total_AC.AN_", pop)] <- apply(impact, 1, function(x) get_gnomAD_total_AC.AN(x, pop))
+        impact[, paste0("VEP_gnomAD_total_AC.AN_", pop)] <- apply(impact, 1, function(x) get_gnomAD_total_AC.AN_pop(x, pop))
 
     # [+7 features] VEP_gnomAD_total_AF_<POP>
     for (pop in c('AFR', 'AMR', 'ASJ', 'EAS', 'FIN', 'NFE', 'OTH'))
-        impact[, paste0("VEP_gnomAD_total_AF_", pop)] <- apply(impact, 1, function(x) get_gnomAD_total_AF(x, pop))
+        impact[, paste0("VEP_gnomAD_total_AF_", pop)] <- apply(impact, 1, function(x) get_gnomAD_total_AF_pop(x, pop))
 
     # [+1 feature] VEP_gnomAD_total_AF_max
     total_AF_columns <- colnames(impact)[grepl("VEP_gnomAD_total_AF_", colnames(impact))]
     impact$VEP_gnomAD_total_AF_max <- apply(impact, 1, function(x) max(as.numeric(x[total_AF_columns])))
 
     # [+1 feature] VEP_gnomAD_total_AF
-    impact$VEP_gnomAD_total_AF <- apply(impact, 1, get_gnomAD_AF_MEAN)
+    impact$VEP_gnomAD_total_AF <- apply(impact, 1, get_gnomAD_total_AF)
 
     # [-21 features] remove VEP_gnomAD_genome_AC.AN_<POP>, VEP_gnomAD_exome_AC.AN_<POP> and VEP_gnomAD_total_AC.AN_<POP>
     impact[, colnames(impact)[grepl("VEP_gnomAD_genome", colnames(impact))]] <- NULL
