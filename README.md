@@ -38,10 +38,22 @@ $ cd data/other_databases
 $ bash get_data.sh
 ```
 
-* If you want to annotate the data with OncoKB, please run oncokb-annotator in the `data/annotate_with_oncokb` folder, the instructions are detailed there.
+* If you want to annotate the cleaned data with OncoKB, please run oncokb-annotator in the `data/annotate_with_oncokb` folder, the instructions are detailed there.
 ```shell
 $ cd data/annotate_with_oncokb
-$ bsub -I -We 20 -R select[internet] "bash annotate_with_oncokb_annotator.sh"
+$ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_annotator.sh"
+```
+
+* If you want to annotate the data with click_annotvcf, please run it in the `data/annotate_with_click_annotvcf` folder, the instructions are detailed there.
+```shell
+$ cd data/annotate_with_click_annotvcf
+$ bsub -o job_output.txt "bash annotate_with_click_annotvcf.sh"
+```
+
+* If you want to annotate the final data with OncoKB, please run oncokb-annotator in the `data/annotate_with_oncokb_final_dataset` folder, the instructions are detailed there.
+```shell
+$ cd data/annotate_with_oncokb_final_dataset
+$ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_annotator.sh"
 ```
 
 ### Structure of the repository
