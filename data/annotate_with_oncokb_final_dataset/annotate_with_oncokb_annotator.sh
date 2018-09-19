@@ -10,7 +10,7 @@ git clone https://github.com/oncokb/oncokb-annotator.git
 
 printf "\n${GREEN}-> Prepare the final IMPACT mutation data 'final_IMPACT_mutations_180508.txt' for oncokb-annotator...${NC}\n"
 Rscript prepare_for_annotation.R
-
+head ready_to_annotate_final_IMPACT_mutations_180508.txt
 
 # create a 2.7 python virtual env with the appropriate dependencies
 source `which virtualenvwrapper.sh` # find the path to use virtualenvwrapper functions
