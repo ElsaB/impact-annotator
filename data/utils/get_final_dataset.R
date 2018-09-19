@@ -360,25 +360,26 @@ process_raw_features <- function(impact) {
     impact$VEP_CLIN_SIG <- sapply(impact$VEP_CLIN_SIG, get_simplified_clin_sig)
 
 
-    # [~ every rows] vep_gnomad_colnames -> VEP_gnomAD_total_AF_<POP>, VEP_gnomAD_AF_MAX, VEP_gnomAD_AF_MEAN
-    ## VEP_gnomAD_total_AC.AN_<POP> -> temp
+    # [+7 features] VEP_gnomAD_total_AC.AN_<POP> (temporary feature)
     for (pop in c('AFR', 'AMR', 'ASJ', 'EAS', 'FIN', 'NFE', 'OTH'))
         impact[, paste0("VEP_gnomAD_total_AC.AN_", pop)] <- apply(impact, 1, function(x) get_gnomAD_total_AC.AN(x, pop))
 
-    ## VEP_gnomAD_total_AF_<POP>
+    # [+7 features] VEP_gnomAD_total_AF_<POP>
     for (pop in c('AFR', 'AMR', 'ASJ', 'EAS', 'FIN', 'NFE', 'OTH'))
         impact[, paste0("VEP_gnomAD_total_AF_", pop)] <- apply(impact, 1, function(x) get_gnomAD_total_AF(x, pop))
 
-    ## VEP_gnomAD_AF_MAX
+    # [+1 feature] VEP_gnomAD_total_AF_max
     total_AF_columns <- colnames(impact)[grepl("VEP_gnomAD_total_AF_", colnames(impact))]
-    impact$VEP_gnomAD_AF_MAX <- apply(impact, 1, function(x) max(as.numeric(x[total_AF_columns])))
+    impact$VEP_gnomAD_total_AF_max <- apply(impact, 1, function(x) max(as.numeric(x[total_AF_columns])))
 
-    ## VEP_gnomAD_AF_MEAN
-    impact$VEP_gnomAD_AF_MEAN <- apply(impact, 1, get_gnomAD_AF_MEAN)
+    # [+1 feature] VEP_gnomAD_total_AF
+    impact$VEP_gnomAD_total_AF <- apply(impact, 1, get_gnomAD_AF_MEAN)
 
+    # [-21 features] remove VEP_gnomAD_genome_AC.AN_<POP>, VEP_gnomAD_exome_AC.AN_<POP> and VEP_gnomAD_total_AC.AN_<POP>
     impact[, colnames(impact)[grepl("VEP_gnomAD_genome", colnames(impact))]] <- NULL
     impact[, colnames(impact)[grepl("VEP_gnomAD_exome", colnames(impact))]] <- NULL
     impact[, colnames(impact)[grepl("VEP_gnomAD_total_AC.AN", colnames(impact))]] <- NULL
+
     vep_gnomad_colnames <- c("VEP_gnomAD_AF",
                              "VEP_gnomAD_total_AC.AN_AFR",
                              "VEP_gnomAD_total_AC.AN_AMR",
@@ -387,8 +388,8 @@ process_raw_features <- function(impact) {
                              "VEP_gnomAD_total_AC.AN_FIN",
                              "VEP_gnomAD_total_AC.AN_NFE",
                              "VEP_gnomAD_total_AC.AN_OTH",
-                             "VEP_gnomAD_AF_MAX",
-                             "VEP_gnomAD_AF_MEAN")
+                             "VEP_gnomAD_total_AF_max",
+                             "VEP_gnomAD_total_AF")
 
     return (impact)
 }
@@ -414,8 +415,7 @@ add_new_features <- function(impact) {
                                     impact_kaviar$Alt,
                                     sep = '_')
     impact_kaviar <- unique(impact_kaviar[, c("join_key", "Kaviar_AF")])
-    impact[, "Kaviar_AF"] <- left_join(impact, impact_kaviar,
-                                       by = c("mut_key" = "join_key"))[, "Kaviar_AF"]
+    impact <- left_join(impact, impact_kaviar[, c("join_key", "Kaviar_AF")], by = c("mut_key" = "join_key"))
 
 
     # 3. Process the raw feature
@@ -432,17 +432,17 @@ add_new_features <- function(impact) {
 
     # 2. Create keys to join the two dataframes and extract the features
     impact_oncokb <- unique(impact_oncokb[, c("mut_key", "is.a.hotspot", "is.a.3d.hotspot", "oncogenic")])
-    impact[, c("is_a_hotspot", "is_a_3d_hotspot", "oncogenic")] <- left_join(impact, impact_oncokb,
-                                                                             by = c("mut_key" = "mut_key"))[, c("is.a.hotspot",
-                                                                                                                "is.a.3d.hotspot",
-                                                                                                                "oncogenic")]
+    impact <- left_join(impact, impact_oncokb[, c("mut_key", "is.a.hotspot", "is.a.3d.hotspot", "oncogenic")], by = c("mut_key" = "mut_key"))
+
 
     # 3. Process the raw features
     ## is_a_hostpot
+    colnames(impact)[colnames(impact) == "is.a.hotspot"] <- "is_a_hotspot"
     impact$is_a_hotspot[impact$is_a_hotspot == "Y"  ] <- "yes"
     impact$is_a_hotspot[impact$is_a_hotspot != "yes"] <- "unknown"
 
     ## is_a_3d_hostpot
+    colnames(impact)[colnames(impact) == "is.a.3d.hotspot"] <- "is_a_3d_hotspot"
     impact$is_a_3d_hotspot[impact$is_a_3d_hotspot == "Y"  ] <- "yes"
     impact$is_a_3d_hotspot[impact$is_a_3d_hotspot != "yes"] <- "unknown"
 
@@ -458,8 +458,7 @@ add_new_features <- function(impact) {
 
 
     # 2. Create keys to join the two dataframes and extract the features
-    impact[, c("OncoKB.Oncogene", "OncoKB.TSG")] <- left_join(impact, cancer_genes_list,
-                                                              by = c("VEP_SYMBOL" = "Hugo.Symbol"))[,c("OncoKB.Oncogene", "OncoKB.TSG")]
+    impact <- left_join(impact, cancer_genes_list[, c("Hugo.Symbol", "OncoKB.Oncogene", "OncoKB.TSG")], by = c("VEP_SYMBOL" = "Hugo.Symbol"))
 
 
     # 3. Process the raw features
@@ -513,6 +512,8 @@ get_final_dataset <- function() {
     impact <- process_raw_features(impact)
     new <- Sys.time() - old
     print(new)
+
+    write.table(impact, paste0(data_path, "/final_IMPACT_mutations_180508.txt"), sep = "\t", row.names = FALSE)
 
     old <- Sys.time()
     cat("\nAdd new features...\n")
