@@ -20,9 +20,9 @@ selected_mutation_types = c("missense_variant",
 get_variant_classification <- function(data) {
     if (data["VEP_Consequence"] == "frameshift_variant") {
         if (data["VEP_VARIANT_CLASS"] == "insertion")
-            return ("In_Frame_Ins")
+            return ("Frame_Shift_Ins")
         else
-            return ("In_Frame_Del")
+            return ("Frame_Shift_Del")
     }
 
 
