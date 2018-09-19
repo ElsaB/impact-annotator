@@ -24,7 +24,7 @@ get_variant_classification <- function(data) {
         else
             return ("Frame_Shift_Del")
     }
-
+    
 
     Variant_Classification = c("Missense_Mutation", 
                                "-",
