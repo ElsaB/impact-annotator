@@ -15,8 +15,7 @@ else
 fi
 
 
-printf "\n${GREEN}-> Get the cleaned IMPACT mutation data...${NC}\n"
-printf "It might take some time (around 2 minutes)...\n"
+printf "\n${GREEN}-> Get the cleaned IMPACT mutation data (~ 2 minutes)...${NC}\n"
 Rscript utils/get_cleaned_impact.R
 
 
@@ -29,3 +28,7 @@ then
 else
 	scp ${username}@selene.mskcc.org:/ifs/work/leukgen/home/eb2/impact_mutations/key.txt .
 fi
+
+
+printf "\n${GREEN}-> Get the final IMPACT mutation data (~ 10 minutes)...${NC}\n"
+Rscript utils/get_final_dataset.R
