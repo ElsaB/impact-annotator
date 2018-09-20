@@ -261,6 +261,8 @@ get_simplified_clin_sig <- function(clin_sig_string) {
         tags <- gsub('risk_factor'      , 'pathogenic', tags)
         tags <- gsub('likely_benign'    , 'benign'    , tags)
         
+        tags <- unique(tags)
+
         tags <- tags[! tags %in% c("not_provided", "uncertain_significance", "other")]
         
         if (length(tags) == 0 || length(tags) > 1)
