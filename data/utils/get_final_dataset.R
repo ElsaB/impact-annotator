@@ -1,3 +1,7 @@
+source("../src/utils/custom_tools.R")
+setup_environment("../src/utils")
+
+
 # #######################################
 # ## get_impact_annotated ###############
 # #######################################
@@ -28,6 +32,7 @@ vep_add_colnames <- c("VEP_IMPACT",
                       "VEP_CLIN_SIG",
                       "VEP_SIFT",
                       "VEP_PolyPhen",
+                      "VEP_Existing_variation",
                       "VEP_COSMIC_CNT")
 
 vep_gnomad_colnames <- c("VEP_gnomAD_AF",
@@ -306,17 +311,18 @@ get_gnomAD_total_AF <- function(data) {
 
 process_raw_features <- function(impact) {
     # [~ every rows] NA -> "unknown"
-    impact <- replace_na(impact, "VAG_GENE"          , "unknown")
-    impact <- replace_na(impact, "VAG_cDNA_CHANGE"   , "unknown")
-    impact <- replace_na(impact, "VAG_PROTEIN_CHANGE", "unknown")
-    impact <- replace_na(impact, "VAG_EFFECT"        , "unknown")
-    impact <- replace_na(impact, "VEP_HGVSc"         , "unknown")
-    impact <- replace_na(impact, "VEP_HGVSp"         , "unknown")
-    impact <- replace_na(impact, "VEP_Amino_acids"   , "unknown")
-    impact <- replace_na(impact, "VEP_CLIN_SIG"      , "unknown")
-    impact <- replace_na(impact, "VEP_SIFT"          , "unknown")
-    impact <- replace_na(impact, "VEP_PolyPhen"      , "unknown")
-    impact <- replace_na(impact, "VEP_COSMIC_CNT"    , "unknown")
+    impact <- replace_na(impact, "VAG_GENE"              , "unknown")
+    impact <- replace_na(impact, "VAG_cDNA_CHANGE"       , "unknown")
+    impact <- replace_na(impact, "VAG_PROTEIN_CHANGE"    , "unknown")
+    impact <- replace_na(impact, "VAG_EFFECT"            , "unknown")
+    impact <- replace_na(impact, "VEP_HGVSc"             , "unknown")
+    impact <- replace_na(impact, "VEP_HGVSp"             , "unknown")
+    impact <- replace_na(impact, "VEP_Amino_acids"       , "unknown")
+    impact <- replace_na(impact, "VEP_CLIN_SIG"          , "unknown")
+    impact <- replace_na(impact, "VEP_SIFT"              , "unknown")
+    impact <- replace_na(impact, "VEP_PolyPhen"          , "unknown")
+    impact <- replace_na(impact, "VEP_Existing_variation", "unknown")
+    impact <- replace_na(impact, "VEP_COSMIC_CNT"        , "unknown")
     
     # [~ every rows] NA -> 0.0
     impact <- replace_na(impact, "VEP_gnomAD_AF", 0.0)
@@ -351,6 +357,11 @@ process_raw_features <- function(impact) {
     impact$VEP_PolyPhen_class <- sapply(impact$VEP_PolyPhen, function(x) strsplit(x, '\\(')[[1]][1])
     impact$VEP_PolyPhen_score <- sapply(impact$VEP_PolyPhen, function(x) as.numeric(gsub(')', '', strsplit(x, '\\(')[[1]][2])))
     impact$VEP_PolyPhen <- NULL
+
+
+    # [~ every rows] VEP_Existing_variation -> VEP_in_dbSNP
+    impact$VEP_in_dbSNP <- grepl("rs", impact$VEP_Existing_variation)
+    impact$VEP_Existing_variation <- NULL
 
 
     # [~ every rows] VEP_COSMIC_CNT -> readable VEP_COSMIC_CNT
@@ -483,48 +494,34 @@ add_new_features <- function(impact) {
 # #######################################
 
 get_final_dataset <- function() {
-    old <- Sys.time()
-    cat("Get raw impact...\n")
+    cat("Get raw impact...")
     impact <- read.table(paste0(data_path, "/all_IMPACT_mutations_180508.txt"),
                          sep = "\t", stringsAsFactors = FALSE, header = TRUE)
-    new <- Sys.time() - old
-    print(new)
+    cat(" done\n")
 
-    old <- Sys.time()
-    cat("\nGet impact_annotated (impact annotated with click_annotvcf)...\n")
+    cat("Get impact_annotated (impact annotated with click_annotvcf)...")
     impact_annotated <- get_impact_annotated()
-    new <- Sys.time() - old
-    print(new)
+    cat(" done\n")
 
-    old <- Sys.time()
-    cat("\nJoin impact and impact_annotated...\n")
+    cat("Join impact and impact_annotated...")
     impact <- add_click_annotvcf_annotations(impact, impact_annotated)
-    new <- Sys.time() - old
-    print(new)
+    cat(" done\n")
 
-    old <- Sys.time()
-    cat("\nFilter impact...\n")
+    cat("Filter impact...")
     impact <- filter_impact(impact)
-    new <- Sys.time() - old
-    print(new)
+    cat(" done\n")
 
-    old <- Sys.time()
-    cat("\nProcess raw features...\n")
+    cat("Process raw features...")
     impact <- process_raw_features(impact)
-    new <- Sys.time() - old
-    print(new)
+    cat(" done\n")
 
-    write.table(impact, paste0(data_path, "/final_IMPACT_mutations_180508.txt"), sep = "\t", row.names = FALSE)
-
-    old <- Sys.time()
-    cat("\nAdd new features...\n")
+    cat("Add new features...")
     impact <- add_new_features(impact)
-    new <- Sys.time() - old
-    print(new)
-
-    cat("\n", nrow(impact))
+    cat(" done\n")
 
     write.table(impact, paste0(data_path, "/final_IMPACT_mutations_180508.txt"), sep = "\t", row.names = FALSE)
 }
 
+data_path <- "./"
+get_final_dataset()
 
