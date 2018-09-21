@@ -11,6 +11,8 @@ The output files are:
 
 - `cleaned_IMPACT_mutations_180508.txt`: cleaned dataset (dataset obtained at the end of [`first_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/180731_pierre/first_analysis.ipynb)).
 
+- `key.txt`: dataset given by Dominik, gives information (cancer type, BAM id, matched normal, ...) on some of the `Tumor_Sample_Barcode`.
+
 ***
 
 ### Structure

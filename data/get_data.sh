@@ -28,7 +28,3 @@ then
 else
 	scp ${username}@selene.mskcc.org:/ifs/work/leukgen/home/eb2/impact_mutations/key.txt .
 fi
-
-
-printf "\n${GREEN}-> Get the final IMPACT mutation data (~ 10 minutes)...${NC}\n"
-Rscript utils/get_final_dataset.R
