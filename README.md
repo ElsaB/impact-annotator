@@ -12,7 +12,7 @@ You can clone this repository using:
 $ git clone https://github.com/ElsaB/impact-annotator.git
 ```
 
-The repository was written and tested under `R 3.5.1` and `R 3.2.3`. To work with this repository please:
+The repository was written and tested under `R 3.5.1` and `R 3.2.3`, working with Jupyter Notebook. To work with this repository please:
 
 * Make sure to have the following R packages installed:
 	* `tidyverse`
@@ -28,34 +28,7 @@ The repository was written and tested under `R 3.5.1` and `R 3.2.3`. To work wit
     install.packages("readxl",    repos = "http://cran.us.r-project.org")
     install.packages("hexbin",    repos = "http://cran.us.r-project.org")
     ```
-
-* Make sure to download the data in the `/data` and `/data/other_databases` folders, the instructions are detailed there.
-    ```shell
-    $ cd data
-    $ bash get_data.sh your_cluster_username
-    ```
-    ```shell
-    $ cd data/other_databases
-    $ bash get_data.sh
-    ```
-
-* If you want to annotate the cleaned data with OncoKB, please run oncokb-annotator in the `data/annotate_with_oncokb` folder, the instructions are detailed there.
-    ```shell
-    $ cd data/annotate_with_oncokb
-    $ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_annotator.sh"
-    ```
-
-* If you want to annotate the data with click_annotvcf, please run it in the `data/annotate_with_click_annotvcf` folder, the instructions are detailed there.
-    ```shell
-    $ cd data/annotate_with_click_annotvcf
-    $ bsub -o job_output.txt "bash annotate_with_click_annotvcf.sh"
-    ```
-
-* If you want to annotate the final data with OncoKB, please run oncokb-annotator in the `data/annotate_with_oncokb_final_dataset` folder, the instructions are detailed there.
-    ```shell
-    $ cd data/annotate_with_oncokb_final_dataset
-    $ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_annotator.sh"
-    ```
+* Go to the [`\data`](https://github.com/ElsaB/impact-annotator/tree/master/data) folder and follow the `README.md` to download all the necessary data.
 
 ### Structure of the repository
 
@@ -66,7 +39,7 @@ The repository was written and tested under `R 3.5.1` and `R 3.2.3`. To work wit
 
 * **`/doc`**: useful documentation, bibliography, slides for talks
 
-* **`/results`**: folder where the main results are summarized in a markdown (entries in the form YYMMDD).
+* **`/results`**: folder where the main results are summarized in a markdown (entries in the form YYMMDD)
 
 * **`/src`**: main scripts that are used across analysis (predictors, cross-validation scripts, evaluation scripts, tools...)
 
