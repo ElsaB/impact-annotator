@@ -28,10 +28,10 @@ The following explains how to download each dataset used in the study. More info
 
     Command:
     ```shell
-    $ bash get_raw_data.sh your_cluster_username
+    $ bash get_raw_dataset.sh your_cluster_username
     ```
 
-* **Other databases ([`/other_databases`] folder)**  
+* **Other databases ([`/other_databases`](https://github.com/ElsaB/impact-annotator/blob/master/data/other_databases) folder)**  
     Input:  
     Outputs:  
     * `/other_databases/CIViC_01-Jul-2018-VariantSummaries.tsv`
@@ -100,7 +100,7 @@ The following explains how to download each dataset used in the study. More info
     $ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_annotator.sh"
     ```
 
-* **Curated and annotated final dataset ([`/annotate_with_oncokb_final_dataset`] folder)**  
+* **Curated and annotated final dataset**  
     Input: `/annotate_with_oncokb_final_dataset/oncokb_annotated_final_IMPACT_mutations_180508.txt`  
     Output: `annotated_final_IMPACT_mutations_180508.txt`
 

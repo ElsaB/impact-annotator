@@ -28,14 +28,3 @@ This notebook studies the OncoKB annotations added with oncokb-annotator (see [`
 
 * **[`comparison_between_variant_annotation_databases.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/first_study/comparison_between_variant_annotation_databases.ipynb)**  
 This notebook is directly linked to [`doc/biblio/variant_annotation_databases.md`](https://github.com/ElsaB/impact-annotator/blob/master/doc/biblio/variant_annotation_databases.md) which compares and describes different variant annotation databases. The aim of this notebook is to compare the annotations of some of the databases studied in the markdown with OncoKB annotations.  
-
-* **[`click_annotvcf_annotations_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/first_study/click_annotvcf_annotations_analysis.ipynb)**  
-This notebook studies the annotations added with click_annotvcf, see [`/data/annotate_with_click_annotvcf`](https://github.com/ElsaB/impact-annotator/tree/master/data/annotate_with_click_annotvcf).  
-
-
-### Details on the notebooks
-All notebooks will begin with the following lines, which load a set of custom function designed by us, and setup the R environment by loading the appropriate libraries:
-```R
-source("../../../src/utils/custom_tools.R")
-setup_environment("../../../src/utils")
-```
