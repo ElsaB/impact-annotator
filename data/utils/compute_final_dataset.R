@@ -517,13 +517,25 @@ get_final_dataset <- function() {
     impact <- process_raw_features(impact)
     cat(" done\n")
 
+    write.table(impact, paste0(data_path, "/final_IMPACT_mutations_180508.txt"), sep = "\t", row.names = FALSE)
+}
+
+
+
+
+# #######################################
+# ## annotate_final_dataset #############
+# #######################################
+
+annotate_final_dataset <- function() {
+    cat("Get final impact...")
+    impact <- read.table(paste0(data_path, "/final_IMPACT_mutations_180508.txt"),
+                         sep = "\t", stringsAsFactors = FALSE, header = TRUE)
+    cat(" done\n")
+
     cat("Add new features...")
     impact <- add_new_features(impact)
     cat(" done\n")
 
-    write.table(impact, paste0(data_path, "/final_IMPACT_mutations_180508.txt"), sep = "\t", row.names = FALSE)
+    write.table(impact, paste0(data_path, "/annotated_final_IMPACT_mutations_180508.txt"), sep = "\t", row.names = FALSE)
 }
-
-data_path <- "./"
-get_final_dataset()
-

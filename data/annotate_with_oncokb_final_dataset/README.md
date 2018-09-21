@@ -4,7 +4,7 @@
 
 The modifications made to the original version are listed under:
 
-* The output file is not `oncokb_annotated_cleaned_IMPACT_mutations_180508` but `oncokb_annotated_final_IMPACT_mutations_180508`.
+* The output file is not `oncokb_annotated_cleaned_IMPACT_mutations_180508.txt` but `oncokb_annotated_final_IMPACT_mutations_180508.txt`.
 * The script [`prepare_for_annotation.R`](https://github.com/ElsaB/impact-annotator/blob/master/data/annotate_with_oncokb_final_dataset/prepare_for_annotation.R) uses the following conversion table:
 
 | Consequence               | Variant_Classification |
