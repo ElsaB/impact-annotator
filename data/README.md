@@ -47,7 +47,7 @@ The following explains how to download each dataset used in the study. More info
     ```
 
 ### Cleaned dataset used in the analysis part
-* **Cleaned dataset from the end of [`first_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/first_study/first_analysis.ipynb)**OK  
+* **Cleaned dataset from the end of [`first_analysis.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/first_study/first_analysis.ipynb)**  
     Input: `all_IMPACT_mutations_180508.txt`  
     Output: `cleaned_IMPACT_mutations_180508.txt`
 
@@ -56,7 +56,7 @@ The following explains how to download each dataset used in the study. More info
     $ bash get_cleaned_dataset.sh
     ```
     
-* **Cleaned dataset annotated with OncoKB ([`/annotate_with_oncokb`](https://github.com/ElsaB/impact-annotator/blob/master/data/annotate_with_oncokb) folder)**OK  
+* **Cleaned dataset annotated with OncoKB ([`/annotate_with_oncokb`](https://github.com/ElsaB/impact-annotator/blob/master/data/annotate_with_oncokb) folder)**  
     Input: `cleaned_IMPACT_mutations_180508.txt`  
     Output: `/annotate_with_oncokb/oncokb_annotated_cleaned_IMPACT_mutations_180508.txt`  
 
@@ -67,7 +67,7 @@ The following explains how to download each dataset used in the study. More info
     ```
 
 ### Final dataset used in the rest of the study
-* **Raw dataset annotated with click_annotvcf ([`/annotate_with_click_annotvcf`](https://github.com/ElsaB/impact-annotator/blob/master/data/annotate_with_click_annotvcf) folder)**OK  
+* **Raw dataset annotated with click_annotvcf ([`/annotate_with_click_annotvcf`](https://github.com/ElsaB/impact-annotator/blob/master/data/annotate_with_click_annotvcf) folder)**  
     Input: `all_IMPACT_mutations_180508.txt`  
     Outputs:  
     * `/annotate_with_click_annotvcf/all_IMPACT_mutations_180508.vcf`  
@@ -79,7 +79,7 @@ The following explains how to download each dataset used in the study. More info
     $ bsub -o job_output.txt "bash annotate_with_click_annotvcf.sh"
     ```
 
-* **Final dataset from the end of [`get_final_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/compute_final_dataset/get_final_dataset.ipynb)**OK  
+* **Final dataset from the end of [`get_final_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/compute_final_dataset/get_final_dataset.ipynb)**  
     Inputs:  
     * `/annotate_with_click_annotvcf/click_annotvcf_IMPACT_mutations_180508.txt`
     * `/annotate_with_click_annotvcf/all_IMPACT_mutations_180508.vcf`   
@@ -91,7 +91,7 @@ The following explains how to download each dataset used in the study. More info
     $ bash get_final_dataset.sh
     ```
 
-* **Final dataset annotated with OncoKB ([`/annotate_with_oncokb_final_dataset`](https://github.com/ElsaB/impact-annotator/blob/master/data/annotate_with_oncokb_final_dataset) folder)**OK  
+* **Final dataset annotated with OncoKB ([`/annotate_with_oncokb_final_dataset`](https://github.com/ElsaB/impact-annotator/blob/master/data/annotate_with_oncokb_final_dataset) folder)**  
     Input: `final_IMPACT_mutations_180508.txt`  
     Output: `/annotate_with_oncokb_final_dataset/oncokb_annotated_final_IMPACT_mutations_180508.txt`  
     
@@ -101,7 +101,7 @@ The following explains how to download each dataset used in the study. More info
     $ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_annotator.sh"
     ```
 
-* **Final dataset from the end of [`annotate_final_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/compute_final_dataset/annotate_final_dataset.ipynb)**OK  
+* **Final dataset from the end of [`annotate_final_dataset.ipynb`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/description/compute_final_dataset/annotate_final_dataset.ipynb)**  
     Input: `/annotate_with_oncokb_final_dataset/oncokb_annotated_final_IMPACT_mutations_180508.txt`  
     Output: `annotated_final_IMPACT_mutations_180508.txt`
 
