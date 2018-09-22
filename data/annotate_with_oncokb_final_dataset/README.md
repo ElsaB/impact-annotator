@@ -1,4 +1,4 @@
-# Annotate the mutations with oncokb-annotator
+# Annotate the mutations of the final dataset with oncokb-annotator
 
 :warning: This folder is a slightly modfied version of [`annotate_with_oncokb_annotator`](https://github.com/ElsaB/impact-annotator/blob/master/data/annotate_with_oncokb/), but applied on the final dataset rather than on the clean dataset. Please follow the link to read the associated `README.md`.
 

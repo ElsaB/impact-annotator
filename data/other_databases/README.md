@@ -19,9 +19,12 @@ Downloaded from http://oncokb.org/api/v1/utils/allAnnotatedVariants.txt
 * `PMK_IPM_Knowledgebase_Interpretations_Complete_20180807-1922.xlsx`: [Precision Medecine Knowledgebase](https://github.com/ElsaB/impact-annotator/blob/master/doc/biblio/variant_annotation_databases.md#precision-medicine-knowledgebase) dataset (up-to-date version)  
 Downloaded from https://pmkb.weill.cornell.edu/therapies/download.xlsx
 
+* `DoCM_variants.tsv`: [DocM](https://github.com/ElsaB/impact-annotator/blob/master/doc/biblio/variant_annotation_databases.md#docm) dataset (version 3.2 13/08/17)  
+Downloaded from http://www.docm.info/api/v1/variants.tsv?versions=3.2
+
 ***
 
-Two other files are already present in this folder (no easy download by script):
+Two other files are already present in this folder (because they were not easily downladable with a script):
 
 * `candl-results-20180809100701.csv`: [CanDL](https://github.com/ElsaB/impact-annotator/blob/master/doc/biblio/variant_annotation_databases.md#candl) dataset (09/08/2018)  
 Downloaded from https://candl.osu.edu/download/full under "Export as CSV"
