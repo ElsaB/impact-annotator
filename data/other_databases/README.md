@@ -1,6 +1,6 @@
 # Get other databases data
 
-To get the data run in the cluster or on your working computer:
+To get the data run:
 ```shell
 $ bash get_data.sh
 ```
