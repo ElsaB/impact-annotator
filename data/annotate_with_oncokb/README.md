@@ -1,6 +1,7 @@
 # Annotate the mutations with oncokb-annotator
 
-To annotate the cleaned dataset `cleaned_IMPACT_mutations_180508.txt` with the oncokb annotations from [oncokb-annotator](https://github.com/oncokb/oncokb-annotator) run **in the cluster**:
+To annotate the cleaned dataset `cleaned_IMPACT_mutations_180508.txt` with the oncokb annotations from [oncokb-annotator](https://github.com/oncokb/oncokb-annotator) run:  
+:warning: run on cluster
 ```shell
 $ bsub -We 20 -R select[internet] -o job_output.txt "bash annotate_with_oncokb_annotator.sh"
 ```
