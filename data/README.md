@@ -20,7 +20,7 @@ The following explains how to download each dataset used in the study. More info
 :warning: Some dataset needs other datasets to be computed, listed after "Input:". Please always check that you have the input datasets listed before trying to run the script to get the output dataset(s).
 
 ### Raw datasets and databases
-* **Raw data stored in the cluster**OK  
+* **Raw data stored in the cluster**  
     Input:  
     Outputs:  
     * `all_IMPACT_mutations_180508.txt` (raw dataset, IMPACT mutations data shared by Ahmet on the 180508)
