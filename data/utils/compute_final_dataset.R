@@ -390,20 +390,9 @@ process_raw_features <- function(impact) {
     impact$VEP_gnomAD_total_AF <- apply(impact, 1, get_gnomAD_total_AF)
 
     # [-21 features] remove VEP_gnomAD_genome_AC.AN_<POP>, VEP_gnomAD_exome_AC.AN_<POP> and VEP_gnomAD_total_AC.AN_<POP>
-    impact <- impact[, colnames(impact)[! (grepl("VEP_gnomAD_genome", colnames(impact)) |
-                                           grepl("VEP_gnomAD_exome", colnames(impact)) |
+    impact <- impact[, colnames(impact)[! (grepl("VEP_gnomAD_genome_AC.AN", colnames(impact)) |
+                                           grepl("VEP_gnomAD_exome_AC.AN", colnames(impact)) |
                                            grepl("VEP_gnomAD_total_AC.AN", colnames(impact)))]]
-
-    vep_gnomad_colnames <- c("VEP_gnomAD_AF",
-                             "VEP_gnomAD_total_AC.AN_AFR",
-                             "VEP_gnomAD_total_AC.AN_AMR",
-                             "VEP_gnomAD_total_AC.AN_ASJ",
-                             "VEP_gnomAD_total_AC.AN_EAS",
-                             "VEP_gnomAD_total_AC.AN_FIN",
-                             "VEP_gnomAD_total_AC.AN_NFE",
-                             "VEP_gnomAD_total_AC.AN_OTH",
-                             "VEP_gnomAD_total_AF_max",
-                             "VEP_gnomAD_total_AF")
 
     return (impact)
 }
