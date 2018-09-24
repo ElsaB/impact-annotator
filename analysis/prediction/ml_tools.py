@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def plot_cross_validation_ROC_curves(model, X, y, n_fold):
-    # http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
+    # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
 
     from scipy import interp
     from sklearn.metrics import roc_curve, auc
@@ -48,16 +48,14 @@ def plot_cross_validation_ROC_curves(model, X, y, n_fold):
     # mean ROC
     mean_tpr = np.mean(tprs, axis=0)
     mean_tpr[-1] = 1.0
-    mean_auc = auc(mean_fpr, mean_tpr)
+    mean_auc = np.mean(aucs)
     std_auc = np.std(aucs)
     plt.plot(mean_fpr, mean_tpr, 'b', linewidth = 1,
              label = 'Mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc))
 
     # mean std
     std_tprs = np.std(tprs, axis = 0)
-    tprs_upper = mean_tpr + std_tprs # tprs_upper = np.minimum(mean_tpr + std_tprs, 1)
-    tprs_lower = mean_tpr - std_tprs # tprs_lower = np.maximum(mean_tpr - std_tprs, 0)
-    plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color = 'blue', alpha = 0.1,
+    plt.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color = 'blue', alpha = 0.1,
                      label='$\pm$ 1 std. dev.')
 
     plt.xlim([-0.05, 1.05])
