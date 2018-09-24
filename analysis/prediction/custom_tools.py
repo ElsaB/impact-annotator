@@ -1,18 +1,42 @@
-def setup_environment():
-    print("Setup environment...", end = "")
-    import numpy as np
-    import pandas as pd
-    import matplotlib
-    import matplotlib.pyplot as plt
-    import seaborn as sns
+print("Setup environment...", end = "")
 
-    sns.set()
+import numpy as np
+import pandas as pd
+import matplotlib
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-    matplotlib.rcParams['figure.figsize'] = (5, 4)
-    matplotlib.rcParams['figure.dpi'] = 200
+from IPython.display import Markdown, display
 
-    print(" done!")
+pd.set_option('display.max_rows', 200)
+pd.set_option('display.max_columns', 200)
+pd.set_option('display.max_colwidth', 1000)
 
+matplotlib.rcParams['figure.figsize'] = (5, 4)
+matplotlib.rcParams['figure.dpi'] = 300
+
+sns.set()
+
+print(" done!")
+
+
+def print_md(string):
+    string = string.replace('\ ', '&nbsp;')
+    string = string.replace('\t', '&emsp;')
+    string = string.replace('\n', '<br>')
+    display(Markdown(string))
+
+
+def check_conda_env(env_name):
+    try:
+        if env_name != 'impact-annotator_env':
+            raise Exception("⚠️ <span style='color:red'>Please activate the **impact-annotator_env** conda environment to work with this notebook:</span>\n"
+                            "\t\t\ \ <span style='color:blue'>$ source activate impact-annotator_env</span>\n"
+                            "\t\t\ \ current environment: " + env_name)
+        else:
+            print_md("✅ <span style='color:green'>Working on **impact-annotator_env** conda environment.</span>")
+    except Exception as e:
+        print_md(str(e))
 
 
 def get_table(serie):
@@ -25,3 +49,4 @@ def get_table(serie):
 
 def print_count(numerator, denominator):
     print("%d/%d (%.2f%%)" % (numerator, denominator, 100 * numerator / denominator))
+
