@@ -1,7 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_cross_validation_ROC_curves(model, X, y, n_fold):
+from sklearn.model_selection import cross_val_score
+
+from custom_tools import *
+
+def plot_cross_validation_ROC_curves(model, X, y, n_fold, ax, title):
     # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
 
     from scipy import interp
@@ -15,8 +19,6 @@ def plot_cross_validation_ROC_curves(model, X, y, n_fold):
     mean_fpr = np.linspace(0, 1, 100) # [0, 0.01, 0.02, ..., 0.09]
     tprs = [] # True Positive Rate for each fold
     aucs = [] # Area under ROC curve for each fold
-
-    plt.figure(figsize = (2.5, 2.5))
 
     i = 0
     for train_index, test_index in cv.split(X, y):
@@ -39,30 +41,39 @@ def plot_cross_validation_ROC_curves(model, X, y, n_fold):
         roc_auc = auc(fpr, tpr)
         aucs.append(roc_auc)
         
-        plt.plot(fpr, tpr, linewidth = 0.5, alpha = 0.4,
+        ax.plot(fpr, tpr, linewidth = 0.5, alpha = 0.4,
                  label = 'ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
         i += 1
         
-    plt.plot([0, 1], [0, 1], '--r', linewidth = 0.5, alpha = 0.8, label = 'random')
+    ax.plot([0, 1], [0, 1], '--r', linewidth = 0.5, alpha = 0.8, label = 'random')
 
     # mean ROC
     mean_tpr = np.mean(tprs, axis=0)
     mean_tpr[-1] = 1.0
     mean_auc = np.mean(aucs)
     std_auc = np.std(aucs)
-    plt.plot(mean_fpr, mean_tpr, 'b', linewidth = 1,
-             label = 'Mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc))
+    #ax.plot(mean_fpr, mean_tpr, 'b', linewidth = 1,
+    #         label = 'Mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc))
 
     # mean std
     std_tprs = np.std(tprs, axis = 0)
-    plt.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color = 'blue', alpha = 0.1,
+    ax.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color = 'blue', alpha = 0.2,
                      label='$\pm$ 1 std. dev.')
 
-    plt.xlim([-0.05, 1.05])
-    plt.ylim([-0.05, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.legend(loc = "lower right", prop = {'size': 4})
-    
-    return plt
+    ax.set_xlim([-0.05, 1.05])
+    ax.set_ylim([-0.05, 1.05])
+    ax.set_xlabel('False Positive Rate')
+    ax.set_ylabel('True Positive Rate')
+    ax.legend(loc = "lower right", prop = {'size': 8})
+    ax.set_title(title)
+
+
+def get_accuracy_and_AUC(model, X, y, n_folds, model_name):
+    accuracy_scores = cross_val_score(model, X, y, cv = n_folds)
+    auc_scores = cross_val_score(model, X, y, cv = n_folds, scoring = "roc_auc")
+    print_md("**%s** Accuracy: %0.2f ± %0.2f | AUC: %0.2f ± %0.2f" % (model_name,
+                                                                      accuracy_scores.mean(),
+                                                                      accuracy_scores.std(),
+                                                                      auc_scores.mean(),
+                                                                      auc_scores.std()))
 
