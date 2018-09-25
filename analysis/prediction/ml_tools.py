@@ -5,7 +5,7 @@ from sklearn.model_selection import cross_val_score
 
 from custom_tools import *
 
-def plot_cross_validation_ROC_curves(model, X, y, n_fold, ax, title):
+def plot_cross_validation_ROC_curves(model, X, y, n_fold, title, ax):
     # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
 
     from scipy import interp
@@ -42,7 +42,7 @@ def plot_cross_validation_ROC_curves(model, X, y, n_fold, ax, title):
         aucs.append(roc_auc)
         
         ax.plot(fpr, tpr, linewidth = 0.5, alpha = 0.4,
-                 label = 'ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
+                label = 'ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
         i += 1
         
     ax.plot([0, 1], [0, 1], '--r', linewidth = 0.5, alpha = 0.8, label = 'random')
@@ -52,8 +52,8 @@ def plot_cross_validation_ROC_curves(model, X, y, n_fold, ax, title):
     mean_tpr[-1] = 1.0
     mean_auc = np.mean(aucs)
     std_auc = np.std(aucs)
-    #ax.plot(mean_fpr, mean_tpr, 'b', linewidth = 1,
-    #         label = 'Mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc))
+    ax.plot(mean_fpr, mean_tpr, 'b', linewidth = 1,
+            label = 'Mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc))
 
     # mean std
     std_tprs = np.std(tprs, axis = 0)
