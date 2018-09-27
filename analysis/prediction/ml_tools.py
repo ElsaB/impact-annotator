@@ -70,10 +70,15 @@ def plot_cross_validation_ROC_curves(model, X, y, n_fold, title, ax):
 
 def get_accuracy_and_AUC(model, X, y, n_folds, model_name):
     accuracy_scores = cross_val_score(model, X, y, cv = n_folds)
-    auc_scores = cross_val_score(model, X, y, cv = n_folds, scoring = "roc_auc")
+    auc_scores      = cross_val_score(model, X, y, cv = n_folds, scoring = "roc_auc")
     print_md("**%s** Accuracy: %0.2f ± %0.2f | AUC: %0.2f ± %0.2f" % (model_name,
                                                                       accuracy_scores.mean(),
                                                                       accuracy_scores.std(),
                                                                       auc_scores.mean(),
                                                                       auc_scores.std()))
+
+
+
+
+
 

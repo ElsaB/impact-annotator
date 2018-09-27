@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib
+import matplotlib.pyplot as plt
 import seaborn as sns
 
 print("Setup environment...", end = "")
@@ -13,7 +14,6 @@ pd.set_option('display.max_colwidth', 1000)
 # Set jupyter lab matplotlib figure output parameters
 matplotlib.rcParams['figure.dpi'] = 100;
 matplotlib.rcParams['figure.figsize'] = (10, 4)
-
 
 sns.set()
 
