@@ -4,6 +4,49 @@ from sklearn.metrics import roc_curve, auc, roc_auc_score
 from scipy import interp
 import time
 
+# strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
+def plot_roc_(n_folds, metrics, ax):
+    mean_fpr = np.linspace(0, 1, 100) # [0, 0.01, 0.02, ..., 0.09]
+    tprs = [] # True Positive Rate for each fold
+    
+    # plot fold ROC
+    for i in range(n_folds):
+        fpr, tpr = metrics.iloc[i].test_fpr, metrics.iloc[i].test_tpr
+        
+        
+        # because the length of fpr and tpr vary with the fold (size of thersholds  = nunique(y_pred[:, 1]) + 1), we can't just do
+        # fprs.append(fpr) and tprs.append(tpr)
+        tprs.append(interp(mean_fpr, fpr, tpr)) # linear interpolation to find the values for a 100 tpr
+        tprs[-1][0] = 0.0 # threshold > 1 for the first point
+
+        ax.plot(fpr, tpr, linewidth = 0.7, alpha = 0.5,
+                label = 'ROC fold %d (AUC = %0.2f)' % (i,  metrics.iloc[i].test_roc_auc))
+    
+
+    # plot baseline
+    ax.plot([0, 1], [0, 1], '--r', linewidth = 0.5, alpha = 0.8, label = 'random')
+
+
+    # plot mean ROC
+    mean_tpr = np.mean(tprs, axis = 0)
+    ax.plot(mean_fpr, mean_tpr, 'b', linewidth = 1,
+            label = 'mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (metrics.test_roc_auc.mean(), 1.96 * metrics.test_roc_auc.std()))
+
+
+    # plot mean ROC std
+    std_tprs = np.std(tprs, axis = 0)
+    ax.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color = 'blue', alpha = 0.2,
+                     label='$\pm$ 1 std. dev.')
+
+
+    # set plot parameters
+    ax.set_xlim([-0.05, 1.05])
+    ax.set_ylim([-0.05, 1.05])
+    ax.set_xlabel('False Positive Rate')
+    ax.set_ylabel('True Positive Rate')
+    ax.legend(loc = "lower right", prop = {'size': 10})
+
+
 
 
 def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics = False, print_grid_search_metrics = False, plot_roc = False, ax = None):
@@ -39,8 +82,8 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
         start = time.time()
         
         # accuracy
-        metrics.iloc[i].train_accuracy = model.score(X_train, y_train)
-        metrics.iloc[i].test_accuracy  = model.score(X_test , y_test)
+        metrics.iloc[i].train_accuracy = np.mean(model.predict(X_train) == y_train)
+        metrics.iloc[i].test_accuracy  = np.mean(model.predict(X_test)  == y_test)
 
         # auc
         fpr, tpr, thresholds = roc_curve(y_train, y_train_pred) # fpr: false positive rate, tpr: true positive rate
@@ -55,8 +98,8 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
         
         if print_fold_metrics:
             print("Fold %d: [%.2fs | %.2fs]\n"    % (i, metrics.iloc[i].fit_time  , metrics.iloc[i].score_time) +
-                  "  → accuracy: [%.3f | %.3f]\n" % (metrics.iloc[i].test_accuracy, metrics.iloc[i].train_accuracy) +
-                  "  → ROC AUC : [%.3f | %.3f]"   % (metrics.iloc[i].test_roc_auc , metrics.iloc[i].train_roc_auc))
+                  "  → accuracy: [%.2f | %.2f]\n" % (metrics.iloc[i].test_accuracy, metrics.iloc[i].train_accuracy) +
+                  "  → ROC AUC : [%.2f | %.2f]"   % (metrics.iloc[i].test_roc_auc , metrics.iloc[i].train_roc_auc))
         
         if grid_search:
             metrics.iloc[i].best_parameters = model.best_params_
@@ -77,44 +120,9 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
           "## Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
     
     
-    # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
+    
     if plot_roc:
-        mean_fpr = np.linspace(0, 1, 100) # [0, 0.01, 0.02, ..., 0.09]
-        tprs = [] # True Positive Rate for each fold
-        
-        # plot fold ROC
-        for i in range(cv_strategy.get_n_splits()):
-            fpr, tpr = metrics.iloc[i].test_fpr, metrics.iloc[i].test_tpr
-            
-            
-            # because the length of fpr and tpr vary with the fold (size of thersholds  = nunique(y_pred[:, 1]) + 1), we can't just do
-            # fprs.append(fpr) and tprs.append(tpr)
-            tprs.append(interp(mean_fpr, fpr, tpr)) # linear interpolation to find the values for a 100 tpr
-            tprs[-1][0] = 0.0 # threshold > 1 for the first point
-
-            ax.plot(fpr, tpr, linewidth = 0.7, alpha = 0.5,
-                    label = 'ROC fold %d (AUC = %0.2f)' % (i,  metrics.iloc[i].test_roc_auc))
-        
-        # plot baseline
-        ax.plot([0, 1], [0, 1], '--r', linewidth = 0.5, alpha = 0.8, label = 'random')
-
-        # plot mean ROC
-        mean_tpr = np.mean(tprs, axis = 0)
-        ax.plot(mean_fpr, mean_tpr, 'b', linewidth = 1,
-                label = 'mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (metrics.test_roc_auc.mean(), 1.96 * metrics.test_roc_auc.std()))
-
-        # plot mean ROC std
-        std_tprs = np.std(tprs, axis = 0)
-        ax.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color = 'blue', alpha = 0.2,
-                         label='$\pm$ 1 std. dev.')
-
-
-        # set plot parameters
-        ax.set_xlim([-0.05, 1.05])
-        ax.set_ylim([-0.05, 1.05])
-        ax.set_xlabel('False Positive Rate')
-        ax.set_ylabel('True Positive Rate')
-        ax.legend(loc = "lower right", prop = {'size': 10})
+        plot_roc_(cv_strategy.get_n_splits(), metrics, ax)
     
     
     metrics.drop(['test_fpr', 'test_tpr'], axis = 1, inplace = True)
