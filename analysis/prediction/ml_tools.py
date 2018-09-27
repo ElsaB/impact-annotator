@@ -1,84 +1,112 @@
-import matplotlib.pyplot as plt
+import pandas as pd
 import numpy as np
+from sklearn.metrics import roc_curve, auc
+from scipy import interp
+import time
 
-from sklearn.model_selection import cross_val_score
-
-from custom_tools import *
-
-def plot_cross_validation_ROC_curves(model, X, y, n_fold, title, ax):
-    # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
-
-    from scipy import interp
-    from sklearn.metrics import roc_curve, auc
-    from sklearn.model_selection import StratifiedKFold
-
-    # gives train/test indices to split data in train/test sets: returns 5 stratified fold (balanced: the percentage of samples foe each class is preserved)
-    # see http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html
-    cv = StratifiedKFold(n_splits = n_fold)
-
-    mean_fpr = np.linspace(0, 1, 100) # [0, 0.01, 0.02, ..., 0.09]
-    tprs = [] # True Positive Rate for each fold
-    aucs = [] # Area under ROC curve for each fold
-
+def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics = False, plot_roc = False, ax = None):
+    
+    if print_fold_metrics:
+        print("Fold #: [fit_time | score_time]\n",
+          "  → accuracy: [test_accuracy | train_accuracy]\n",
+          "  → ROC AUC : [test_roc_auc  | train_roc_auc]\n")
+        
+    metrics = pd.DataFrame(index = range(cv_strategy.get_n_splits()),
+                           columns = ['fit_time', 'score_time',
+                                      'train_accuracy', 'test_accuracy',
+                                      'train_roc_auc', 'test_roc_auc',
+                                      'test_fpr', 'test_tpr',
+                                      'best_parameters'])
+    metrics.index.name = 'fold_number'
+    
     i = 0
-    for train_index, test_index in cv.split(X, y):
-        model.fit(X.iloc[train_index], y.iloc[train_index])
-        y_pred = model.predict_proba(X.iloc[test_index])
-        # y_pred: (n_samples, 2), 1st column = proba of 0, 2nd column = proba of 1
-        # so y_pred[:, 1] is the probability of getting the output as 1
-            
-        # fpr: false positive rate
-        # tpr: true positive rate
-        # thresholds: probability thresholds (nunique(y_pred[:, 1]) + 1)
-        fpr, tpr, thresholds = roc_curve(y.iloc[test_index], y_pred[:, 1])
+    
+    # for each fold
+    for train_index, test_index in cv_strategy.split(X, y):
+        (X_train, X_test) = (X.iloc[train_index], X.iloc[test_index])
+        (y_train, y_test) = (y.iloc[train_index], y.iloc[test_index])
         
-        # because the length of fpr and tpr vary with the fold (number of thersholds  = nunique(y_pred[:, 1]) + 1), we can't just do
-        # fprs.append(fpr) and tprs.append(tpr)
+        # Fit model
+        start = time.time()
+        model.fit(X_train, y_train)
+        y_train_pred = model.predict_proba(X_train)[:, 1]
+        y_test_pred  = model.predict_proba(X_test) [:, 1]        
+        metrics.iloc[i].fit_time = time.time() - start
         
-        tprs.append(interp(mean_fpr, fpr, tpr)) # linear interpolation to find the values for a 100 tpr
-        tprs[-1][0] = 0.0 # threshold > 1 for the first point
+        # Get scores
+        start = time.time()
+        
+        # accuracy
+        metrics.iloc[i].train_accuracy = model.score(X_train, y_train)
+        metrics.iloc[i].test_accuracy  = model.score(X_test , y_test)
 
-        roc_auc = auc(fpr, tpr)
-        aucs.append(roc_auc)
+        # auc
+        fpr, tpr, thresholds = roc_curve(y_train, y_train_pred) # fpr: false positive rate, tpr: true positive rate
+        metrics.iloc[i].train_roc_auc = auc(fpr, tpr)
         
-        ax.plot(fpr, tpr, linewidth = 0.5, alpha = 0.4,
-                label = 'ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
+        metrics.iloc[i].test_fpr, metrics.iloc[i].test_tpr, thresholds = roc_curve(y_test , y_test_pred)
+        metrics.iloc[i].test_roc_auc = auc(fpr, tpr)
+    
+        metrics.iloc[i].score_time = time.time() - start
+        
+        if print_fold_metrics:
+            print("Fold %d: [%.2fs | %.2fs]\n"    % (i, metrics.iloc[i].fit_time  , metrics.iloc[i].score_time) +
+                  "  → accuracy: [%.3f | %.3f]\n" % (metrics.iloc[i].test_accuracy, metrics.iloc[i].train_accuracy) +
+                  "  → ROC AUC : [%.3f | %.3f]"   % (metrics.iloc[i].test_roc_auc , metrics.iloc[i].train_roc_auc))
+        
+        if grid_search:
+            metrics.iloc[i].best_parameters = model.best_params_
+            print("  → Best parameters : %s"   % str(model.best_params_))
+
         i += 1
+    
+    print()
+    
+    # mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
+    print("## Mean accuracy: %0.2f ± %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
+          "## Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
+    
+    
+    # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
+    if plot_roc:
+        mean_fpr = np.linspace(0, 1, 100) # [0, 0.01, 0.02, ..., 0.09]
+        tprs = [] # True Positive Rate for each fold
         
-    ax.plot([0, 1], [0, 1], '--r', linewidth = 0.5, alpha = 0.8, label = 'random')
+        # plot fold ROC
+        for i in range(cv_strategy.get_n_splits()):
+            fpr, tpr = metrics.iloc[i].test_fpr, metrics.iloc[i].test_tpr
+            
+            
+            # because the length of fpr and tpr vary with the fold (size of thersholds  = nunique(y_pred[:, 1]) + 1), we can't just do
+            # fprs.append(fpr) and tprs.append(tpr)
+            tprs.append(interp(mean_fpr, fpr, tpr)) # linear interpolation to find the values for a 100 tpr
+            tprs[-1][0] = 0.0 # threshold > 1 for the first point
 
-    # mean ROC
-    mean_tpr = np.mean(tprs, axis=0)
-    mean_tpr[-1] = 1.0
-    mean_auc = np.mean(aucs)
-    std_auc = np.std(aucs)
-    ax.plot(mean_fpr, mean_tpr, 'b', linewidth = 1,
-            label = 'Mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc))
+            ax.plot(fpr, tpr, linewidth = 0.7, alpha = 0.5,
+                    label = 'ROC fold %d (AUC = %0.2f)' % (i,  metrics.iloc[i].test_roc_auc))
+        
+        # plot baseline
+        ax.plot([0, 1], [0, 1], '--r', linewidth = 0.5, alpha = 0.8, label = 'random')
 
-    # mean std
-    std_tprs = np.std(tprs, axis = 0)
-    ax.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color = 'blue', alpha = 0.2,
-                     label='$\pm$ 1 std. dev.')
+        # plot mean ROC
+        mean_tpr = np.mean(tprs, axis = 0)
+        ax.plot(mean_fpr, mean_tpr, 'b', linewidth = 1,
+                label = 'mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (metrics.test_roc_auc.mean(), 1.96 * metrics.test_roc_auc.std()))
 
-    ax.set_xlim([-0.05, 1.05])
-    ax.set_ylim([-0.05, 1.05])
-    ax.set_xlabel('False Positive Rate')
-    ax.set_ylabel('True Positive Rate')
-    ax.legend(loc = "lower right", prop = {'size': 8})
-    ax.set_title(title)
-
-
-def get_accuracy_and_AUC(model, X, y, n_folds, model_name):
-    accuracy_scores = cross_val_score(model, X, y, cv = n_folds)
-    auc_scores      = cross_val_score(model, X, y, cv = n_folds, scoring = "roc_auc")
-    print_md("**%s** Accuracy: %0.2f ± %0.2f | AUC: %0.2f ± %0.2f" % (model_name,
-                                                                      accuracy_scores.mean(),
-                                                                      accuracy_scores.std(),
-                                                                      auc_scores.mean(),
-                                                                      auc_scores.std()))
+        # plot mean ROC std
+        std_tprs = np.std(tprs, axis = 0)
+        ax.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color = 'blue', alpha = 0.2,
+                         label='$\pm$ 1 std. dev.')
 
 
-
-
-
-
+        # set plot parameters
+        ax.set_xlim([-0.05, 1.05])
+        ax.set_ylim([-0.05, 1.05])
+        ax.set_xlabel('False Positive Rate')
+        ax.set_ylabel('True Positive Rate')
+        ax.legend(loc = "lower right", prop = {'size': 10})
+    
+    
+    metrics.drop(['test_fpr', 'test_tpr'], axis = 1, inplace = True)
+    
+    return (metrics)
