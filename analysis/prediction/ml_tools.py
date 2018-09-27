@@ -1,10 +1,12 @@
 import pandas as pd
 import numpy as np
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, roc_auc_score
 from scipy import interp
 import time
 
-def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics = False, plot_roc = False, ax = None):
+
+
+def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics = False, print_grid_search_metrics = False, plot_roc = False, ax = None):
     
     if print_fold_metrics:
         print("Fold #: [fit_time | score_time]\n",
@@ -43,9 +45,11 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
         # auc
         fpr, tpr, thresholds = roc_curve(y_train, y_train_pred) # fpr: false positive rate, tpr: true positive rate
         metrics.iloc[i].train_roc_auc = auc(fpr, tpr)
-        
-        metrics.iloc[i].test_fpr, metrics.iloc[i].test_tpr, thresholds = roc_curve(y_test , y_test_pred)
+
+        fpr, tpr, thresholds = roc_curve(y_test , y_test_pred)
         metrics.iloc[i].test_roc_auc = auc(fpr, tpr)
+        metrics.iloc[i].test_fpr = fpr
+        metrics.iloc[i].test_tpr = tpr
     
         metrics.iloc[i].score_time = time.time() - start
         
@@ -56,7 +60,13 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
         
         if grid_search:
             metrics.iloc[i].best_parameters = model.best_params_
-            print("  → Best parameters : %s"   % str(model.best_params_))
+            print("  → Best parameters : %r"   % model.best_params_)
+
+            if print_grid_search_metrics:
+                for mean, std, parameters in zip(model.cv_results_['mean_test_score'],
+                                                 model.cv_results_['std_test_score'],
+                                                 model.cv_results_['params']):
+                    print("    %0.2f ± %0.2f for %r" % (mean, 1.96 * std, parameters))
 
         i += 1
     
