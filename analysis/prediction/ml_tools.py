@@ -130,8 +130,8 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
     return metrics
 
 
-def load_dataset():
-    impact = pd.read_csv('../../data/annotated_final_IMPACT_mutations_180508.txt', sep = '\t', low_memory = False)
+def load_dataset(data_folder_path):
+    impact = pd.read_csv(data_folder_path + '/annotated_final_IMPACT_mutations_180508.txt', sep = '\t', low_memory = False)
 
     # shuffle data
     rng = np.random.RandomState(0)
