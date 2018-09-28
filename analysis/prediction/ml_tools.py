@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import pandas as pd
 import numpy as np
 from sklearn.metrics import roc_curve, auc, roc_auc_score
@@ -129,7 +127,7 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
     
     metrics.drop(['test_fpr', 'test_tpr'], axis = 1, inplace = True)
     
-    return (metrics)
+    return metrics
 
 
 def load_dataset():
@@ -211,7 +209,7 @@ def load_dataset():
     # returns stratified randomized folds. The folds are made by preserving the percentage of samples for each class.
     cv_strategy = StratifiedShuffleSplit(n_splits = 5, test_size = 0.2, random_state = 1)
 
-    return (X, y, cv_strategy)
+    return X, y, cv_strategy
 
 
 

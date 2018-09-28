@@ -25,7 +25,7 @@ def get_table(serie):
     table.rename(columns={table.columns[0]: 'count_'}, inplace = True)
     table['freq_'] = table.apply(lambda x: (x / sum(table.count_) * 100).round(1).astype(str) + "%", axis = 0)
     
-    return (table)
+    return table
 
 
 def print_count(numerator, denominator):
