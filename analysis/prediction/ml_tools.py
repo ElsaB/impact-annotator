@@ -203,12 +203,7 @@ def load_dataset(data_folder_path):
     X = impact_selected.drop(label_feature_name, axis = 1) # features matrix X: [n_samples, n_features]
     y = impact_selected[label_feature_name]                # target array y: n_samples
 
-    from sklearn.model_selection import StratifiedShuffleSplit
-
-    # returns stratified randomized folds. The folds are made by preserving the percentage of samples for each class.
-    cv_strategy = StratifiedShuffleSplit(n_splits = 5, test_size = 0.2, random_state = 1)
-
-    return X, y, cv_strategy
+    return X, y
 
 
 
