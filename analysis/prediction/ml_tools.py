@@ -125,7 +125,7 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
         plot_roc_(cv_strategy.get_n_splits(), metrics, ax)
     
     
-    metrics.drop(['test_fpr', 'test_tpr'], axis = 1, inplace = True)
+    #metrics.drop(['test_fpr', 'test_tpr'], axis = 1, inplace = True)
     
     return metrics
 

@@ -43,4 +43,4 @@ analysis/description/synonymous_study/synonymous_mutations_analysis_extra
 # temp
 data/other_databases/cbioportal.txt
 
-analysis/prediction/ssh_remote_jobs/*
+analysis/prediction/ssh_remote_jobs/
