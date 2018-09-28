@@ -1,5 +1,6 @@
 from IPython.display import Markdown, display
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def print_md(string):
     string = string.replace('\ ', '&nbsp;')
