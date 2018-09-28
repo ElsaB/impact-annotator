@@ -49,7 +49,7 @@ def plot_roc_(n_folds, metrics, ax):
 
 
 
-def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics = False, print_grid_search_metrics = False, plot_roc = False, ax = None):
+def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics = False, print_grid_search_metrics = False, plot_roc = False, ax = None, in_cluster = False):
     
     if print_fold_metrics:
         print("Fold #: [fit_time | score_time]\n",
@@ -120,12 +120,11 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
           "## Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
     
     
-    
     if plot_roc:
         plot_roc_(cv_strategy.get_n_splits(), metrics, ax)
     
-    
-    #metrics.drop(['test_fpr', 'test_tpr'], axis = 1, inplace = True)
+    if not in_cluster:
+        metrics.drop(['test_fpr', 'test_tpr'], axis = 1, inplace = True)
     
     return metrics
 
