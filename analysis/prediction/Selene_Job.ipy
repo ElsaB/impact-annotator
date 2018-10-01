@@ -19,14 +19,26 @@ class Selene_Job:
         self.local_job_directory_path = 'ssh_remote_jobs/job_' + str(job_id)
         self.selene_ssh_remote_jobs_path = cluster_username + '@selene.mskcc.org:/home/' + cluster_username + '/impact-annotator/analysis/prediction/ssh_remote_jobs'
         self.selene_job_directory_path = self.selene_ssh_remote_jobs_path + '/job_' + str(job_id)
-        
-        self.make_local_job_directory_()
+        self.username = cluster_username
 
 
-    def make_local_job_directory_(self):
-        print('➞ mkdir ' + self.local_job_directory_path)
-
+        print('➞ mkdir on local computer ' + self.local_job_directory_path)
         !mkdir {self.local_job_directory_path}
+
+
+        print_md(self.get_job_md_string_('green') + '✅ created\n')
+
+
+    def get_job_md_string_(self, color):
+        return "<span style='color:" + color + "'>Job < " + str(self.job_id) + " >: </span>"
+
+
+    def load_data(self, X, y):
+        print('➞ save X.pkl & y.pkl in ' + self.local_job_directory_path)
+        X.to_pickle(self.local_job_directory_path + '/X.pkl')
+        y.to_pickle(self.local_job_directory_path + '/y.pkl')
+
+        print_md(self.get_job_md_string_('green') + '✅ data loaded\n')
 
 
     def run(self):
@@ -34,37 +46,57 @@ class Selene_Job:
 
         !scp -r {self.local_job_directory_path} {self.selene_ssh_remote_jobs_path}
 
-        test = 'echo "➞ Logged in $PWD on $HOSTNAME"; \
+        test = 'echo "➞ logged in $PWD on $HOSTNAME"; \
                 \
-                echo "➞ Load ~/.bash_profile"; \
+                echo "➞ load ~/.bash_profile"; \
                 source ~/.bash_profile; \
                 export LSF_ENVDIR=/common/lsf/conf; export LSF_SERVERDIR=/common/lsf/9.1/linux2.6-glibc2.3-x86_64/etc; \
                 \
-                echo "➞ Work on impact-annotator_env python virtualenv"; \
+                echo "➞ work on impact-annotator_env python virtualenv"; \
                 workon impact-annotator_env; \
                 \
                 cd ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id) + '; \
-                echo "➞ Launch job in $PWD"; \
+                echo "➞ launch job in $PWD"; \
                 bsub -o job_output.txt -We 20 "python script.py"'
 
-        !ssh guilminp@selene.mskcc.org '{test}'
+        !ssh {self.username}@selene.mskcc.org '{test}'
+
+        print_md(self.get_job_md_string_('green') + '✅ submitted\n')
 
 
     def get_results(self):        
         test = 'cd ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id) + '; \
                [ -e metrics.pkl ] && echo "yes" || echo "no"'
             
-        file_found = ! ssh guilminp@selene.mskcc.org '{test}'
+        file_found = !ssh {self.username}@selene.mskcc.org '{test}'
         file_found = file_found[0]
 
         if file_found == "yes":
-            print_md("✅ <span style='color:green'>Job \< " + str(self.job_id) + " \> finished !</span>\n")
-            print('➞ scp ' + self.selene_job_directory_path + ' documents to ' + self.local_job_directory_path)
+            print_md(self.get_job_md_string_('green') + '✅ finished\n')
+            print('➞ scp metrics.pkl & job_output.txt from ' + self.selene_job_directory_path + ' to ' + self.local_job_directory_path)
             ! scp -r {self.selene_job_directory_path}/metrics.pkl {self.local_job_directory_path}
             ! scp -r {self.selene_job_directory_path}/job_output.txt {self.local_job_directory_path}
 
-            print('➞ Load metrics.pkl in pandas dataframe')
+            print('➞ load metrics.pkl in pandas dataframe self.metrics')
             self.metrics = pd.read_pickle(self.local_job_directory_path + '/metrics.pkl')
 
+            print('➞ print main results')
+            # mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
+            print("## Mean accuracy: %0.2f ± %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
+                  "## Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
+
         else:
-            print_md("⚠️ <span style='color:red'>Job \< " + str(self.job_id) + " \> doesn't exist or is not done yet.</span>\n")
+            print_md(self.get_job_md_string_('red') + '⚠️ does not exist, is not done yet or an error occured before the creation of `metrics.pkl`\n')
+
+
+    def remove(self):
+        print('➞ rm on local computer ' + self.local_job_directory_path + '')
+        !rm -f -r {self.local_job_directory_path}
+
+        print('➞ rm on cluster ' + self.selene_job_directory_path)
+        test = 'rm -f -r ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id)
+        !ssh {self.username}@selene.mskcc.org '{test}'
+
+        print_md(self.get_job_md_string_('green') + '✅ removed from local computer and cluster\n')
+
+

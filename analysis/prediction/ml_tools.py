@@ -61,7 +61,7 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
                                       'train_accuracy', 'test_accuracy',
                                       'train_roc_auc', 'test_roc_auc',
                                       'test_fpr', 'test_tpr',
-                                      'best_parameters'])
+                                      'best_parameters', 'gs_cv_results'])
     metrics.index.name = 'fold_number'
     
     i = 0
@@ -104,6 +104,8 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
         if grid_search:
             metrics.iloc[i].best_parameters = model.best_params_
             print("  → Best parameters : %r"   % model.best_params_)
+
+            metrics.iloc[i].gs_cv_results = model.cv_results_
 
             if print_grid_search_metrics:
                 for mean, std, parameters in zip(model.cv_results_['mean_test_score'],
