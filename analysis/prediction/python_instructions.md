@@ -40,3 +40,11 @@ python 3.6
 | scikit-learn | 0.19.2  |
 | pandas       | 0.23.4  |
 ...
+
+
+%run setup_environment.py
+%run ml_tools.py
+%run custom_tools.py
+
+current_conda_env = !echo $CONDA_DEFAULT_ENV
+check_conda_env(current_conda_env[0])
