@@ -14,19 +14,30 @@ from custom_tools import print_md
 #     - print an error if the job is not done or the folder was not found
 #     - scp the files metrics.pkl and job_output.txt from the cluster to the local computer
 class Selene_Job:
-    def __init__(self, job_id, cluster_username):
+    def __init__(self, job_id, cluster_username, job_duration = 20, load_from_id = False):
         self.job_id = job_id
+        self.job_duration = job_duration
         self.local_job_directory_path = 'ssh_remote_jobs/job_' + str(job_id)
         self.selene_ssh_remote_jobs_path = cluster_username + '@selene.mskcc.org:/home/' + cluster_username + '/impact-annotator/analysis/prediction/ssh_remote_jobs'
         self.selene_job_directory_path = self.selene_ssh_remote_jobs_path + '/job_' + str(job_id)
         self.username = cluster_username
 
+        file_found = ![ -e {self.local_job_directory_path} ] && echo "yes" || echo "no"
+        file_found = file_found[0]
 
-        print('➞ mkdir on local computer ' + self.local_job_directory_path)
-        !mkdir {self.local_job_directory_path}
+        if load_from_id:
+            if file_found == "yes":
+                print_md(self.get_job_md_string_('green') + '✅ job found and reloaded\n')
+            else:
+                print_md(self.get_job_md_string_('red') + '⚠️ does not exist yet\n')
 
-
-        print_md(self.get_job_md_string_('green') + '✅ created\n')
+        else:
+            if file_found == "yes":
+                print_md(self.get_job_md_string_('red') + '⚠️ job already exists, please remove it with `job.remove()` or use `load_from_id = True` when you create the job\n')
+            else:
+                print('➞ mkdir on local computer ' + self.local_job_directory_path)
+                !mkdir {self.local_job_directory_path}
+                print_md(self.get_job_md_string_('green') + '✅ created\n')
 
 
     def get_job_md_string_(self, color):
@@ -46,29 +57,29 @@ class Selene_Job:
 
         !scp -r {self.local_job_directory_path} {self.selene_ssh_remote_jobs_path}
 
-        test = 'echo "➞ logged in $PWD on $HOSTNAME"; \
-                \
-                echo "➞ load ~/.bash_profile"; \
-                source ~/.bash_profile; \
-                export LSF_ENVDIR=/common/lsf/conf; export LSF_SERVERDIR=/common/lsf/9.1/linux2.6-glibc2.3-x86_64/etc; \
-                \
-                echo "➞ work on impact-annotator_env python virtualenv"; \
-                workon impact-annotator_env; \
-                \
-                cd ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id) + '; \
-                echo "➞ launch job in $PWD"; \
-                bsub -o job_output.txt -We 20 "python script.py"'
+        command = 'echo "➞ logged in $PWD on $HOSTNAME"; \
+                  \
+                  echo "➞ load ~/.bash_profile"; \
+                  source ~/.bash_profile; \
+                  export LSF_ENVDIR=/common/lsf/conf; export LSF_SERVERDIR=/common/lsf/9.1/linux2.6-glibc2.3-x86_64/etc; \
+                  \
+                  echo "➞ work on impact-annotator_env python virtualenv"; \
+                  workon impact-annotator_env; \
+                  \
+                  cd ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id) + '; \
+                  echo "➞ launch job in $PWD"; \
+                  bsub -o job_output.txt -We ' + str(self.job_duration) + ' "python script.py"'
 
-        !ssh {self.username}@selene.mskcc.org '{test}'
+        !ssh {self.username}@selene.mskcc.org '{command}'
 
         print_md(self.get_job_md_string_('green') + '✅ submitted\n')
 
 
     def get_results(self):        
-        test = 'cd ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id) + '; \
-               [ -e metrics.pkl ] && echo "yes" || echo "no"'
+        command = 'cd ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id) + '; \
+                   [ -e metrics.pkl ] && echo "yes" || echo "no"'
             
-        file_found = !ssh {self.username}@selene.mskcc.org '{test}'
+        file_found = !ssh {self.username}@selene.mskcc.org '{command}'
         file_found = file_found[0]
 
         if file_found == "yes":
@@ -94,8 +105,8 @@ class Selene_Job:
         !rm -f -r {self.local_job_directory_path}
 
         print('➞ rm on cluster ' + self.selene_job_directory_path)
-        test = 'rm -f -r ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id)
-        !ssh {self.username}@selene.mskcc.org '{test}'
+        command = 'rm -f -r ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id)
+        !ssh {self.username}@selene.mskcc.org '{command}'
 
         print_md(self.get_job_md_string_('green') + '✅ removed from local computer and cluster\n')
 

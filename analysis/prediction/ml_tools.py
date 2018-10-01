@@ -5,7 +5,7 @@ from scipy import interp
 import time
 
 # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
-def plot_roc(n_folds, metrics, ax):
+def plot_roc(n_folds, metrics, ax, title = ""):
     mean_fpr = np.linspace(0, 1, 100) # [0, 0.01, 0.02, ..., 0.09]
     tprs = [] # True Positive Rate for each fold
 
@@ -44,6 +44,7 @@ def plot_roc(n_folds, metrics, ax):
     ax.set_ylim([-0.05, 1.05])
     ax.set_xlabel('False Positive Rate')
     ax.set_ylabel('True Positive Rate')
+    ax.set_title(title)
     ax.legend(loc = "lower right", prop = {'size': 10})
 
 
