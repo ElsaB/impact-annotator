@@ -31,7 +31,7 @@ The repository was written and tested under `R 3.5.1` and `R 3.2.3`, working wit
 * Go to the [`\data`](https://github.com/ElsaB/impact-annotator/tree/master/data) folder and follow the `README.md` to download all the necessary data.
 
 ### Details on the notebooks
-All notebooks will begin with the following lines, which load a set of custom function designed by us, and setup the R environment by loading the appropriate libraries:
+All R notebooks will begin with the following lines, which load a set of custom function designed by us, and setup the R environment by loading the appropriate libraries:
 ```R
 source("../../../src/utils/custom_tools.R")
 setup_environment("../../../src/utils")
