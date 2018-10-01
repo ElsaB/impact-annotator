@@ -1,37 +1,38 @@
-from custom_tools import *
-from IPython import get_ipython
-from subprocess import check_output
+from custom_tools import print_md
 
-from subprocess import Popen, PIPE, STDOUT
-
+# This class is used to send job to the cluster from the jupyter notebook
+# Please see the notebook cluster_job_tutorial.ipynb for a detailed example
+# 
+# For this class to work you need to have the git repository in your home folder on the cluster
+#
+# → creating a class object will create a directory holding everything related to the job in the local ssh_remote_jobs/ folder
+# → calling the run() function of the object will:
+#     - scp the directory to the cluster ssh_remote_jobs/ folder
+#     - setup a working environment to launch the job
+#     - bsub the job
+# → calling the get_results() function will:
+#     - print an error if the job is not done or the folder was not found
+#     - scp the files metrics.pkl and job_output.txt from the cluster to the local computer
 class Selene_Job:
-    def __init__(self, job_id):
+    def __init__(self, job_id, cluster_username):
         self.job_id = job_id
         self.local_job_directory_path = 'ssh_remote_jobs/job_' + str(job_id)
-        self.selene_ssh_remote_jobs_path = 'guilminp@selene.mskcc.org:/home/guilminp/impact-annotator/analysis/prediction/ssh_remote_jobs'
+        self.selene_ssh_remote_jobs_path = cluster_username + '@selene.mskcc.org:/home/' + cluster_username + '/impact-annotator/analysis/prediction/ssh_remote_jobs'
         self.selene_job_directory_path = self.selene_ssh_remote_jobs_path + '/job_' + str(job_id)
         
         self.make_local_job_directory_()
-        
+
 
     def make_local_job_directory_(self):
         print('➞ mkdir ' + self.local_job_directory_path)
 
-        #p = Popen('mkdir ' + self.local_job_directory_path, shell = True, stdin = PIPE, stdout = PIPE, stderr = STDOUT)
-        #print(p.stdout.read())
-        #check_output('mkdir ' + self.local_job_directory_path, shell = True)
-        #get_ipython().run_line_magic('mkdir', '{self.local_job_directory_path}')
-        ! mkdir {self.local_job_directory_path}
-    
+        !mkdir {self.local_job_directory_path}
+
 
     def run(self):
         print('➞ scp ' + self.local_job_directory_path + ' to ' + self.selene_ssh_remote_jobs_path)
-        
-        #p = Popen('scp -r ' +  self.local_job_directory_path + ' ' + self.selene_ssh_remote_jobs_path, shell = True, stdin = PIPE, stdout = PIPE, stderr = STDOUT)
-        #print(p.stdout.read())
-        #check_output('scp -r ' +  self.local_job_directory_path + ' ' + self.selene_ssh_remote_jobs_path, shell = True)
-        #get_ipython().run_line_magic('system', 'scp -r {self.local_job_directory_path} {self.selene_ssh_remote_jobs_path}')
-        ! scp -r {self.local_job_directory_path} {self.selene_ssh_remote_jobs_path}
+
+        !scp -r {self.local_job_directory_path} {self.selene_ssh_remote_jobs_path}
 
         test = 'echo "➞ Logged in $PWD on $HOSTNAME"; \
                 \
@@ -46,31 +47,24 @@ class Selene_Job:
                 echo "➞ Launch job in $PWD"; \
                 bsub -o job_output.txt -We 20 "python script.py"'
 
-        #p = Popen('ssh guilminp@selene.mskcc.org ' + test, shell = True, stdin = PIPE, stdout = PIPE, stderr = STDOUT)
-        #print(p.stdout.read())
-        #check_output('ssh guilminp@selene.mskcc.org ' + test, shell = True)
-        #get_ipython().run_line_magic('system', 'ssh guilminp@selene.mskcc.org \'{test}\'')
         !ssh guilminp@selene.mskcc.org '{test}'
+
 
     def get_results(self):        
         test = 'cd ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id) + '; \
                [ -e metrics.pkl ] && echo "yes" || echo "no"'
             
-        #file_found = get_ipython().run_line_magic('ssh', 'guilminp@selene.mskcc.org \'{test}\'')
         file_found = ! ssh guilminp@selene.mskcc.org '{test}'
         file_found = file_found[0]
 
         if file_found == "yes":
             print_md("✅ <span style='color:green'>Job \< " + str(self.job_id) + " \> finished !</span>\n")
             print('➞ scp ' + self.selene_job_directory_path + ' documents to ' + self.local_job_directory_path)
-            #get_ipython().run_line_magic('scp', '-r {self.selene_job_directory_path}/metrics.pkl {self.local_job_directory_path}')
             ! scp -r {self.selene_job_directory_path}/metrics.pkl {self.local_job_directory_path}
-            #get_ipython().run_line_magic('scp', '-r {self.selene_job_directory_path}/job_output.txt {self.local_job_directory_path}')
             ! scp -r {self.selene_job_directory_path}/job_output.txt {self.local_job_directory_path}
 
             print('➞ Load metrics.pkl in pandas dataframe')
             self.metrics = pd.read_pickle(self.local_job_directory_path + '/metrics.pkl')
-            
-            return(self.metrics)
+
         else:
             print_md("⚠️ <span style='color:red'>Job \< " + str(self.job_id) + " \> doesn't exist or is not done yet.</span>\n")

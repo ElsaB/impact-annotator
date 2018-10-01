@@ -5,7 +5,7 @@ from scipy import interp
 import time
 
 # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
-def plot_roc_(n_folds, metrics, ax):
+def plot_roc(n_folds, metrics, ax):
     mean_fpr = np.linspace(0, 1, 100) # [0, 0.01, 0.02, ..., 0.09]
     tprs = [] # True Positive Rate for each fold
 
@@ -49,7 +49,7 @@ def plot_roc_(n_folds, metrics, ax):
 
 
 
-def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics = False, print_grid_search_metrics = False, plot_roc = False, ax = None):
+def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics = False, print_grid_search_metrics = False):
     
     if print_fold_metrics:
         print("Fold #: [fit_time | score_time]\n",
@@ -118,89 +118,7 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
     # mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
     print("## Mean accuracy: %0.2f ± %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
           "## Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
-    
-    
-    if plot_roc:
-        plot_roc_(cv_strategy.get_n_splits(), metrics, ax)
+
     
     return metrics
-
-
-def load_dataset(data_folder_path):
-    impact = pd.read_csv(data_folder_path + '/annotated_final_IMPACT_mutations_180508.txt', sep = '\t', low_memory = False)
-
-    # shuffle data
-    rng = np.random.RandomState(0)
-    permutation = rng.permutation(len(impact))
-    impact = impact.iloc[permutation]
-
-    impact['is_somatic'] = impact.confidence_class != "UNLIKELY"
-
-    label_feature_name = 'is_somatic'
-
-    impact_selected = pd.concat([impact[~impact.is_somatic],
-                             impact[impact.is_somatic].iloc[0:20000]], ignore_index = True)
-
-    feature_names = [
-    # 'Hugo_Symbol', 'Chromosome', 'Start_Position', 'End_Position', 'Consequence', 'Variant_Type', 'Reference_Allele', 'Tumor_Seq_Allele2', 'Tumor_Sample_Barcode',
-    # 'cDNA_change', 'HGVSp_Short',
-    't_depth', 't_vaf', 't_alt_count', 'n_depth', 'n_vaf', 'n_alt_count',
-    # 't_ref_plus_count', 't_ref_neg_count', 't_alt_plus_count', 't_alt_neg_count',
-    #'confidence_class',
-    'sample_coverage',
-    #'mut_key',
-    #'VAG_VT', 'VAG_GENE', 'VAG_cDNA_CHANGE', 'VAG_PROTEIN_CHANGE', 'VAG_EFFECT',
-    'VEP_Consequence',
-    #'VEP_SYMBOL', 'VEP_HGVSc', 'VEP_HGVSp',
-    #'VEP_Amino_acids',
-    'VEP_VARIANT_CLASS',
-    #'VEP_EXON', 'VEP_INTRON',
-    'VEP_IMPACT',
-    'VEP_CLIN_SIG',
-    'VEP_COSMIC_CNT',
-    'VEP_gnomAD_AF',
-    #'sample_mut_key', 'patient_key',
-    'frequency_in_normals',
-    #'VEP_SIFT_class',
-    #'VEP_SIFT_score',
-    #'VEP_PolyPhen_class',
-    #'VEP_PolyPhen_score',
-    'VEP_in_dbSNP',
-    'VEP_gnomAD_total_AF_AFR',
-    'VEP_gnomAD_total_AF_AMR',
-    'VEP_gnomAD_total_AF_ASJ',
-    'VEP_gnomAD_total_AF_EAS',
-    'VEP_gnomAD_total_AF_FIN',
-    'VEP_gnomAD_total_AF_NFE',
-    'VEP_gnomAD_total_AF_OTH',
-    'VEP_gnomAD_total_AF_max',
-    'VEP_gnomAD_total_AF',
-    'Kaviar_AF',
-    #'is_a_hotspot',
-    #'is_a_3d_hotspot',
-    #'oncogenic',
-    'gene_type',
-    label_feature_name
-    ]
-
-    categorical_features_names = [
-    'VEP_Consequence',
-    #'VEP_Amino_acids',
-    'VEP_VARIANT_CLASS',
-    'VEP_IMPACT',
-    'VEP_CLIN_SIG',
-    #'VEP_SIFT_class',
-    #'VEP_PolyPhen_class',
-    'VEP_in_dbSNP',
-    'gene_type',
-    ]
-
-    impact_selected = impact_selected[feature_names].dropna()
-    impact_selected = pd.get_dummies(impact_selected, columns = categorical_features_names, sparse = True)
-    X = impact_selected.drop(label_feature_name, axis = 1) # features matrix X: [n_samples, n_features]
-    y = impact_selected[label_feature_name]                # target array y: n_samples
-
-    return X, y
-
-
 
