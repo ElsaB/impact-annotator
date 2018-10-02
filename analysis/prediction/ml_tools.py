@@ -80,8 +80,8 @@ def print_grid_search_curves(metrics):
 
 def print_mean_metrics(metrics):
     # mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
-    print("# Mean accuracy: %0.2f ± %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
-          "# Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
+    print("# Mean accuracy: %0.2f +/- %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
+          "# Mean ROC AUC : %0.2f +/- %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
 
 
 
