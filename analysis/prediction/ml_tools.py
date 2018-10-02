@@ -50,16 +50,16 @@ def plot_roc(metrics, ax, title = ""):
 
 def print_fold_metrics(metrics, grid_search = False):
     print("Fold #: [fit_time | score_time]\n",
-          "  - accuracy: [test_accuracy | train_accuracy]\n",
-          "  - ROC AUC : [test_roc_auc  | train_roc_auc]\n")
+          "  → accuracy: [test_accuracy | train_accuracy]\n",
+          "  → ROC AUC : [test_roc_auc  | train_roc_auc]\n")
 
     # for each fold
     for i in range(metrics.shape[0]):
         print("Fold %d: [%.2fs | %.2fs]\n"    % (i + 1, metrics.iloc[i].fit_time  , metrics.iloc[i].score_time) +
-              "  - accuracy: [%.2f | %.2f]\n" % (metrics.iloc[i].test_accuracy, metrics.iloc[i].train_accuracy) +
-              "  - ROC AUC : [%.2f | %.2f]"   % (metrics.iloc[i].test_roc_auc , metrics.iloc[i].train_roc_auc))
+              "  → accuracy: [%.2f | %.2f]\n" % (metrics.iloc[i].test_accuracy, metrics.iloc[i].train_accuracy) +
+              "  → ROC AUC : [%.2f | %.2f]"   % (metrics.iloc[i].test_roc_auc , metrics.iloc[i].train_roc_auc))
         if grid_search:
-            print("  - Best parameters : %r"   % metrics.iloc[i].best_parameters)
+            print("  → Best parameters : %r"   % metrics.iloc[i].gs_best_parameters)
 
             for mean, std, parameters in zip(metrics.iloc[i].gs_cv_results['mean_test_score'],
                                              metrics.iloc[i].gs_cv_results['std_test_score'],
@@ -80,8 +80,8 @@ def print_grid_search_curves(metrics):
 
 def print_mean_metrics(metrics):
     # mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
-    print("# Mean accuracy: %0.2f +/- %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
-          "# Mean ROC AUC : %0.2f +/- %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
+    print("▴ Mean accuracy: %0.2f ± %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
+          "▴ Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
 
 
 
@@ -103,6 +103,7 @@ def run_model(model, X, y, cv_strategy, grid_search = False):
         print('  - fold %d/%d...' % (i + 1, cv_strategy.get_n_splits()), end = '')
         (X_train, X_test) = (X.iloc[train_index], X.iloc[test_index])
         (y_train, y_test) = (y.iloc[train_index], y.iloc[test_index])
+
         
         # Fit model
         start = time.time()

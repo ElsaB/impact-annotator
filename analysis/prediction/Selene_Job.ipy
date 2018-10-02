@@ -93,8 +93,7 @@ class Selene_Job:
 
             print('➞ print main results')
             # mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
-            print("## Mean accuracy: %0.2f ± %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
-                  "## Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
+            print_mean_metrics(self.metrics)
 
         else:
             print_md(self.get_job_md_string_('red') + '⚠️ does not exist, is not done yet or an error occured before the creation of `metrics.pkl`\n')
