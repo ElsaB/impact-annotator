@@ -5,12 +5,12 @@ from scipy import interp
 import time
 
 # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
-def plot_roc(n_folds, metrics, ax, title = ""):
+def plot_roc(metrics, ax, title = ""):
     mean_fpr = np.linspace(0, 1, 100) # [0, 0.01, 0.02, ..., 0.09]
     tprs = [] # True Positive Rate for each fold
 
     # plot fold ROC
-    for i in range(n_folds):
+    for i in range(metrics.shape[0]):
         fpr, tpr = metrics.iloc[i].test_fpr, metrics.iloc[i].test_tpr
         
         
@@ -48,27 +48,59 @@ def plot_roc(n_folds, metrics, ax, title = ""):
     ax.legend(loc = "lower right", prop = {'size': 10})
 
 
-
-
-def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics = False, print_grid_search_metrics = False):
-    
-    if print_fold_metrics:
-        print("Fold #: [fit_time | score_time]\n",
+def print_fold_metrics(metrics, grid_search = False):
+    print("Fold #: [fit_time | score_time]\n",
           "  → accuracy: [test_accuracy | train_accuracy]\n",
           "  → ROC AUC : [test_roc_auc  | train_roc_auc]\n")
-        
+
+    # for each fold
+    for i in range(metrics.shape[0]):
+        print("Fold %d: [%.2fs | %.2fs]\n"    % (i + 1, metrics.iloc[i].fit_time  , metrics.iloc[i].score_time) +
+              "  → accuracy: [%.2f | %.2f]\n" % (metrics.iloc[i].test_accuracy, metrics.iloc[i].train_accuracy) +
+              "  → ROC AUC : [%.2f | %.2f]"   % (metrics.iloc[i].test_roc_auc , metrics.iloc[i].train_roc_auc))
+        if grid_search:
+            print("  → Best parameters : %r"   % metrics.iloc[i].best_parameters)
+
+            for mean, std, parameters in zip(metrics.iloc[i].gs_cv_results['mean_test_score'],
+                                             metrics.iloc[i].gs_cv_results['std_test_score'],
+                                             metrics.iloc[i].gs_cv_results['params']):
+                print("    %0.2f ± %0.2f for %r" % (mean, 1.96 * std, parameters))
+
+def print_grid_search_curves(metrics):
+    n_folds = metrics.shape[0]
+
+    fig, ax = plt.subplots(1, n_folds, figsize = (20, 6))
+
+
+    for i in range(n_folds):
+        roc_auc = metrics.iloc[i].gs_cv_results['mean_test_score']
+        ax[i].plot(metrics.iloc[i].gs_cv_results['mean_test_score'], metrics.iloc[i].gs_cv_results['params'],
+                   linewidth = 0.7, alpha = 0.5, label = 'fold %d' % (i + 1))
+
+
+def print_mean_metrics(metrics):
+    # mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
+    print("- Mean accuracy: %0.2f ± %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
+          "- Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
+
+
+
+def run_model(model, X, y, cv_strategy, grid_search = False):
+    print('Run model')
+
     metrics = pd.DataFrame(index = range(cv_strategy.get_n_splits()),
                            columns = ['fit_time', 'score_time',
                                       'train_accuracy', 'test_accuracy',
                                       'train_roc_auc', 'test_roc_auc',
                                       'test_fpr', 'test_tpr',
-                                      'best_parameters', 'gs_cv_results'])
+                                      'gs_best_parameters', 'gs_cv_results'])
     metrics.index.name = 'fold_number'
     
     i = 0
     
     # for each fold
     for train_index, test_index in cv_strategy.split(X, y):
+        print('  → fold %d/%d...' % (i + 1, cv_strategy.get_n_splits()), end = '')
         (X_train, X_test) = (X.iloc[train_index], X.iloc[test_index])
         (y_train, y_test) = (y.iloc[train_index], y.iloc[test_index])
         
@@ -95,33 +127,15 @@ def run_model(model, X, y, cv_strategy, grid_search = False, print_fold_metrics 
         metrics.iloc[i].test_fpr = fpr
         metrics.iloc[i].test_tpr = tpr
     
-        metrics.iloc[i].score_time = time.time() - start
-        
-        if print_fold_metrics:
-            print("Fold %d: [%.2fs | %.2fs]\n"    % (i, metrics.iloc[i].fit_time  , metrics.iloc[i].score_time) +
-                  "  → accuracy: [%.2f | %.2f]\n" % (metrics.iloc[i].test_accuracy, metrics.iloc[i].train_accuracy) +
-                  "  → ROC AUC : [%.2f | %.2f]"   % (metrics.iloc[i].test_roc_auc , metrics.iloc[i].train_roc_auc))
-        
         if grid_search:
-            metrics.iloc[i].best_parameters = model.best_params_
-            print("  → Best parameters : %r"   % model.best_params_)
-
+            metrics.iloc[i].gs_best_parameters = model.best_params_
             metrics.iloc[i].gs_cv_results = model.cv_results_
 
-            if print_grid_search_metrics:
-                for mean, std, parameters in zip(model.cv_results_['mean_test_score'],
-                                                 model.cv_results_['std_test_score'],
-                                                 model.cv_results_['params']):
-                    print("    %0.2f ± %0.2f for %r" % (mean, 1.96 * std, parameters))
+        metrics.iloc[i].score_time = time.time() - start
+
+        print(' done! (%.2fs)' % (metrics.iloc[i].fit_time + metrics.iloc[i].score_time))
 
         i += 1
-    
-    print()
-    
-    # mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
-    print("## Mean accuracy: %0.2f ± %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
-          "## Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
-
-    
+        
     return metrics
 
