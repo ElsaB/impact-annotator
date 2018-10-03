@@ -14,7 +14,7 @@ from custom_tools import print_md
 #     - print an error if the job is not done or the folder was not found
 #     - scp the files metrics.pkl and job_output.txt from the cluster to the local computer
 class Selene_Job:
-    def __init__(self, job_id, cluster_username, load_from_id = False):
+    def __init__(self, job_id, cluster_username, load_from_id=False):
         self.job_id = job_id
         self.local_job_directory_path = 'ssh_remote_jobs/job_' + str(job_id)
         self.selene_ssh_remote_jobs_path = cluster_username + '@selene.mskcc.org:/home/' + cluster_username + '/impact-annotator/analysis/prediction/ssh_remote_jobs'
@@ -51,7 +51,7 @@ class Selene_Job:
         print_md(self.get_job_md_string_('green') + '✅ data loaded\n')
 
 
-    def run(self, n_jobs = 1, short_job = True, memory = None):
+    def run(self, n_jobs=1, short_job=True, memory=None):
         print('➞ scp ' + self.local_job_directory_path + ' to ' + self.selene_ssh_remote_jobs_path)
 
         !scp -r {self.local_job_directory_path} {self.selene_ssh_remote_jobs_path}

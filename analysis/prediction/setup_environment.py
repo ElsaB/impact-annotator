@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-print("Setup environment...", end = "")
+print('Setup environment...', end='')
 
 
 # set jupyter notebook pandas dataframe output parameters
@@ -23,4 +23,4 @@ sns.set()
 
 
 
-print(" done!")
+print(' done!')

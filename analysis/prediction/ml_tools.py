@@ -6,7 +6,7 @@ from scipy import interp
 import time
 
 # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
-def plot_roc(metrics, ax, title = ""):
+def plot_roc(metrics, ax, title=""):
     mean_fpr = np.linspace(0, 1, 100) # [0, 0.01, 0.02, ..., 0.09]
     tprs = [] # True Positive Rate for each fold
 
@@ -20,23 +20,23 @@ def plot_roc(metrics, ax, title = ""):
         tprs.append(interp(mean_fpr, fpr, tpr)) # linear interpolation to find the values for a 100 tpr
         tprs[-1][0] = 0.0 # threshold > 1 for the first point
 
-        ax.plot(fpr, tpr, linewidth = 0.6, alpha = 0.4,
-                label = 'ROC fold %d (AUC = %0.2f)' % (i,  metrics.iloc[i].test_roc_auc))
+        ax.plot(fpr, tpr, linewidth=0.6, alpha=0.4,
+                label='ROC fold %d (AUC = %0.2f)' % (i,  metrics.iloc[i].test_roc_auc))
     
 
     # plot baseline
-    ax.plot([0, 1], [0, 1], '--r', linewidth = 0.5, alpha = 0.8, label = 'random')
+    ax.plot([0, 1], [0, 1], '--r', linewidth=0.5, alpha=0.8, label='random')
 
 
     # plot mean ROC
-    mean_tpr = np.mean(tprs, axis = 0)
-    ax.plot(mean_fpr, mean_tpr, 'b', linewidth = 2,
-            label = 'mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (metrics.test_roc_auc.mean(), 1.96 * metrics.test_roc_auc.std()))
+    mean_tpr = np.mean(tprs, axis=0)
+    ax.plot(mean_fpr, mean_tpr, 'b', linewidth=2,
+            label='mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (metrics.test_roc_auc.mean(), 1.96 * metrics.test_roc_auc.std()))
 
 
     # plot mean ROC std
-    std_tprs = np.std(tprs, axis = 0)
-    ax.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color = 'blue', alpha = 0.15,
+    std_tprs = np.std(tprs, axis=0)
+    ax.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color='blue', alpha=0.15,
                      label='$\pm$ 1 std. dev.')
 
 
@@ -46,10 +46,10 @@ def plot_roc(metrics, ax, title = ""):
     ax.set_xlabel('False Positive Rate')
     ax.set_ylabel('True Positive Rate')
     ax.set_title(title)
-    ax.legend(loc = "lower right", prop = {'size': 10})
+    ax.legend(loc="lower right", prop={'size': 10})
 
 
-def print_fold_metrics(metrics, grid_search = False):
+def print_fold_metrics(metrics, grid_search=False):
     print("Fold #: [fit_time | score_time]\n",
           "  → accuracy: [test_accuracy | train_accuracy]\n",
           "  → ROC AUC : [test_roc_auc  | train_roc_auc]\n")
@@ -68,28 +68,16 @@ def print_fold_metrics(metrics, grid_search = False):
                 print("    %0.2f ± %0.2f for %r" % (mean, 1.96 * std, parameters))
 
 
-def print_grid_search_curves(metrics):
-    n_folds = metrics.shape[0]
-
-    fig, ax = plt.subplots(1, n_folds, figsize = (20, 6))
-
-
-    for i in range(n_folds):
-        roc_auc = metrics.iloc[i].gs_cv_results['mean_test_score']
-        ax[i].plot(metrics.iloc[i].gs_cv_results['mean_test_score'], metrics.iloc[i].gs_cv_results['params'],
-                   linewidth = 0.7, alpha = 0.5, label = 'fold %d' % (i + 1))
-
-
 def print_mean_metrics(metrics):
     # mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
     print("▴ Mean accuracy: %0.2f ± %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
           "▴ Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
 
 
-def run_model(model, X, y, cv_strategy, n_jobs = 1, grid_search = False, get_roc_curve = True):
-    print('Run model...', end = "")
+def run_model(model, X, y, cv_strategy, n_jobs=1, grid_search=False, get_roc_curve=True):
+    print('Run model...', end="")
 
-    metrics = cross_validate(model, X, y, cv = cv_strategy, scoring = ['accuracy', 'roc_auc'], return_train_score = True, return_estimator = True, n_jobs = n_jobs, error_score='raise')
+    metrics = cross_validate(model, X, y, cv=cv_strategy, scoring=['accuracy', 'roc_auc'], return_train_score=True, return_estimator=True, n_jobs=n_jobs, error_score='raise')
     metrics = pd.DataFrame(metrics)
     metrics.index.name = 'fold_number'
 
@@ -100,7 +88,7 @@ def run_model(model, X, y, cv_strategy, n_jobs = 1, grid_search = False, get_roc
     if get_roc_curve:
         get_roc_metrics(metrics, X, y, cv_strategy)
 
-    metrics.drop('estimator', axis = 1, inplace = True)
+    metrics.drop('estimator', axis=1, inplace=True)
 
     print(' done!')
         
@@ -127,22 +115,22 @@ def get_roc_metrics(metrics, X, y, cv_strategy):
         i += 1
 
 
-def run_model_old(model, X, y, cv_strategy, grid_search = False):
+def run_model_old(model, X, y, cv_strategy, grid_search=False):
     print('Run model')
 
-    metrics = pd.DataFrame(index = range(cv_strategy.get_n_splits()),
-                           columns = ['fit_time', 'score_time',
-                                      'train_accuracy', 'test_accuracy',
-                                      'train_roc_auc', 'test_roc_auc',
-                                      'test_fpr', 'test_tpr',
-                                      'gs_best_parameters', 'gs_cv_results'])
+    metrics = pd.DataFrame(index=range(cv_strategy.get_n_splits()),
+                           columns=['fit_time', 'score_time',
+                                    'train_accuracy', 'test_accuracy',
+                                    'train_roc_auc', 'test_roc_auc',
+                                    'test_fpr', 'test_tpr',
+                                    'gs_best_parameters', 'gs_cv_results'])
     metrics.index.name = 'fold_number'
     
     i = 0
     
     # for each fold
     for train_index, test_index in cv_strategy.split(X, y):
-        print('  - fold %d/%d...' % (i + 1, cv_strategy.get_n_splits()), end = '')
+        print('  - fold %d/%d...' % (i + 1, cv_strategy.get_n_splits()), end='')
         (X_train, X_test) = (X.iloc[train_index], X.iloc[test_index])
         (y_train, y_test) = (y.iloc[train_index], y.iloc[test_index])
 

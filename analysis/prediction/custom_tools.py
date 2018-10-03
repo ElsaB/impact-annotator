@@ -27,10 +27,10 @@ def get_table(serie):
     table = serie.value_counts().to_frame()
 
     # rename the first column
-    table.rename(columns = {table.columns[0]: 'count_'}, inplace = True)
+    table.rename(columns={table.columns[0]: 'count_'}, inplace=True)
 
     # create the frequency column
-    table['freq_'] = table.apply(lambda x: (x / sum(table.count_) * 100).round(1).astype(str) + "%", axis = 0)
+    table['freq_'] = table.apply(lambda x: (x / sum(table.count_) * 100).round(1).astype(str) + "%", axis=0)
     
     return table
 
