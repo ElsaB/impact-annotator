@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.metrics import roc_curve, auc, roc_auc_score
+from sklearn.model_selection import cross_validate
 from scipy import interp
 import time
 
@@ -19,7 +20,7 @@ def plot_roc(metrics, ax, title = ""):
         tprs.append(interp(mean_fpr, fpr, tpr)) # linear interpolation to find the values for a 100 tpr
         tprs[-1][0] = 0.0 # threshold > 1 for the first point
 
-        ax.plot(fpr, tpr, linewidth = 0.7, alpha = 0.5,
+        ax.plot(fpr, tpr, linewidth = 0.6, alpha = 0.4,
                 label = 'ROC fold %d (AUC = %0.2f)' % (i,  metrics.iloc[i].test_roc_auc))
     
 
@@ -29,13 +30,13 @@ def plot_roc(metrics, ax, title = ""):
 
     # plot mean ROC
     mean_tpr = np.mean(tprs, axis = 0)
-    ax.plot(mean_fpr, mean_tpr, 'b', linewidth = 1,
+    ax.plot(mean_fpr, mean_tpr, 'b', linewidth = 2,
             label = 'mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (metrics.test_roc_auc.mean(), 1.96 * metrics.test_roc_auc.std()))
 
 
     # plot mean ROC std
     std_tprs = np.std(tprs, axis = 0)
-    ax.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color = 'blue', alpha = 0.2,
+    ax.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color = 'blue', alpha = 0.15,
                      label='$\pm$ 1 std. dev.')
 
 
@@ -84,8 +85,46 @@ def print_mean_metrics(metrics):
           "▴ Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
 
 
+def run_model(model, X, y, cv_strategy, n_jobs = 1, grid_search = False, get_roc_curve = True):
+    print('Run model...', end = "")
 
-def run_model(model, X, y, cv_strategy, grid_search = False):
+    metrics = cross_validate(model, X, y, cv = cv_strategy, scoring = ['accuracy', 'roc_auc'], return_train_score = True, return_estimator = True, n_jobs = n_jobs)
+    metrics = pd.DataFrame(metrics)
+    metrics.index.name = 'fold_number'
+
+    if grid_search:
+        metrics['gs_best_parameters'] = metrics.estimator.apply(lambda x: x.best_params_)
+        metrics['gs_cv_results']      = metrics.estimator.apply(lambda x: x.cv_results_)
+
+    if get_roc_curve:
+        get_roc_metrics(metrics, X, y, cv_strategy)
+
+    print(' done!')
+        
+    return metrics
+
+
+def get_roc_metrics(metrics, X, y, cv_strategy):
+
+    i = 0
+
+    metrics['test_fpr'] = [[] for i in range(metrics.shape[0])]
+    metrics['test_tpr'] = [[] for i in range(metrics.shape[0])]
+
+    # for each fold
+    for train_index, test_index in cv_strategy.split(X, y):
+        (X_train, X_test) = (X.iloc[train_index], X.iloc[test_index])
+        (y_train, y_test) = (y.iloc[train_index], y.iloc[test_index])
+        
+        y_test_pred  = metrics.iloc[i].estimator.predict_proba(X_test)[:, 1]        
+        fpr, tpr, thresholds = roc_curve(y_test , y_test_pred)
+        metrics.at[i, 'test_fpr'] = fpr
+        metrics.at[i, 'test_tpr'] = tpr
+
+        i += 1
+
+
+def run_model_old(model, X, y, cv_strategy, grid_search = False):
     print('Run model')
 
     metrics = pd.DataFrame(index = range(cv_strategy.get_n_splits()),

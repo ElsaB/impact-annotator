@@ -2,7 +2,7 @@
 
 Proceed ([y]/n)? y
 ```bash
-conda create --name impact-annotator_env python=3.6 ipython nb_conda_kernels numpy matplotlib seaborn scikit-learn pandas graphviz
+conda create --name impact-annotator_env python=3.6 ipython nb_conda_kernels numpy matplotlib seaborn scikit-learn pandas
 source activate impact-annotator_env
 
 
@@ -20,7 +20,7 @@ source `which virtualenvwrapper.sh`
 
 ```bash
 mkvirtualenv --python=python3.6 impact-annotator_env
-pip install ipython nb_conda_kernels numpy matplotlib seaborn scikit-learn pandas graphviz
+pip install ipython nb_conda_kernels numpy matplotlib seaborn scikit-learn pandas
 
 
 workon impact-annotator_env
@@ -31,6 +31,7 @@ rmvirtualenv impact-annotator_env
 ```
 
 python 3.6
+
 | package      | version |
 | ------------ | ------- |
 | ipython      | 6.5.0   |
@@ -39,6 +40,7 @@ python 3.6
 | seaborn      | 0.9.0   |
 | scikit-learn | 0.19.2  |
 | pandas       | 0.23.4  |
+
 ...
 
 
