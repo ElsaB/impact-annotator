@@ -14,10 +14,8 @@ from custom_tools import print_md
 #     - print an error if the job is not done or the folder was not found
 #     - scp the files metrics.pkl and job_output.txt from the cluster to the local computer
 class Selene_Job:
-    def __init__(self, job_id, cluster_username, n_jobs = 1, load_from_id = False):
+    def __init__(self, job_id, cluster_username, load_from_id = False):
         self.job_id = job_id
-        self.n_jobs = n_jobs
-        self.job_duration = 20
         self.local_job_directory_path = 'ssh_remote_jobs/job_' + str(job_id)
         self.selene_ssh_remote_jobs_path = cluster_username + '@selene.mskcc.org:/home/' + cluster_username + '/impact-annotator/analysis/prediction/ssh_remote_jobs'
         self.selene_job_directory_path = self.selene_ssh_remote_jobs_path + '/job_' + str(job_id)
@@ -53,7 +51,7 @@ class Selene_Job:
         print_md(self.get_job_md_string_('green') + '✅ data loaded\n')
 
 
-    def run(self):
+    def run(self, n_jobs = 1, short_job = True, memory = None):
         print('➞ scp ' + self.local_job_directory_path + ' to ' + self.selene_ssh_remote_jobs_path)
 
         !scp -r {self.local_job_directory_path} {self.selene_ssh_remote_jobs_path}
@@ -69,15 +67,23 @@ class Selene_Job:
                   \
                   cd ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id) + '; \
                   echo "➞ launch job in $PWD";'
-        if self.n_jobs == 1:
-            bsub_command = 'bsub -o job_output.txt -We ' + str(self.job_duration) + ' "python script.py"'
-        else:
-            bsub_command = 'bsub -o job_output.txt -We ' + str(self.job_duration) + ' -n ' + str(self.n_jobs) + ' -R "span[ptile=5]"' + ' "python script.py"'
+
+        bsub_command = 'bsub -o job_output.txt'
+        if short_job:
+            bsub_command += ' -We 59'
+        if n_jobs > 1:
+            if memory:
+                bsub_command += ' -n ' + str(n_jobs) + ' -R "span[ptile=5,mem=' + str(memory) + ']"'
+            else:
+                bsub_command += ' -n ' + str(n_jobs) + ' -R "span[ptile=5]"'
+
+        bsub_command +=' "python script.py"'
 
         command = setup_command + bsub_command
 
         !ssh {self.username}@selene.mskcc.org '{command}'
 
+        print('➞ bsub command used: $ ' + bsub_command)
         print_md(self.get_job_md_string_('green') + '✅ submitted\n')
 
 

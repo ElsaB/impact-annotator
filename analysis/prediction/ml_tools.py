@@ -100,6 +100,8 @@ def run_model(model, X, y, cv_strategy, n_jobs = 1, grid_search = False, get_roc
     if get_roc_curve:
         get_roc_metrics(metrics, X, y, cv_strategy)
 
+    metrics.drop('estimator', axis = 1, inplace = True)
+
     print(' done!')
         
     return metrics
