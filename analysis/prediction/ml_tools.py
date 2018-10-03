@@ -67,6 +67,7 @@ def print_fold_metrics(metrics, grid_search = False):
                                              metrics.iloc[i].gs_cv_results['params']):
                 print("    %0.2f ± %0.2f for %r" % (mean, 1.96 * std, parameters))
 
+
 def print_grid_search_curves(metrics):
     n_folds = metrics.shape[0]
 
@@ -88,7 +89,7 @@ def print_mean_metrics(metrics):
 def run_model(model, X, y, cv_strategy, n_jobs = 1, grid_search = False, get_roc_curve = True):
     print('Run model...', end = "")
 
-    metrics = cross_validate(model, X, y, cv = cv_strategy, scoring = ['accuracy', 'roc_auc'], return_train_score = True, return_estimator = True, n_jobs = n_jobs)
+    metrics = cross_validate(model, X, y, cv = cv_strategy, scoring = ['accuracy', 'roc_auc'], return_train_score = True, return_estimator = True, n_jobs = n_jobs, error_score='raise')
     metrics = pd.DataFrame(metrics)
     metrics.index.name = 'fold_number'
 

@@ -14,9 +14,10 @@ from custom_tools import print_md
 #     - print an error if the job is not done or the folder was not found
 #     - scp the files metrics.pkl and job_output.txt from the cluster to the local computer
 class Selene_Job:
-    def __init__(self, job_id, cluster_username, job_duration = 20, load_from_id = False):
+    def __init__(self, job_id, cluster_username, n_jobs = 1, load_from_id = False):
         self.job_id = job_id
-        self.job_duration = job_duration
+        self.n_jobs = n_jobs
+        self.job_duration = 20
         self.local_job_directory_path = 'ssh_remote_jobs/job_' + str(job_id)
         self.selene_ssh_remote_jobs_path = cluster_username + '@selene.mskcc.org:/home/' + cluster_username + '/impact-annotator/analysis/prediction/ssh_remote_jobs'
         self.selene_job_directory_path = self.selene_ssh_remote_jobs_path + '/job_' + str(job_id)
@@ -57,7 +58,7 @@ class Selene_Job:
 
         !scp -r {self.local_job_directory_path} {self.selene_ssh_remote_jobs_path}
 
-        command = 'echo "➞ logged in $PWD on $HOSTNAME"; \
+        setup_command = 'echo "➞ logged in $PWD on $HOSTNAME"; \
                   \
                   echo "➞ load ~/.bash_profile"; \
                   source ~/.bash_profile; \
@@ -67,8 +68,13 @@ class Selene_Job:
                   workon impact-annotator_env; \
                   \
                   cd ~/impact-annotator/analysis/prediction/ssh_remote_jobs/job_' + str(self.job_id) + '; \
-                  echo "➞ launch job in $PWD"; \
-                  bsub -o job_output.txt -We ' + str(self.job_duration) + ' "python script.py"'
+                  echo "➞ launch job in $PWD";'
+        if self.n_jobs == 1:
+            bsub_command = 'bsub -o job_output.txt -We ' + str(self.job_duration) + ' "python script.py"'
+        else:
+            bsub_command = 'bsub -o job_output.txt -We ' + str(self.job_duration) + ' -n ' + str(self.n_jobs) + ' -R "span[ptile=5]"' + ' "python script.py"'
+
+        command = setup_command + bsub_command
 
         !ssh {self.username}@selene.mskcc.org '{command}'
 
