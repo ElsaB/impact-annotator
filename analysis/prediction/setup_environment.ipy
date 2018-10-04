@@ -25,9 +25,9 @@ matplotlib.rcParams['figure.figsize'] = (6, 6)
 seaborn.set()
 
 # load custom functions
-%run custom_tools.py
-%run ml_tools.py
-%run Selene_Job.ipy
+%run ../custom_tools.py
+%run ../ml_tools.py
+%run ../Selene_Job.ipy
 
 print(' done!')
 
