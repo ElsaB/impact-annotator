@@ -1,120 +1,166 @@
-import pandas as pd
 import numpy as np
-from sklearn.metrics import roc_curve, auc, roc_auc_score
-from sklearn.model_selection import cross_validate
+import pandas as pd
+import matplotlib.pyplot as plt
 from scipy import interp
+from sklearn.metrics import roc_curve
+from sklearn.model_selection import cross_validate
 import time
 
-# strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
-def plot_roc(metrics, ax, title=""):
-    mean_fpr = np.linspace(0, 1, 100) # [0, 0.01, 0.02, ..., 0.09]
-    tprs = [] # True Positive Rate for each fold
-
-    # plot fold ROC
-    for i in range(metrics.shape[0]):
-        fpr, tpr = metrics.iloc[i].test_fpr, metrics.iloc[i].test_tpr
-        
-        
-        # because the length of fpr and tpr vary with the fold (size of thersholds  = nunique(y_pred[:, 1]) + 1), we can't just do
-        # fprs.append(fpr) and tprs.append(tpr)
-        tprs.append(interp(mean_fpr, fpr, tpr)) # linear interpolation to find the values for a 100 tpr
-        tprs[-1][0] = 0.0 # threshold > 1 for the first point
-
-        ax.plot(fpr, tpr, linewidth=0.6, alpha=0.4,
-                label='ROC fold %d (AUC = %0.2f)' % (i,  metrics.iloc[i].test_roc_auc))
-    
-
-    # plot baseline
-    ax.plot([0, 1], [0, 1], '--r', linewidth=0.5, alpha=0.8, label='random')
+# run_model_old() only
+from sklearn.metrics import roc_curve, auc, roc_auc_score
 
 
-    # plot mean ROC
-    mean_tpr = np.mean(tprs, axis=0)
-    ax.plot(mean_fpr, mean_tpr, 'b', linewidth=2,
-            label='mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (metrics.test_roc_auc.mean(), 1.96 * metrics.test_roc_auc.std()))
+
+# run the given model with the given parameters
+# return a pandas DataFrame object containing all the relevant metrics, including the grid search metrics when a grid_search was performed
+def run_model(model, X, y, cv_strategy, n_jobs=1):
+    print('Run model...', end='')
+    start = time.time()
 
 
-    # plot mean ROC std
-    std_tprs = np.std(tprs, axis=0)
-    ax.fill_between(mean_fpr, mean_tpr - std_tprs, mean_tpr + std_tprs, color='blue', alpha=0.15,
-                     label='$\pm$ 1 std. dev.')
-
-
-    # set plot parameters
-    ax.set_xlim([-0.05, 1.05])
-    ax.set_ylim([-0.05, 1.05])
-    ax.set_xlabel('False Positive Rate')
-    ax.set_ylabel('True Positive Rate')
-    ax.set_title(title)
-    ax.legend(loc="lower right", prop={'size': 10})
-
-
-def print_fold_metrics(metrics, grid_search=False):
-    print("Fold #: [fit_time | score_time]\n",
-          "  → accuracy: [test_accuracy | train_accuracy]\n",
-          "  → ROC AUC : [test_roc_auc  | train_roc_auc]\n")
-
-    # for each fold
-    for i in range(metrics.shape[0]):
-        print("Fold %d: [%.2fs | %.2fs]\n"    % (i + 1, metrics.iloc[i].fit_time  , metrics.iloc[i].score_time) +
-              "  → accuracy: [%.2f | %.2f]\n" % (metrics.iloc[i].test_accuracy, metrics.iloc[i].train_accuracy) +
-              "  → ROC AUC : [%.2f | %.2f]"   % (metrics.iloc[i].test_roc_auc , metrics.iloc[i].train_roc_auc))
-        if grid_search:
-            print("  → Best parameters : %r"   % metrics.iloc[i].gs_best_parameters)
-
-            for mean, std, parameters in zip(metrics.iloc[i].gs_cv_results['mean_test_score'],
-                                             metrics.iloc[i].gs_cv_results['std_test_score'],
-                                             metrics.iloc[i].gs_cv_results['params']):
-                print("    %0.2f ± %0.2f for %r" % (mean, 1.96 * std, parameters))
-
-
-def print_mean_metrics(metrics):
-    # mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
-    print("▴ Mean accuracy: %0.2f ± %0.2f\n" % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()) +
-          "▴ Mean ROC AUC : %0.2f ± %0.2f"   % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
-
-
-def run_model(model, X, y, cv_strategy, n_jobs=1, grid_search=False, get_roc_curve=True):
-    print('Run model...', end="")
-
+    # get cross validation metrics
     metrics = cross_validate(model, X, y, cv=cv_strategy, scoring=['accuracy', 'roc_auc'], return_train_score=True, return_estimator=True, n_jobs=n_jobs, error_score='raise')
     metrics = pd.DataFrame(metrics)
     metrics.index.name = 'fold_number'
 
-    if grid_search:
+    # get grid search metrics if the model seems to have performed a grid search
+    if hasattr(metrics.estimator.iloc[0], 'best_params_'):
         metrics['gs_best_parameters'] = metrics.estimator.apply(lambda x: x.best_params_)
         metrics['gs_cv_results']      = metrics.estimator.apply(lambda x: x.cv_results_)
 
-    if get_roc_curve:
-        get_roc_metrics(metrics, X, y, cv_strategy)
+    # get ROC metrics, warning this implies:
+    # - creating the cross-validation folds again
+    # - re-testing the fitted model on the test folds
+    get_roc_metrics(metrics, X, y, cv_strategy)
 
+    # we remove the estimators from the metrics because they can be quite memory-expensive (for random forest with a lot of trees for example)
     metrics.drop('estimator', axis=1, inplace=True)
 
-    print(' done!')
+
+    print(' done! (%.2fs)' % (time.time() - start))
         
     return metrics
 
 
+
+# add to metrics the test_fpr and test_tpr columns necessary to plot the ROC curve
+# only used in run_model()
 def get_roc_metrics(metrics, X, y, cv_strategy):
 
-    i = 0
-
+    # create empty list for test_fpr and test_tpr metrics
     metrics['test_fpr'] = [[] for i in range(metrics.shape[0])]
     metrics['test_tpr'] = [[] for i in range(metrics.shape[0])]
 
+    i = 0
     # for each fold
     for train_index, test_index in cv_strategy.split(X, y):
         (X_train, X_test) = (X.iloc[train_index], X.iloc[test_index])
         (y_train, y_test) = (y.iloc[train_index], y.iloc[test_index])
         
         y_test_pred  = metrics.iloc[i].estimator.predict_proba(X_test)[:, 1]        
-        fpr, tpr, thresholds = roc_curve(y_test , y_test_pred)
+        fpr, tpr, thresholds = roc_curve(y_test, y_test_pred)
         metrics.at[i, 'test_fpr'] = fpr
         metrics.at[i, 'test_tpr'] = tpr
 
         i += 1
 
 
+
+# print the average test set accuracy and test ROC AUC for a given metrics DataFrame
+def print_mean_metrics(metrics):
+    # test set mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
+    print('▴ Mean accuracy: %0.3f ± %0.3f' % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()))
+    print('▴ Mean ROC AUC : %0.3f ± %0.3f' % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
+
+
+
+# print multiple metrics values for the train and test set accross each folds, including the grid search metrics when a grid_search was performed
+# set detailed_grid_search_metrics to True when you want the detailed grid search metrics
+def print_fold_metrics(metrics, detailed_grid_search_metrics=False):
+    
+    # boolean variable being True if the metrics DataFrame contains grid search metrics
+    grid_search = hasattr(metrics.iloc[0], 'gs_best_parameters')
+
+    print('Fold #: [fit_time | score_time]')
+    print('  → accuracy: [test_accuracy | train_accuracy]')
+    print('  → ROC AUC : [test_roc_auc  | train_roc_auc] ')
+
+    if grid_search:
+        print('  → best hyperparameters: {\'first_hyperparameter_name\': best_value, ...}')
+
+        if detailed_grid_search_metrics:
+            print('      mean_test_score ± 1.96 * std_test_score for {hyperparameters_set #1}')
+            print('      mean_test_score ± 1.96 * std_test_score for {hyperparameters_set #2}')
+            print('      ...')
+
+    print()
+
+    # for each fold
+    for i, fold_metrics in metrics.iterrows():
+        print('Fold %d: [%.2fs | %.2fs]' % (i + 1, fold_metrics.fit_time, fold_metrics.score_time))
+        print('  → accuracy: [%.3f | %.3f]' % (fold_metrics.test_accuracy, fold_metrics.train_accuracy))
+        print('  → ROC AUC : [%.3f | %.3f]' % (fold_metrics.test_roc_auc , fold_metrics.train_roc_auc ))
+
+        if grid_search:
+            print('  → best hyperparameters: %s' % fold_metrics.gs_best_parameters)
+
+            if detailed_grid_search_metrics:
+                for mean, std, param in zip(fold_metrics.gs_cv_results['mean_test_score'],
+                                            fold_metrics.gs_cv_results['std_test_score'],
+                                            fold_metrics.gs_cv_results['params']):
+                    print('      %0.3f ± %0.3f for %s' % (mean, 1.96 * std, param))
+
+
+
+# plot ROC curve for each fold and a mean ROC curve
+# strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
+def plot_roc(metrics, figsize=(10, 10)):
+    # set plot
+    fig, ax = plt.subplots(1, 1, figsize=figsize)
+    ax.set_xlabel('false positive rate')
+    ax.set_ylabel('true positive rate')
+    
+
+    mean_fpr = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
+    tprs = [] # true positive rate list for each fold
+
+
+    # for each fold
+    for i, fold_metrics in metrics.iterrows():
+        fpr, tpr = fold_metrics.test_fpr, fold_metrics.test_tpr
+        
+        # because the length of fpr and tpr vary with the fold (size of thresholds  = nunique(y_pred[:, 1]) + 1), we can't just do
+        # fprs.append(fpr) and tprs.append(tpr)
+        # we use a linear interpolation to find the values of fpr for a 101 tpr chosen values
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0 # threshold > 1 for the first point
+
+        ax.plot(fpr, tpr, linewidth=0.6, alpha=0.4,
+                label='ROC fold %d (AUC = %0.3f)' % (i, fold_metrics.test_roc_auc))
+    
+
+    # plot baseline
+    ax.plot([0, 1], [0, 1], '--r', linewidth=0.5, alpha=1, label='random')\
+
+
+    # plot mean ROC
+    mean_tpr = np.mean(tprs, axis=0)
+    ax.plot(mean_fpr, mean_tpr, 'b', linewidth=2,
+            label='mean ROC (AUC = %0.3f $\pm$ %0.3f)' % (metrics.test_roc_auc.mean(), 1.96 * metrics.test_roc_auc.std()))
+
+
+    # plot mean ROC std
+    std_tpr = np.std(tprs, axis=0)
+    ax.fill_between(mean_fpr, mean_tpr - std_tpr, mean_tpr + std_tpr, color='blue', alpha=0.15,
+                     label='mean ROC $\pm$ 1 std. dev.')
+
+
+    ax.legend(loc='lower right', prop={'size': figsize[0] * 1.5})
+
+
+
+# old run_model(), not safe to use, not commented, will be removed soon
+# the whole cross-validation and metrics evaluation was done by hand without using cross_validate
 def run_model_old(model, X, y, cv_strategy, grid_search=False):
     print('Run model')
 
@@ -169,4 +215,51 @@ def run_model_old(model, X, y, cv_strategy, grid_search=False):
         i += 1
         
     return metrics
+
+
+
+def plot_grid_search_results(metrics, plot_error_bar = True):
+
+    hyper_parameters = list(metrics.iloc[0].gs_best_parameters.keys())
+    
+    n_folds_nested_cross_validation = len([key for key in metrics.iloc[0].gs_cv_results.keys() if key.startswith('split') and key.endswith('_test_score')])
+    print('%d hyperparameters tuned for %d different folds (over a %d-fold nested cross-validation):' % (len(hyper_parameters), metrics.shape[0], n_folds_nested_cross_validation))
+    
+    max_param_name_length = max([len(p) for p in hyper_parameters])
+    for p in hyper_parameters:
+        print('  → %s: %s' % (p.ljust(max_param_name_length), np.unique(metrics.iloc[0].gs_cv_results['param_%s' % p])))
+
+    plt.figure(figsize = (10 * len(hyper_parameters), 10))
+
+    for (plot_id, moving_parameter) in enumerate(hyper_parameters):
+        fix_parameters = [p for p in hyper_parameters if p != moving_parameter]
+
+        plt.subplot(1, len(hyper_parameters), plot_id + 1)
+        plt.title("Varying %s with %s fixed to its(their) best value(s) for each fold" % (moving_parameter, fix_parameters))
+        plt.ylabel("score")
+        plt.xlabel(moving_parameter)
+        
+
+        for fold_number in range(metrics.shape[0]):
+            fold_metric = pd.DataFrame(metrics.iloc[fold_number].gs_cv_results)
+            fix_parameters_best_values = [metrics.iloc[fold_number].gs_best_parameters[key] for key in fix_parameters]
+
+            mask = set(fold_metric.index.tolist())
+            for (i, p) in enumerate(fix_parameters):
+                #print(i, p, fix_parameters_best_values[i])
+                new_mask = set(np.unique(np.where(fold_metric['param_%s' % p] == fix_parameters_best_values[i])))
+                mask = set.intersection(mask, new_mask)
+            mask = sorted(list(mask))
+
+            x = fold_metric['param_%s' % moving_parameter].iloc[mask]
+            y = fold_metric['mean_test_score'].iloc[mask]
+            
+            plot = plt.plot(x, y, '-o', markersize=10, alpha = 0.6, label='fold %d with %s = %s' % (fold_number + 1, fix_parameters, fix_parameters_best_values))
+
+            if plot_error_bar:
+                yerr = fold_metric['std_test_score'].iloc[mask]
+                plt.errorbar(x, y, yerr=yerr, capsize=5, label=None, ecolor=plot[0].get_color(), fmt = 'none', alpha = 0.5)
+    
+        plt.legend(loc='lower center', prop={'size': 15})
+
 
