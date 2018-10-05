@@ -24,6 +24,7 @@ class Selene_Job:
 
         # path on the cluster
         self.selene_ssh_server_path = cluster_username + '@selene.mskcc.org'
+        self.selene_ssh_remote_jobs_directory_path = cluster_path_to_impact_annotator + '/analysis/prediction/ssh_remote_jobs'
         self.selene_job_directory_path = cluster_path_to_impact_annotator + '/analysis/prediction/ssh_remote_jobs/job_' + str(job_id)
 
         # check if the job exists already
@@ -70,11 +71,15 @@ class Selene_Job:
             print_md(self.get_job_md_string_('red') + '⚠️ does not exist yet')
         else:
             # scp the job directory to the cluster
-            print('➞ scp ' + self.local_job_directory_path + ' to ' + self.selene_ssh_server_path + ':' + self.selene_job_directory_path)
-            !scp -r {self.local_job_directory_path} {self.selene_ssh_server_path + ':' + self.selene_job_directory_path}
+            print('➞ scp ' + self.local_job_directory_path + ' to ' + self.selene_ssh_server_path + ':' + self.selene_ssh_remote_jobs_directory_path)
+            !scp -r {self.local_job_directory_path} {self.selene_ssh_server_path + ':' + self.selene_ssh_remote_jobs_directory_path}
 
-
-            # setup command to log on the cluster, load the appropriate environments variables, set the python virtualenv and cd in the job directory
+            # setup command to:
+            #  - log on the cluster
+            #  - load the appropriate environments variables
+            #  - set the python virtualenv
+            #  - cd in the job directory
+            #  - rm the existing metrics.pkl or job_output.txt
             setup_command = 'echo "➞ logged in $PWD on $HOSTNAME"; \
                             \
                             echo "➞ load ~/.bash_profile"; \
@@ -85,6 +90,8 @@ class Selene_Job:
                             workon impact-annotator_env; \
                             \
                             cd ' + self.selene_job_directory_path + '; \
+                            echo "➞ rm metrics.pkl & job_output.txt in $PWD"; \
+                            rm -f metrics.pkl job_output.txt\
                             echo "➞ launch job in $PWD";'
 
             # bsub command to bsub the job with the requested n_jobs and memory
