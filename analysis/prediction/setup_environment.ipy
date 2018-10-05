@@ -1,3 +1,6 @@
+print('Setup environment...', end='')
+
+
 # special notebook embedding for matplotlib figures
 %matplotlib inline
 
@@ -8,9 +11,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import seaborn
 
-
-
-print('Setup environment...', end='')
+# load custom functions
+from custom_tools import *
+from ml_tools import *
 
 # set jupyter notebook pandas dataframe output parameters
 pd.set_option('display.max_rows'    , 200)
@@ -24,14 +27,8 @@ matplotlib.rcParams['figure.figsize'] = (6, 6)
 # set the matplotlib figures style
 seaborn.set()
 
-# load custom functions
-%run ../custom_tools.py
-%run ../ml_tools.py
-%run ../Selene_Job.ipy
 
 print(' done!')
-
-
 
 # check current conda env, prints a warning if the current conda env is not the project conda env (ie impact-annotator_env)
 current_conda_env = !echo $CONDA_DEFAULT_ENV
