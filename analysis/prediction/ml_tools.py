@@ -218,48 +218,63 @@ def run_model_old(model, X, y, cv_strategy, grid_search=False):
 
 
 
+# plot a subplot for each paramater p
+# for each subplot:
+#   plot a scatter line for each fold with:
+#   - x: the parameter p values, the other parameters are fixed to their best values for the fold
+#   - y: grid search score for this fold and this parameters set (ie moving parameter p and other parameters fixed)
 def plot_grid_search_results(metrics, plot_error_bar = True):
-
+    # get hyper_parameters list
     hyper_parameters = list(metrics.iloc[0].gs_best_parameters.keys())
     
+    # boiler plate code to get the number of folds in the nested cross-validation
     n_folds_nested_cross_validation = len([key for key in metrics.iloc[0].gs_cv_results.keys() if key.startswith('split') and key.endswith('_test_score')])
     print('%d hyperparameters tuned for %d different folds (over a %d-fold nested cross-validation):' % (len(hyper_parameters), metrics.shape[0], n_folds_nested_cross_validation))
     
+    # print the parameters grid
     max_param_name_length = max([len(p) for p in hyper_parameters])
     for p in hyper_parameters:
         print('  → %s: %s' % (p.ljust(max_param_name_length), np.unique(metrics.iloc[0].gs_cv_results['param_%s' % p])))
 
+    # print the best parameters for each fold
+    print('Best hyperparameters for each fold:')
+    for i, fold_metrics in metrics.iterrows():
+        print('fold %d: %s' % (i, fold_metrics.gs_best_parameters))
+
+
+    # we plot one subplot of size 10x10 per hyperparameter
     plt.figure(figsize = (10 * len(hyper_parameters), 10))
 
+    # for each hyperparameter
     for (plot_id, moving_parameter) in enumerate(hyper_parameters):
+        # get fixed parameters list
         fix_parameters = [p for p in hyper_parameters if p != moving_parameter]
 
         plt.subplot(1, len(hyper_parameters), plot_id + 1)
-        plt.title("Varying %s with %s fixed to its(their) best value(s) for each fold" % (moving_parameter, fix_parameters))
+        plt.title("Varying '%s' with %s fixed to its(their) best value(s) for each fold" % (moving_parameter, fix_parameters))
         plt.ylabel("score")
         plt.xlabel(moving_parameter)
-        
 
+        # for each fold
         for fold_number in range(metrics.shape[0]):
+            # get the grid search results for this fold
             fold_metric = pd.DataFrame(metrics.iloc[fold_number].gs_cv_results)
-            fix_parameters_best_values = [metrics.iloc[fold_number].gs_best_parameters[key] for key in fix_parameters]
 
-            mask = set(fold_metric.index.tolist())
-            for (i, p) in enumerate(fix_parameters):
-                #print(i, p, fix_parameters_best_values[i])
-                new_mask = set(np.unique(np.where(fold_metric['param_%s' % p] == fix_parameters_best_values[i])))
-                mask = set.intersection(mask, new_mask)
-            mask = sorted(list(mask))
+            # only keep the best hyperparameters values for this fold
+            for p in fix_parameters:
+                fold_metric = fold_metric.iloc[np.where(fold_metric['param_%s' % p] == metrics.iloc[fold_number].gs_best_parameters[p])]
 
-            x = fold_metric['param_%s' % moving_parameter].iloc[mask]
-            y = fold_metric['mean_test_score'].iloc[mask]
+            x = fold_metric['param_%s' % moving_parameter]
+            y = fold_metric['mean_test_score']
             
-            plot = plt.plot(x, y, '-o', markersize=10, alpha = 0.6, label='fold %d with %s = %s' % (fold_number + 1, fix_parameters, fix_parameters_best_values))
+            # plot score curve
+            plot = plt.plot(x, y, '-o', markersize=10, alpha = 0.6, label='fold %d' % (fold_number + 1))
 
+            # plot special marker for the highest value
+            plt.plot(x[y.idxmax()], y.max(), 'o',  alpha = 0.6, markersize=20, color=plot[0].get_color())
+
+            # plot error bars
             if plot_error_bar:
-                yerr = fold_metric['std_test_score'].iloc[mask]
-                plt.errorbar(x, y, yerr=yerr, capsize=5, label=None, ecolor=plot[0].get_color(), fmt = 'none', alpha = 0.5)
-    
-        plt.legend(loc='lower center', prop={'size': 15})
-
-
+                plt.errorbar(x, y, yerr=fold_metric['std_test_score'], capsize=5, label=None, ecolor=plot[0].get_color(), fmt = 'none', alpha = 0.5)
+            
+        plt.legend(loc='lower right', prop={'size': 15})
