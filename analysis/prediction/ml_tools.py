@@ -19,7 +19,7 @@ def run_model(model, X, y, cv_strategy, n_jobs=1):
 
 
     # get cross validation metrics
-    metrics = cross_validate(model, X, y, cv=cv_strategy, scoring=['accuracy', 'roc_auc'], return_train_score=True, return_estimator=True, n_jobs=n_jobs, error_score='raise')
+    metrics = cross_validate(model, X, y, cv=cv_strategy, scoring=['accuracy', 'roc_auc', 'f1'], return_train_score=True, return_estimator=True, n_jobs=n_jobs, error_score='raise')
     metrics = pd.DataFrame(metrics)
     metrics.index.name = 'fold_number'
 
@@ -66,11 +66,12 @@ def get_roc_metrics(metrics, X, y, cv_strategy):
 
 
 
-# print the average test set accuracy and test ROC AUC for a given metrics DataFrame
+# print the average test set accuracy, test ROC AUC and test F1-score for a given metrics DataFrame
 def print_mean_metrics(metrics):
     # test set mean metrics and 95% confidence interval on the metrics estimate (= 1.96 x standard_deviation)
     print('▴ Mean accuracy: %0.3f ± %0.3f' % (metrics.test_accuracy.mean(), 1.96 * metrics.test_accuracy.std()))
     print('▴ Mean ROC AUC : %0.3f ± %0.3f' % (metrics.test_roc_auc.mean() , 1.96 * metrics.test_roc_auc.std()))
+    print('▴ Mean F1-score: %0.3f ± %0.3f' % (metrics.test_f1.mean()      , 1.96 * metrics.test_f1.std()))
 
 
 
@@ -84,6 +85,7 @@ def print_fold_metrics(metrics, detailed_grid_search_metrics=False):
     print('Fold #: [fit_time | score_time]')
     print('  → accuracy: [test_accuracy | train_accuracy]')
     print('  → ROC AUC : [test_roc_auc  | train_roc_auc] ')
+    print('  → F1-score: [test_f1_score | train_f1_score]')
 
     if grid_search:
         print('  → best hyperparameters: {\'first_hyperparameter_name\': best_value, ...}')
@@ -100,6 +102,7 @@ def print_fold_metrics(metrics, detailed_grid_search_metrics=False):
         print('Fold %d: [%.2fs | %.2fs]' % (i + 1, fold_metrics.fit_time, fold_metrics.score_time))
         print('  → accuracy: [%.3f | %.3f]' % (fold_metrics.test_accuracy, fold_metrics.train_accuracy))
         print('  → ROC AUC : [%.3f | %.3f]' % (fold_metrics.test_roc_auc , fold_metrics.train_roc_auc ))
+        print('  → F1-score: [%.3f | %.3f]' % (fold_metrics.test_f1      , fold_metrics.train_f1      ))
 
         if grid_search:
             print('  → best hyperparameters: %s' % fold_metrics.gs_best_parameters)
