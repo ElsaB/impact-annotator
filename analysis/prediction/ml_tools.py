@@ -3,12 +3,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as seaborn
 from scipy import interp
-from sklearn.metrics import roc_curve, confusion_matrix
+from sklearn.metrics import roc_curve, confusion_matrix, precision_recall_curve
 from sklearn.model_selection import cross_validate, learning_curve
 import time
 
 # run_model_old() only
-from sklearn.metrics import roc_curve, auc, roc_auc_score
+from sklearn.metrics import auc, roc_auc_score
 
 
 
@@ -29,15 +29,11 @@ def run_model(model, X, y, cv_strategy, n_jobs=1):
         metrics['gs_best_parameters'] = metrics.estimator.apply(lambda x: x.best_params_)
         metrics['gs_cv_results']      = metrics.estimator.apply(lambda x: x.cv_results_)
 
-    # get ROC metrics, warning this implies:
+    # get ROC curve, precision-recall curve and confusion matrix, warning this implies:
     # - creating the cross-validation folds again
     # - re-testing the fitted model on the test folds
-    get_roc_metrics(metrics, X, y, cv_strategy)
+    get_other_metrics(metrics, X, y, cv_strategy)
 
-    # get confusion matrices for each fold, warning this implies:
-    # - creating the cross-validation folds again
-    # - re-testing the fitted model on the test folds
-    get_confusion_matrix_metrics(metrics, X, y, cv_strategy)
 
     # we remove the estimators from the metrics because they can be quite memory-expensive (for random forest with a lot of trees for example)
     metrics.drop('estimator', axis=1, inplace=True)
@@ -49,38 +45,41 @@ def run_model(model, X, y, cv_strategy, n_jobs=1):
 
 
 
-# add to metrics the test_fpr and test_tpr columns necessary to plot the ROC curve
+# add to metrics the necessary metrics to compute later the ROC curve, precision-recall curve and confusion matrix for each fold
 # only used in run_model()
-def get_roc_metrics(metrics, X, y, cv_strategy):
+def get_other_metrics(metrics, X, y, cv_strategy):
 
-    # create empty list for test_fpr and test_tpr metrics
+    # create empty list for the new metrics
+    ## ROC metrics
     metrics['test_fpr'] = [[] for i in range(metrics.shape[0])]
     metrics['test_tpr'] = [[] for i in range(metrics.shape[0])]
+
+    ## precision-recall metrics
+    metrics['precision'] = [[] for i in range(metrics.shape[0])]
+    metrics['recall'] = [[] for i in range(metrics.shape[0])]
+
+    ## confusion matrix metrics
+    metrics['confusion_matrix'] = [[] for i in range(metrics.shape[0])]
+
 
     # for each fold
     for i, (train_index, test_index) in enumerate(cv_strategy.split(X, y)):
         (X_train, X_test) = (X.iloc[train_index], X.iloc[test_index])
         (y_train, y_test) = (y.iloc[train_index], y.iloc[test_index])
         
-        y_test_pred  = metrics.iloc[i].estimator.predict_proba(X_test)[:, 1]        
+        y_test_pred  = metrics.iloc[i].estimator.predict_proba(X_test)[:, 1]
+
+        ## ROC metrics       
         fpr, tpr, thresholds = roc_curve(y_test, y_test_pred)
         metrics.at[i, 'test_fpr'] = fpr
         metrics.at[i, 'test_tpr'] = tpr
 
+        ## precision-recall metrics       
+        precision, recall, thresholds = precision_recall_curve(y_test, y_test_pred)
+        metrics.at[i, 'precision'] = precision
+        metrics.at[i, 'recall'] = recall
 
-
-# add to metrics the confusion matrices
-# only used in run_model()
-def get_confusion_matrix_metrics(metrics, X, y, cv_strategy):
-
-    # create empty list for confusion_matrix
-    metrics['confusion_matrix'] = [[] for i in range(metrics.shape[0])]
-
-    # for each fold
-    for i, (train_index, test_index) in enumerate(cv_strategy.split(X, y)):
-        (X_train, X_test) = (X.iloc[train_index], X.iloc[test_index])
-        (y_train, y_test) = (y.iloc[train_index], y.iloc[test_index])
-
+        ## confusion matrix metrics
         metrics.at[i, 'confusion_matrix'] = confusion_matrix(y_test, metrics.iloc[i].estimator.predict(X_test))
 
 
@@ -134,13 +133,20 @@ def print_fold_metrics(metrics, detailed_grid_search_metrics=False):
 
 
 
+# plot ROC curve and PR curve side_by_side
+def plot_roc_and_precision_recall(metrics, figsize=(20, 10)):
+    fig, (ax0, ax1) = plt.subplots(1, 2, figsize=figsize)
+    plot_roc(metrics, ax0, figsize[0] / 2 * 1.5)
+    plot_precision_recall(metrics, ax1, figsize[0] / 2 * 1.5)
+
+
 # plot ROC curve for each fold and a mean ROC curve
 # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
-def plot_roc(metrics, figsize=(10, 10)):
+def plot_roc(metrics, ax, legend_size):
     # set plot
-    plt.figure(figsize=figsize)
-    plt.xlabel('false positive rate')
-    plt.ylabel('true positive rate')
+    ax.set_title('ROC curve')
+    ax.set_xlabel('false positive rate')
+    ax.set_ylabel('true positive rate')
     
 
     mean_fpr = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
@@ -157,36 +163,75 @@ def plot_roc(metrics, figsize=(10, 10)):
         tprs.append(interp(mean_fpr, fpr, tpr))
         tprs[-1][0] = 0.0 # threshold > 1 for the first point
 
-        plt.plot(fpr, tpr, linewidth=0.6, alpha=0.4,
+        ax.plot(fpr, tpr, linewidth=0.6, alpha=0.4,
                 label='ROC fold %d (AUC = %0.3f)' % (i, fold_metrics.test_roc_auc))
     
 
     # plot baseline
-    plt.plot([0, 1], [0, 1], '--r', linewidth=0.5, alpha=1, label='random')\
+    ax.plot([0, 1], [0, 1], '--r', linewidth=0.5, alpha=1, label='random')\
 
 
     # plot mean ROC
     mean_tpr = np.mean(tprs, axis=0)
-    plt.plot(mean_fpr, mean_tpr, 'b', linewidth=2,
+    ax.plot(mean_fpr, mean_tpr, 'b', linewidth=2,
             label='mean ROC (AUC = %0.3f $\pm$ %0.3f)' % (metrics.test_roc_auc.mean(), 1.96 * metrics.test_roc_auc.std()))
 
 
     # plot mean ROC std
     std_tpr = np.std(tprs, axis=0)
-    plt.fill_between(mean_fpr, mean_tpr - std_tpr, mean_tpr + std_tpr, color='blue', alpha=0.15,
+    ax.fill_between(mean_fpr, mean_tpr - std_tpr, mean_tpr + std_tpr, color='blue', alpha=0.15,
                      label='mean ROC $\pm$ 1 std. dev.')
 
 
-    plt.legend(loc='lower right', prop={'size': figsize[0] * 1.5})
+    ax.legend(loc='lower right', prop={'size': legend_size})
+
+
+
+# plot Precision-Recall curve (PR) for each fold and a mean PR curve
+# strongly inspired by previous function
+def plot_precision_recall(metrics, ax, legend_size):
+    # set plot
+    ax.set_title('Precision-Recall curve')
+    ax.set_xlabel('recall')
+    ax.set_ylabel('precision')
+    
+
+    mean_precision = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
+    recalls = [] # recalls value list for each fold
+
+
+    # for each fold
+    for i, fold_metrics in metrics.iterrows():
+        precision, recall = fold_metrics.precision, fold_metrics.recall
+        
+        # because the length of precision and recall vary with the fold (size of thresholds  = nunique(y_pred[:, 1]) + 1), we can't just do
+        # precisions.append(precision) and recalls.append(recall)
+        # we use a linear interpolation to find the values of precision for a 101 recall chosen values
+        recalls.append(interp(mean_precision, precision, recall))
+
+        ax.plot(precision, recall, linewidth=0.6, alpha=0.4,
+                label='PR fold %d' % i)
+    
+
+    # plot mean PR
+    mean_recall = np.mean(recalls, axis=0)
+    ax.plot(mean_precision, mean_recall, 'b', linewidth=2, label='mean PR')
+
+
+    # plot mean PR std
+    std_recall = np.std(recalls, axis=0)
+    ax.fill_between(mean_precision, mean_recall - std_recall, mean_recall + std_recall, color='blue', alpha=0.15,
+                     label='mean PR $\pm$ 1 std. dev.')
+
+
+    ax.legend(loc='lower left', prop={'size': legend_size})
 
 
 
 # plot confusion matrix for each fold
 def plot_confusion_matrix(metrics):
     # set plot
-    fig = plt.figure(figsize = (4 * metrics.shape[0], 3))
-    plt.xlabel('alalad')
-    plt.ylabel('nadn')
+    plt.figure(figsize = (4 * metrics.shape[0], 3))
 
     # for each fold
     for i, fold_metrics in metrics.iterrows():
@@ -199,7 +244,7 @@ def plot_confusion_matrix(metrics):
         labels = prop.applymap(lambda x: '%d%%' % (100 * x)) + cm.applymap(lambda x: ' (%d)' % x)
         
         # plot confusion matrix
-        seaborn.heatmap(cm, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=cm.sum(axis=1).max(), annot_kws={"size": 13})
+        seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": 13})
 
 
 
