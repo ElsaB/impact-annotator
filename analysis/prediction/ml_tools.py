@@ -1,9 +1,10 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as seaborn
 from scipy import interp
-from sklearn.metrics import roc_curve
-from sklearn.model_selection import cross_validate
+from sklearn.metrics import roc_curve, confusion_matrix
+from sklearn.model_selection import cross_validate, learning_curve
 import time
 
 # run_model_old() only
@@ -33,6 +34,11 @@ def run_model(model, X, y, cv_strategy, n_jobs=1):
     # - re-testing the fitted model on the test folds
     get_roc_metrics(metrics, X, y, cv_strategy)
 
+    # get confusion matrices for each fold, warning this implies:
+    # - creating the cross-validation folds again
+    # - re-testing the fitted model on the test folds
+    get_confusion_matrix_metrics(metrics, X, y, cv_strategy)
+
     # we remove the estimators from the metrics because they can be quite memory-expensive (for random forest with a lot of trees for example)
     metrics.drop('estimator', axis=1, inplace=True)
 
@@ -51,9 +57,8 @@ def get_roc_metrics(metrics, X, y, cv_strategy):
     metrics['test_fpr'] = [[] for i in range(metrics.shape[0])]
     metrics['test_tpr'] = [[] for i in range(metrics.shape[0])]
 
-    i = 0
     # for each fold
-    for train_index, test_index in cv_strategy.split(X, y):
+    for i, (train_index, test_index) in enumerate(cv_strategy.split(X, y)):
         (X_train, X_test) = (X.iloc[train_index], X.iloc[test_index])
         (y_train, y_test) = (y.iloc[train_index], y.iloc[test_index])
         
@@ -62,7 +67,21 @@ def get_roc_metrics(metrics, X, y, cv_strategy):
         metrics.at[i, 'test_fpr'] = fpr
         metrics.at[i, 'test_tpr'] = tpr
 
-        i += 1
+
+
+# add to metrics the confusion matrices
+# only used in run_model()
+def get_confusion_matrix_metrics(metrics, X, y, cv_strategy):
+
+    # create empty list for confusion_matrix
+    metrics['confusion_matrix'] = [[] for i in range(metrics.shape[0])]
+
+    # for each fold
+    for i, (train_index, test_index) in enumerate(cv_strategy.split(X, y)):
+        (X_train, X_test) = (X.iloc[train_index], X.iloc[test_index])
+        (y_train, y_test) = (y.iloc[train_index], y.iloc[test_index])
+
+        metrics.at[i, 'confusion_matrix'] = confusion_matrix(y_test, metrics.iloc[i].estimator.predict(X_test))
 
 
 
@@ -119,9 +138,9 @@ def print_fold_metrics(metrics, detailed_grid_search_metrics=False):
 # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
 def plot_roc(metrics, figsize=(10, 10)):
     # set plot
-    fig, ax = plt.subplots(1, 1, figsize=figsize)
-    ax.set_xlabel('false positive rate')
-    ax.set_ylabel('true positive rate')
+    plt.figure(figsize=figsize)
+    plt.xlabel('false positive rate')
+    plt.ylabel('true positive rate')
     
 
     mean_fpr = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
@@ -138,27 +157,49 @@ def plot_roc(metrics, figsize=(10, 10)):
         tprs.append(interp(mean_fpr, fpr, tpr))
         tprs[-1][0] = 0.0 # threshold > 1 for the first point
 
-        ax.plot(fpr, tpr, linewidth=0.6, alpha=0.4,
+        plt.plot(fpr, tpr, linewidth=0.6, alpha=0.4,
                 label='ROC fold %d (AUC = %0.3f)' % (i, fold_metrics.test_roc_auc))
     
 
     # plot baseline
-    ax.plot([0, 1], [0, 1], '--r', linewidth=0.5, alpha=1, label='random')\
+    plt.plot([0, 1], [0, 1], '--r', linewidth=0.5, alpha=1, label='random')\
 
 
     # plot mean ROC
     mean_tpr = np.mean(tprs, axis=0)
-    ax.plot(mean_fpr, mean_tpr, 'b', linewidth=2,
+    plt.plot(mean_fpr, mean_tpr, 'b', linewidth=2,
             label='mean ROC (AUC = %0.3f $\pm$ %0.3f)' % (metrics.test_roc_auc.mean(), 1.96 * metrics.test_roc_auc.std()))
 
 
     # plot mean ROC std
     std_tpr = np.std(tprs, axis=0)
-    ax.fill_between(mean_fpr, mean_tpr - std_tpr, mean_tpr + std_tpr, color='blue', alpha=0.15,
+    plt.fill_between(mean_fpr, mean_tpr - std_tpr, mean_tpr + std_tpr, color='blue', alpha=0.15,
                      label='mean ROC $\pm$ 1 std. dev.')
 
 
-    ax.legend(loc='lower right', prop={'size': figsize[0] * 1.5})
+    plt.legend(loc='lower right', prop={'size': figsize[0] * 1.5})
+
+
+
+# plot confusion matrix for each fold
+def plot_confusion_matrix(metrics):
+    # set plot
+    fig = plt.figure(figsize = (4 * metrics.shape[0], 3))
+    plt.xlabel('alalad')
+    plt.ylabel('nadn')
+
+    # for each fold
+    for i, fold_metrics in metrics.iterrows():
+        cm = pd.DataFrame(fold_metrics.confusion_matrix, index=['False', 'True'], columns=['False', 'True'])
+        
+        plt.subplot(1, metrics.shape[0], i + 1)
+        plt.title('fold %d' % (i + 1))
+        
+        prop = pd.DataFrame(cm.values / (cm.sum(axis = 1)[:, np.newaxis]), index=['False', 'True'], columns=['False', 'True'])
+        labels = prop.applymap(lambda x: '%d%%' % (100 * x)) + cm.applymap(lambda x: ' (%d)' % x)
+        
+        # plot confusion matrix
+        seaborn.heatmap(cm, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=cm.sum(axis=1).max(), annot_kws={"size": 13})
 
 
 
@@ -281,3 +322,30 @@ def plot_grid_search_results(metrics, plot_error_bar = True):
                 plt.errorbar(x, y, yerr=fold_metric['std_test_score'], capsize=5, label=None, ecolor=plot[0].get_color(), fmt = 'none', alpha = 0.5)
             
         plt.legend(loc='lower right', prop={'size': 15})
+
+
+# plot learning curves
+# strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_learning_curve.html
+def plot_learning_curves(model, X, y, cv_strategy, figsize=(10, 10)):
+    # set plot
+    plt.figure(figsize=figsize)
+    plt.xlabel('Number of training examples')
+    plt.ylabel('ROC AUC score')
+
+    # get metrics
+    train_sizes, train_scores, test_scores = learning_curve(model, X, y, train_sizes=np.linspace(0.1, 1, 10), scoring='roc_auc', cv=cv_strategy, n_jobs=5, error_score='raise')
+    train_scores_mean = np.mean(train_scores, axis=1)
+    test_scores_mean  = np.mean(test_scores , axis=1)
+    test_scores_std   = np.std(test_scores  , axis=1)
+    train_scores_std  = np.std(train_scores , axis=1)
+
+    # plot metrics and their standard deviations
+    plt.plot(train_sizes, train_scores_mean, 'o-', color='r', markersize = 10, label='mean train score')
+    plt.plot(train_sizes, test_scores_mean , 'o-', color='g', markersize = 10, label='mean test score')
+    plt.fill_between(train_sizes, train_scores_mean - train_scores_std, train_scores_mean + train_scores_std,
+                     alpha=0.1, color='r', label='mean train score $\pm$ 1 std. dev.')
+    plt.fill_between(train_sizes, test_scores_mean - test_scores_std, test_scores_mean + test_scores_std,
+                     alpha=0.1, color='g', label='mean test score  $\pm$ 1 std. dev.')
+    
+    plt.legend(loc='best', prop={'size': figsize[0] * 1.5})
+
