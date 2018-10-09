@@ -51,12 +51,14 @@ def get_other_metrics(metrics, X, y, cv_strategy):
 
     # create empty list for the new metrics
     ## ROC metrics
-    metrics['test_fpr'] = [[] for i in range(metrics.shape[0])]
-    metrics['test_tpr'] = [[] for i in range(metrics.shape[0])]
+    metrics['test_fpr']   = [[] for i in range(metrics.shape[0])]
+    metrics['test_tpr']   = [[] for i in range(metrics.shape[0])]
+    metrics['roc_thresh'] = [[] for i in range(metrics.shape[0])]
 
     ## precision-recall metrics
     metrics['precision'] = [[] for i in range(metrics.shape[0])]
-    metrics['recall'] = [[] for i in range(metrics.shape[0])]
+    metrics['recall']    = [[] for i in range(metrics.shape[0])]
+    metrics['pr_thresh'] = [[] for i in range(metrics.shape[0])]
 
     ## confusion matrix metrics
     metrics['confusion_matrix'] = [[] for i in range(metrics.shape[0])]
@@ -70,18 +72,23 @@ def get_other_metrics(metrics, X, y, cv_strategy):
         y_test_pred  = metrics.iloc[i].estimator.predict_proba(X_test)[:, 1]
 
         ## ROC metrics       
-        fpr, tpr, thresholds = roc_curve(y_test, y_test_pred)
-        metrics.at[i, 'test_fpr'] = fpr
-        metrics.at[i, 'test_tpr'] = tpr
+        fpr, tpr, roc_thresholds = roc_curve(y_test, y_test_pred)
+        metrics.at[i, 'test_fpr']   = fpr
+        metrics.at[i, 'test_tpr']   = tpr
+        metrics.at[i, 'roc_thresh'] = roc_thresholds
 
         ## precision-recall metrics       
-        precision, recall, thresholds = precision_recall_curve(y_test, y_test_pred)
+        precision, recall, pr_thresholds = precision_recall_curve(y_test, y_test_pred)
         metrics.at[i, 'precision'] = precision
-        metrics.at[i, 'recall'] = recall
+        metrics.at[i, 'recall']    = recall
+        metrics.at[i, 'pr_thresh'] = pr_thresholds
 
         ## confusion matrix metrics
-        metrics.at[i, 'confusion_matrix'] = confusion_matrix(y_test, metrics.iloc[i].estimator.predict(X_test))
+        #y_pred_25 = (y_test_pred >= 0.25)
+        #y_pred_50 = (y_test_pred >= 0.5) # equivalent to y_pred_05 = metrics.iloc[i].estimator.predict(X_test):
+        #y_pred_75 = (y_test_pred >= 0.75)
 
+        metrics.at[i, 'confusion_matrix'] = confusion_matrix(y_test, metrics.iloc[i].estimator.predict(X_test))
 
 
 # print the average test set accuracy, test ROC AUC and test F1-score for a given metrics DataFrame
@@ -134,19 +141,20 @@ def print_fold_metrics(metrics, detailed_grid_search_metrics=False):
 
 
 # plot ROC curve and PR curve side_by_side
-def plot_roc_and_precision_recall(metrics, figsize=(20, 10)):
+def plot_roc_and_precision_recall(metrics, figsize=(20, 10), plot_thresholds=True):
     fig, (ax0, ax1) = plt.subplots(1, 2, figsize=figsize)
-    plot_roc(metrics, ax0, figsize[0] / 2 * 1.5)
-    plot_precision_recall(metrics, ax1, figsize[0] / 2 * 1.5)
+    plot_roc(metrics, ax0, figsize[0] / 2 * 1.5, plot_thresholds)
+    plot_precision_recall(metrics, ax1, figsize[0] / 2 * 1.5, plot_thresholds)
 
 
-# plot ROC curve for each fold and a mean ROC curve
+
+# plot ROC curve for each fold (and the associated threshold) and a mean ROC curve
 # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
-def plot_roc(metrics, ax, legend_size):
+def plot_roc(metrics, ax, legend_size, plot_thresholds=True):
     # set plot
     ax.set_title('ROC curve')
     ax.set_xlabel('false positive rate')
-    ax.set_ylabel('true positive rate')
+    ax.set_ylabel('true positive rate  |  threshold value')
     
 
     mean_fpr = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
@@ -155,20 +163,26 @@ def plot_roc(metrics, ax, legend_size):
 
     # for each fold
     for i, fold_metrics in metrics.iterrows():
-        fpr, tpr = fold_metrics.test_fpr, fold_metrics.test_tpr
+        fpr, tpr, thresholds = fold_metrics.test_fpr, fold_metrics.test_tpr, fold_metrics.roc_thresh
         
         # because the length of fpr and tpr vary with the fold (size of thresholds  = nunique(y_pred[:, 1]) + 1), we can't just do
         # fprs.append(fpr) and tprs.append(tpr)
         # we use a linear interpolation to find the values of fpr for a 101 tpr chosen values
         tprs.append(interp(mean_fpr, fpr, tpr))
-        tprs[-1][0] = 0.0 # threshold > 1 for the first point
+        tprs[-1][0] = 0.0 # threshold > 1 for the first point (ie the last tpr value)
 
-        ax.plot(fpr, tpr, linewidth=0.6, alpha=0.4,
-                label='ROC fold %d (AUC = %0.3f)' % (i, fold_metrics.test_roc_auc))
+        # plot ROC curve
+        plt = ax.plot(fpr, tpr, linewidth=0.6, alpha=0.4,
+                      label='ROC fold %d (AUC = %0.3f)' % (i, fold_metrics.test_roc_auc))
+
+        # plot thresholds
+        if plot_thresholds:
+            thresholds[0] = 1.001 # value is > 1, we set it just above one for the graphic
+            ax.plot(fpr, thresholds, linewidth=0.6, alpha=0.4, color=plt[0].get_color())
+
     
-
     # plot baseline
-    ax.plot([0, 1], [0, 1], '--r', linewidth=0.5, alpha=1, label='random')\
+    ax.plot([0, 1], [0, 1], '--r', linewidth=0.5, alpha=1, label='random')
 
 
     # plot mean ROC
@@ -187,13 +201,13 @@ def plot_roc(metrics, ax, legend_size):
 
 
 
-# plot Precision-Recall curve (PR) for each fold and a mean PR curve
+# plot Precision-Recall curve (PR) for each fold (and the associated threshold) and a mean PR curve
 # strongly inspired by previous function
-def plot_precision_recall(metrics, ax, legend_size):
+def plot_precision_recall(metrics, ax, legend_size, plot_thresholds=True):
     # set plot
     ax.set_title('Precision-Recall curve')
     ax.set_xlabel('recall')
-    ax.set_ylabel('precision')
+    ax.set_ylabel('precision  |  threshold value')
     
 
     mean_precision = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
@@ -202,16 +216,22 @@ def plot_precision_recall(metrics, ax, legend_size):
 
     # for each fold
     for i, fold_metrics in metrics.iterrows():
-        precision, recall = fold_metrics.precision, fold_metrics.recall
+        precision, recall, thresholds = fold_metrics.precision, fold_metrics.recall, fold_metrics.pr_thresh
         
         # because the length of precision and recall vary with the fold (size of thresholds  = nunique(y_pred[:, 1]) + 1), we can't just do
         # precisions.append(precision) and recalls.append(recall)
         # we use a linear interpolation to find the values of precision for a 101 recall chosen values
         recalls.append(interp(mean_precision, precision, recall))
 
-        ax.plot(precision, recall, linewidth=0.6, alpha=0.4,
-                label='PR fold %d' % i)
-    
+        # plot PR curve
+        plt = ax.plot(precision, recall, linewidth=0.6, alpha=0.4,
+                      label='PR fold %d' % i)
+
+        # plot thresholds
+        if plot_thresholds:
+            thresholds = np.append(thresholds, 1.0)
+            ax.plot(recall[:len(recall)], thresholds, linewidth=0.6, alpha=0.4, color=plt[0].get_color())
+        
 
     # plot mean PR
     mean_recall = np.mean(recalls, axis=0)
@@ -369,11 +389,13 @@ def plot_grid_search_results(metrics, plot_error_bar = True):
         plt.legend(loc='lower right', prop={'size': 15})
 
 
+
 # plot learning curves
 # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_learning_curve.html
 def plot_learning_curves(model, X, y, cv_strategy, figsize=(10, 10)):
     # set plot
     plt.figure(figsize=figsize)
+    plt.title('Learning curves')
     plt.xlabel('Number of training examples')
     plt.ylabel('ROC AUC score')
 
