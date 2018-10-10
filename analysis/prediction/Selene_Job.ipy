@@ -95,7 +95,7 @@ class Selene_Job:
                             echo "➞ launch job in $PWD";'
 
             # bsub command to bsub the job with the requested n_jobs and memory
-            bsub_command = 'bsub -o job_output.txt'
+            bsub_command = 'bsub -o job_output.txt -J ' + self.job_id
             if short_job:
                 bsub_command += ' -We 59'
             if n_jobs > 1:
