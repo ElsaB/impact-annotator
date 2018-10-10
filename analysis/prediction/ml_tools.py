@@ -46,10 +46,15 @@ def run_model(model, X, y, cv_strategy, n_jobs=1):
 
 
 # add to metrics the necessary metrics to compute later the ROC curve, precision-recall curve and confusion matrix for each fold
+# also adds the predicted probability for each sample and the true value
 # only used in run_model()
 def get_other_metrics(metrics, X, y, cv_strategy):
 
     # create empty list for the new metrics
+    ## predicted probability metrics
+    metrics['y_test']      = [[] for i in range(metrics.shape[0])]
+    metrics['y_predicted'] = [[] for i in range(metrics.shape[0])]
+
     ## ROC metrics
     metrics['test_fpr']   = [[] for i in range(metrics.shape[0])]
     metrics['test_tpr']   = [[] for i in range(metrics.shape[0])]
@@ -69,26 +74,29 @@ def get_other_metrics(metrics, X, y, cv_strategy):
         (X_train, X_test) = (X.iloc[train_index], X.iloc[test_index])
         (y_train, y_test) = (y.iloc[train_index], y.iloc[test_index])
         
-        y_test_pred  = metrics.iloc[i].estimator.predict_proba(X_test)[:, 1]
+        ## predicted probability metrics
+        metrics.at[i, 'y_test']      = y_test.values
+        metrics.at[i, 'y_predicted'] = metrics.iloc[i].estimator.predict_proba(X_test)[:,1]
 
         ## ROC metrics       
-        fpr, tpr, roc_thresholds = roc_curve(y_test, y_test_pred)
+        fpr, tpr, roc_thresholds = roc_curve(metrics.at[i, 'y_test'], metrics.iloc[i].y_predicted)
         metrics.at[i, 'test_fpr']   = fpr
         metrics.at[i, 'test_tpr']   = tpr
         metrics.at[i, 'roc_thresh'] = roc_thresholds
 
         ## precision-recall metrics       
-        precision, recall, pr_thresholds = precision_recall_curve(y_test, y_test_pred)
+        precision, recall, pr_thresholds = precision_recall_curve(metrics.at[i, 'y_test'], metrics.iloc[i].y_predicted)
         metrics.at[i, 'precision'] = precision
         metrics.at[i, 'recall']    = recall
         metrics.at[i, 'pr_thresh'] = pr_thresholds
 
         ## confusion matrix metrics
-        #y_pred_25 = (y_test_pred >= 0.25)
-        #y_pred_50 = (y_test_pred >= 0.5) # equivalent to y_pred_05 = metrics.iloc[i].estimator.predict(X_test):
-        #y_pred_75 = (y_test_pred >= 0.75)
+        #y_pred_25 = (metrics.iloc[i].y_predicted >= 0.25)
+        #y_pred_50 = (metrics.iloc[i].y_predicted >= 0.5) # equivalent to y_pred_05 = metrics.iloc[i].estimator.predict(X_test):
+        #y_pred_75 = (metrics.iloc[i].y_predicted >= 0.75)
 
         metrics.at[i, 'confusion_matrix'] = confusion_matrix(y_test, metrics.iloc[i].estimator.predict(X_test))
+
 
 
 # print the average test set accuracy, test ROC AUC and test F1-score for a given metrics DataFrame
@@ -143,11 +151,15 @@ def print_fold_metrics(metrics, detailed_grid_search_metrics=False):
 
 
 
-# plot ROC curve and PR curve side_by_side
-def plot_roc_and_precision_recall(metrics, figsize=(20, 10), plot_thresholds=True):
-    fig, (ax0, ax1) = plt.subplots(1, 2, figsize=figsize)
-    plot_roc(metrics, ax0, figsize[0] / 2 * 1.5, plot_thresholds)
-    plot_precision_recall(metrics, ax1, figsize[0] / 2 * 1.5, plot_thresholds)
+# plot ROC curve, PR curve and predicted probability distribution side by side
+def plot_threshold_decision_metrics(metrics, figsize=(30, 10), plot_thresholds=True):
+    fig, (ax0, ax1, ax2) = plt.subplots(1, 3, figsize=figsize)
+
+    legend_size = figsize[0] / 3 * 1.5
+
+    plot_roc(metrics, ax0, legend_size, plot_thresholds)
+    plot_precision_recall(metrics, ax1, legend_size, plot_thresholds)
+    plot_probability_distribution(metrics, ax2, legend_size)
 
 
 
@@ -206,6 +218,7 @@ def plot_roc(metrics, ax, legend_size, plot_thresholds=True):
 
 # plot Precision-Recall curve (PR) for each fold (and the associated threshold) and a mean PR curve
 # strongly inspired by previous function
+# WARNING: linear interpolation is WRONG
 def plot_precision_recall(metrics, ax, legend_size, plot_thresholds=True):
     # set plot
     ax.set_title('Precision-Recall curve')
@@ -248,6 +261,33 @@ def plot_precision_recall(metrics, ax, legend_size, plot_thresholds=True):
 
 
     ax.legend(loc='lower left', prop={'size': legend_size})
+
+
+
+# plot predicted probability distribution for True and False class
+def plot_probability_distribution(metrics, ax, legend_size):
+    # concatenate y_test and y_predicted list from each fold
+    y_test      = [value for y_test_fold_list      in metrics.y_test      for value in y_test_fold_list]
+    y_predicted = [value for y_predicted_fold_list in metrics.y_predicted for value in y_predicted_fold_list]
+
+    dd = pd.DataFrame({'true_class': y_test, 'predicted_probability': y_predicted})
+
+    # plot predicted probability by class
+    seaborn.distplot(dd.predicted_probability[dd.true_class == True], bins=100,
+                     ax=ax, label='True',
+                     kde_kws={'bw': 0.01, 'alpha': 1},
+                     hist_kws={'alpha': 0.2})
+    seaborn.distplot(dd.predicted_probability[dd.true_class == False], bins=100,
+                     ax=ax, label='False',
+                     kde_kws={'bw': 0.01, 'alpha': 1},
+                     hist_kws={'alpha': 0.2})
+
+    # set plot parameters
+    ax.set_xlim(0, 1)
+    ax.set_title('predicted probability density by class')
+    ax.set_xlabel('predicted probability')
+    ax.set_ylabel('density')
+    ax.legend(loc='upper center', prop={'size': legend_size});
 
 
 
@@ -395,7 +435,10 @@ def plot_grid_search_results(metrics, plot_error_bar = True):
 
 # plot learning curves
 # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_learning_curve.html
-def plot_learning_curves(model, X, y, cv_strategy, figsize=(10, 10)):
+def plot_learning_curves(model, X, y, cv_strategy, figsize=(10, 10), n_jobs=1):
+    print('Run learning curves computation...', end='')
+    start = time.time()
+
     # set plot
     plt.figure(figsize=figsize)
     plt.title('Learning curves')
@@ -403,7 +446,7 @@ def plot_learning_curves(model, X, y, cv_strategy, figsize=(10, 10)):
     plt.ylabel('ROC AUC score')
 
     # get metrics
-    train_sizes, train_scores, test_scores = learning_curve(model, X, y, train_sizes=np.linspace(0.1, 1, 10), scoring='roc_auc', cv=cv_strategy, n_jobs=5, error_score='raise')
+    train_sizes, train_scores, test_scores = learning_curve(model, X, y, train_sizes=np.linspace(0.1, 1, 10), scoring='roc_auc', cv=cv_strategy, n_jobs=n_jobs, error_score='raise')
     train_scores_mean = np.mean(train_scores, axis=1)
     test_scores_mean  = np.mean(test_scores , axis=1)
     test_scores_std   = np.std(test_scores  , axis=1)
@@ -418,4 +461,6 @@ def plot_learning_curves(model, X, y, cv_strategy, figsize=(10, 10)):
                      alpha=0.1, color='g', label='mean test score  $\pm$ 1 std. dev.')
     
     plt.legend(loc='best', prop={'size': figsize[0] * 1.5})
+
+    print(' done! (%.2fs)' % (time.time() - start))
 
