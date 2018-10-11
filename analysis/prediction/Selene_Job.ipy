@@ -35,7 +35,7 @@ class Selene_Job:
                 print_md(self.get_job_md_string_('red') + '⚠️ does not exist yet')
         else:
             if exist_file(self.local_job_directory_path):
-                print_md(self.get_job_md_string_('red') + '⚠️ job already exists, please remove it with `job.remove()` or use `load_from_id = True` when you create the job\n')
+                print_md(self.get_job_md_string_('red') + '⚠️ job already exists, please remove it with `job.remove()` or use `load_from_id = True` to reload the existing job\n')
             else:
                 print('➞ mkdir on local computer ' + self.local_job_directory_path)
                 !mkdir {self.local_job_directory_path}
