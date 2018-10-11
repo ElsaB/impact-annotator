@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as seaborn
-from scipy import interp
 from sklearn.metrics import roc_curve, confusion_matrix, precision_recall_curve
 from sklearn.model_selection import cross_validate, learning_curve
 import time
@@ -170,6 +169,8 @@ def plot_roc(metrics, ax, legend_size, plot_thresholds=True):
     ax.set_title('ROC curve')
     ax.set_xlabel('false positive rate')
     ax.set_ylabel('true positive rate  |  threshold value')
+    ax.set_xlim(-0.05, 1.05)
+    ax.set_ylim(-0.05, 1.05)
     
 
     mean_fpr = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
@@ -178,17 +179,17 @@ def plot_roc(metrics, ax, legend_size, plot_thresholds=True):
 
     # for each fold
     for i, fold_metrics in metrics.iterrows():
-        fpr, tpr, thresholds = fold_metrics.test_fpr, fold_metrics.test_tpr, fold_metrics.roc_thresh
-        
+        fpr, tpr, thresholds = fold_metrics.test_fpr.copy(), fold_metrics.test_tpr.copy(), fold_metrics.roc_thresh.copy()
+
         # because the length of fpr and tpr vary with the fold (size of thresholds  = nunique(y_pred[:, 1]) + 1), we can't just do
         # fprs.append(fpr) and tprs.append(tpr)
-        # we use a linear interpolation to find the values of fpr for a 101 tpr chosen values
-        tprs.append(interp(mean_fpr, fpr, tpr))
-        tprs[-1][0] = 0.0 # threshold > 1 for the first point (ie the last tpr value)
+        # we use a linear interpolation to find the values of fpr for a 101 chosen tpr values
+        tprs.append(np.interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0 # threshold > 1 for the first point (ie the last tpr value, we correct the interpolation)
 
         # plot ROC curve
         plt = ax.plot(fpr, tpr, linewidth=0.6, alpha=0.4,
-                      label='ROC fold %d (AUC = %0.3f)' % (i, fold_metrics.test_roc_auc))
+                      label='ROC fold %d (AUC = %0.3f)' % (i + 1, fold_metrics.test_roc_auc))
 
         # plot thresholds
         if plot_thresholds:
@@ -218,46 +219,69 @@ def plot_roc(metrics, ax, legend_size, plot_thresholds=True):
 
 # plot Precision-Recall curve (PR) for each fold (and the associated threshold) and a mean PR curve
 # strongly inspired by previous function
-# WARNING: linear interpolation is WRONG
+# see https://classeval.wordpress.com/introduction/introduction-to-the-precision-recall-plot/
+# WARNING: for simplicity we use linear interpolation but this is wrong (cf. previous website)
 def plot_precision_recall(metrics, ax, legend_size, plot_thresholds=True):
     # set plot
     ax.set_title('Precision-Recall curve')
     ax.set_xlabel('recall')
     ax.set_ylabel('precision  |  threshold value')
+    ax.set_xlim(-0.05, 1.05)
+    ax.set_ylim(-0.05, 1.05)
     
 
-    mean_precision = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
-    recalls = [] # recalls value list for each fold
+    mean_recall = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
+    precisions = [] # precision value list for each fold
 
 
     # for each fold
     for i, fold_metrics in metrics.iterrows():
-        precision, recall, thresholds = fold_metrics.precision, fold_metrics.recall, fold_metrics.pr_thresh
+        precision, recall, thresholds = fold_metrics.precision.copy(), fold_metrics.recall.copy(), fold_metrics.pr_thresh.copy()
         
+        # correct first point precision to make a horizontal line between first and second point
+        # from the sklearn documentation: "The last precision and recall values are 1. and 0. respectively and do not have a corresponding
+        # threshold. This ensures that the graph starts on the y axis."
+        # this methodology is advised by the website quoted at the beginning
+        precision[-1] = precision[-2]
+
+
         # because the length of precision and recall vary with the fold (size of thresholds  = nunique(y_pred[:, 1]) + 1), we can't just do
         # precisions.append(precision) and recalls.append(recall)
-        # we use a linear interpolation to find the values of precision for a 101 recall chosen values
-        recalls.append(interp(mean_precision, precision, recall))
+        # we use a linear interpolation to find the values of precision for a 101 chosen recall values
+        # WARNING: this is wrong, this choice has been made for simplicity
+        # aslo, the documentation for np.interp asks the coordinates where we want to interpolate the values to be sorted, these explains the need to do [::-1]
+        # for both recall and precision
+        precisions.append(np.interp(mean_recall, recall[::-1], precision[::-1]))
 
         # plot PR curve
-        plt = ax.plot(precision, recall, linewidth=0.6, alpha=0.4,
-                      label='PR fold %d' % i)
+        plt = ax.plot(recall, precision, linewidth=0.6, alpha=0.4,
+                      label='PR fold %d (AP = %0.3f)' % (i + 1, fold_metrics.test_average_precision))
 
         # plot thresholds
         if plot_thresholds:
-            thresholds = np.append(thresholds, 1.0)
-            ax.plot(recall[:len(recall)], thresholds, linewidth=0.6, alpha=0.4, color=plt[0].get_color())
+            # cf last comment on sklearn documentation, there's no threshold for the first point so we don't plot it
+            ax.plot(recall[:-1], thresholds, linewidth=0.6, alpha=0.4, color=plt[0].get_color())
         
 
+    # plot baseline
+    # see website
+    positive_number = metrics.y_test.apply(lambda x: sum(x)).sum()
+    negative_number = metrics.y_test.apply(lambda x: sum(~x)).sum()
+    positive_proportion = positive_number / (positive_number + negative_number)
+    ax.plot([0, 1], [positive_proportion, positive_proportion], '--r', linewidth=0.5, alpha=1, label='random')
+
+
     # plot mean PR
-    mean_recall = np.mean(recalls, axis=0)
-    ax.plot(mean_precision, mean_recall, 'b', linewidth=2, label='mean PR')
+    mean_precision = np.mean(precisions, axis=0)
+    ax.plot(mean_recall, mean_precision, 'b', linewidth=2,
+            label='mean PR (AP = %0.3f $\pm$ %0.3f)' % (metrics.test_average_precision.mean(), 1.96 * metrics.test_average_precision.std()))
 
 
     # plot mean PR std
-    std_recall = np.std(recalls, axis=0)
-    ax.fill_between(mean_precision, mean_recall - std_recall, mean_recall + std_recall, color='blue', alpha=0.15,
+    std_precision = np.std(precisions, axis=0)
+    ax.fill_between(mean_recall, mean_precision - std_precision, mean_precision + std_precision, color='blue', alpha=0.15,
                      label='mean PR $\pm$ 1 std. dev.')
+
 
 
     ax.legend(loc='lower left', prop={'size': legend_size})
