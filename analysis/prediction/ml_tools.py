@@ -488,3 +488,24 @@ def plot_learning_curves(model, X, y, cv_strategy, figsize=(10, 10), n_jobs=1):
 
     print(' done! (%.2fs)' % (time.time() - start))
 
+
+
+def compare_models(data, colors=None):
+    display(data.style.highlight_max(axis=0, color='yellow').set_precision(3))
+    data = data.copy()
+    data = data.iloc[::-1].transpose().iloc[::-1]
+    
+    fig, ax = plt.subplots(1, 1, figsize=(10, 12))
+    if not colors:
+        colors = ['darkblue', 'purple', 'grey', 'maroon', 'crimson', 'salmon', 'darkgoldenrod', 'seagreen', 'mediumseagreen']
+    data.plot.barh(ax=ax, width=0.85, color=colors)
+
+    # print text results
+    for rect in ax.patches:
+        ax.text(rect.get_width() + 0.01, rect.get_y() + rect.get_height() / 2, '%.3f' % rect.get_width(), ha='left', va='center', color=rect.get_facecolor(), fontsize=13)
+
+    # invert legend order
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles[::-1], labels[::-1], loc='center left', bbox_to_anchor=(1, 0.5), prop={'size':18})
+    ax.set_xlim(right=1.05)
+
