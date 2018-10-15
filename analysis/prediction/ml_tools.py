@@ -92,7 +92,7 @@ def get_other_metrics(metrics, X, y, cv_strategy):
         ## confusion matrix metrics
         #y_pred_25 = (metrics.iloc[i].y_predicted >= 0.25)
         #y_pred_50 = (metrics.iloc[i].y_predicted >= 0.5) # equivalent to y_pred_05 = metrics.iloc[i].estimator.predict(X_test):
-        #y_pred_75 = (metrics.iloc[i].y_predicted >= 0.75)
+        #y_pred_75 = (metrics.iloc[i].y_predicted >= 0.75)            
 
         metrics.at[i, 'confusion_matrix'] = confusion_matrix(y_test, metrics.iloc[i].estimator.predict(X_test))
 
