@@ -489,24 +489,37 @@ def plot_learning_curves(model, X, y, cv_strategy, figsize=(10, 10), n_jobs=1):
     print(' done! (%.2fs)' % (time.time() - start))
 
 
+
+# work in progress...
 def add_metrics_to_summary(summary, metrics, name):
     summary.loc[name] = [metrics.test_accuracy.mean(), metrics.test_roc_auc.mean(), metrics.test_f1.mean(), metrics.test_average_precision.mean(),
                          metrics.test_accuracy.std() , metrics.test_roc_auc.std() , metrics.test_f1.std() , metrics.test_average_precision.std()]
 
 
-def compare_models(data, colors=None, figsize=(10, 12)):
-    display(data.style.highlight_max(axis=0, color='yellow').set_precision(3))
+# work in progress...
+def compare_models(data, colors=None, metrics=['test_accuracy', 'test_f1', 'test_roc_auc', 'test_average_precision'], figsize=(10, 12), error_bars=True):
+    display(data[['%s_mean' % m for m in metrics]].style.highlight_max(axis=0, color='yellow').set_precision(3))
     data = data.copy()
     data = data.iloc[::-1].transpose().iloc[::-1]
     
     fig, ax = plt.subplots(1, 1, figsize=figsize)
     if not colors:
         colors = ['darkblue', 'purple', 'grey', 'maroon', 'crimson', 'salmon', 'darkgoldenrod', 'seagreen', 'mediumseagreen']
-    data.plot.barh(ax=ax, width=0.85, color=colors)
 
+    metrics_mean = data.loc[['%s_mean' % m for m in metrics]]
+    if error_bars:
+        metrics_std  = data.loc[['%s_std'  % m for m in metrics]]
+    else:
+        metrics_std = pd.DataFrame(0, index=data.index, columns=data.columns)
+
+    metrics_std.index = metrics_mean.index
+
+    metrics_mean.plot.barh(ax=ax, width=0.85, color=colors, xerr=metrics_std, error_kw={'ecolor': 'black', 'capsize': 2})
+        
     # print text results
     for rect in ax.patches:
-        ax.text(rect.get_width() + 0.01, rect.get_y() + rect.get_height() / 2, '%.3f' % rect.get_width(), ha='left', va='center', color=rect.get_facecolor(), fontsize=13)
+        ax.text(rect.get_width() + 0.01 + metrics_std.max().max(), rect.get_y() + rect.get_height() / 2,
+                '%.3f' % rect.get_width(), ha='left', va='center', color=rect.get_facecolor(), fontsize=13)
 
     # invert legend order
     handles, labels = ax.get_legend_handles_labels()
