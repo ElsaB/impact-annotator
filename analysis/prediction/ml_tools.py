@@ -489,13 +489,17 @@ def plot_learning_curves(model, X, y, cv_strategy, figsize=(10, 10), n_jobs=1):
     print(' done! (%.2fs)' % (time.time() - start))
 
 
+def add_metrics_to_summary(summary, metrics, name):
+    summary.loc[name] = [metrics.test_accuracy.mean(), metrics.test_roc_auc.mean(), metrics.test_f1.mean(), metrics.test_average_precision.mean(),
+                         metrics.test_accuracy.std() , metrics.test_roc_auc.std() , metrics.test_f1.std() , metrics.test_average_precision.std()]
 
-def compare_models(data, colors=None):
+
+def compare_models(data, colors=None, figsize=(10, 12)):
     display(data.style.highlight_max(axis=0, color='yellow').set_precision(3))
     data = data.copy()
     data = data.iloc[::-1].transpose().iloc[::-1]
     
-    fig, ax = plt.subplots(1, 1, figsize=(10, 12))
+    fig, ax = plt.subplots(1, 1, figsize=figsize)
     if not colors:
         colors = ['darkblue', 'purple', 'grey', 'maroon', 'crimson', 'salmon', 'darkgoldenrod', 'seagreen', 'mediumseagreen']
     data.plot.barh(ax=ax, width=0.85, color=colors)
@@ -508,4 +512,9 @@ def compare_models(data, colors=None):
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(handles[::-1], labels[::-1], loc='center left', bbox_to_anchor=(1, 0.5), prop={'size':18})
     ax.set_xlim(right=1.05)
+
+
+
+
+
 
