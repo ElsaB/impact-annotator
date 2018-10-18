@@ -491,6 +491,29 @@ def plot_learning_curves(model, X, y, cv_strategy, figsize=(10, 10), n_jobs=1):
 
 
 # work in progress...
+def plot_features_importance(model, X, y, random_forest=False, figsize=(20, 8)):
+    model.fit(X, y)
+    
+    feature_importance = pd.DataFrame({'value': model.feature_importances_.tolist()}, index=X.columns.tolist())
+    feature_importance.sort_values(by='value', axis=0, inplace=True)
+    
+    if random_forest:
+        feature_importance['inter_tree_variability'] = np.std([tree.feature_importances_ for tree in model.estimators_], axis=0)
+    else:
+        feature_importance['inter_tree_variability'] = 0
+    
+    plt.figure(figsize=figsize)
+    
+    plt.subplot(1, 2, 1)
+    feature_importance.tail(15).value.plot.barh(width=0.85, xerr=feature_importance.tail(15).inter_tree_variability)
+        
+    plt.subplot(1, 2, 2)
+    feature_importance.value.plot.barh(width=0.85, xerr=feature_importance.inter_tree_variability)
+    plt.tight_layout()
+
+
+
+# work in progress...
 def add_metrics_to_summary(summary, metrics, name):
     summary.loc[name] = [metrics.test_accuracy.mean(), metrics.test_roc_auc.mean(), metrics.test_f1.mean(), metrics.test_average_precision.mean(),
                          metrics.test_accuracy.std() , metrics.test_roc_auc.std() , metrics.test_f1.std() , metrics.test_average_precision.std()]
@@ -525,6 +548,46 @@ def compare_models(data, colors=None, metrics=['test_accuracy', 'test_f1', 'test
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(handles[::-1], labels[::-1], loc='center left', bbox_to_anchor=(1, 0.5), prop={'size':18})
     ax.set_xlim(right=1.05)
+
+
+
+# work in progress...
+def get_impact_ready_for_classification(impact, label, features):
+    # keep the selected features
+    impact['is_artefact'] = impact.confidence_class == "UNLIKELY"
+    impact = impact[features + [label]]
+
+    # transform categorical features
+    original_categorical_features = ['Hugo_Symbol', 'Chromosome', 'Consequence', 'Variant_Type', 'Tumor_Sample_Barcode',
+                                     'confidence_class', 'mut_key', 'VAG_VT', 'VAG_GENE', 'VAG_EFFECT', 'VEP_Consequence',
+                                     'VEP_SYMBOL', 'VEP_Amino_acids', 'VEP_VARIANT_CLASS', 'VEP_EXON', 'VEP_INTRON',
+                                     'VEP_IMPACT', 'VEP_CLIN_SIG', 'sample_mut_key', 'patient_key', 'VEP_SIFT_class', 'VEP_PolyPhen_class',
+                                     'VEP_in_dbSNP', 'is_a_hotspot', 'is_a_3d_hotspot', 'oncogenic', 'gene_type']
+    categorical_features = [f for f in original_categorical_features if f in features]
+    impact = pd.get_dummies(impact, columns=categorical_features, sparse=True)
+
+    return impact
+
+
+# work in progress...
+def get_X_and_y(impact, label, negative_class_index):
+    # get selected dataset
+    impact_selected = pd.concat([impact[impact[label]],
+                                 impact[~impact[label]].iloc[negative_class_index]], ignore_index=True)
+
+    # shuffle data
+    rng = np.random.RandomState(42)
+    permutation = rng.permutation(len(impact_selected))
+    impact_selected = impact_selected.iloc[permutation]
+    impact_selected.reset_index(drop=True, inplace=True)
+
+    # get features matrix X (n_samples x n_features) and target array y (n_samples)
+    X = impact_selected.drop(label, axis=1)
+    X = X.astype(float)
+    y = impact_selected[label]
+    
+    return (X, y)
+
 
 
 
