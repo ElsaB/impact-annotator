@@ -47,25 +47,16 @@ def run_model(model, X, y, cv_strategy, n_jobs=1):
 # add to metrics the necessary metrics to compute later the ROC curve, precision-recall curve and confusion matrix for each fold
 # also adds the predicted probability for each sample and the true value
 # only used in run_model()
-def get_other_metrics(metrics, X, y, cv_strategy):
+def get_other_metrics(metrics, X, y, cv_strategy, detailed_cv=False):
 
     # create empty list for the new metrics
-    ## predicted probability metrics
-    metrics['y_test']      = [[] for i in range(metrics.shape[0])]
-    metrics['y_predicted'] = [[] for i in range(metrics.shape[0])]
+    new_columns = ['y_test', 'y_predicted',
+                   'test_fpr', 'test_tpr', 'roc_thresh',
+                   'precision', 'recall', 'pr_thresh',
+                   'confusion_matrix']
 
-    ## ROC metrics
-    metrics['test_fpr']   = [[] for i in range(metrics.shape[0])]
-    metrics['test_tpr']   = [[] for i in range(metrics.shape[0])]
-    metrics['roc_thresh'] = [[] for i in range(metrics.shape[0])]
-
-    ## precision-recall metrics
-    metrics['precision'] = [[] for i in range(metrics.shape[0])]
-    metrics['recall']    = [[] for i in range(metrics.shape[0])]
-    metrics['pr_thresh'] = [[] for i in range(metrics.shape[0])]
-
-    ## confusion matrix metrics
-    metrics['confusion_matrix'] = [[] for i in range(metrics.shape[0])]
+    for col in new_columns:
+        metrics[col] = [[] for i in range(metrics.shape[0])]
 
 
     # for each fold
@@ -96,6 +87,13 @@ def get_other_metrics(metrics, X, y, cv_strategy):
 
         metrics.at[i, 'confusion_matrix'] = confusion_matrix(y_test, metrics.iloc[i].estimator.predict(X_test))
 
+
+        if detailed_cv:
+            metrics.iloc[i].test_roc_auc = auc(fpr, tpr)
+
+            y_predicted_train = metrics.iloc[i].estimator.predict_proba(X_train)[:,1]
+            fpr, tpr, roc_thresholds = roc_curve(y_train.values, y_predicted_train)
+            metrics.iloc[i].train_roc_auc = auc(fpr, tpr)
 
 
 # print the average test set accuracy, test ROC AUC and test F1-score for a given metrics DataFrame
@@ -572,6 +570,9 @@ def get_impact_ready_for_classification(impact, label, features):
 # work in progress...
 def get_X_and_y(impact, label, negative_class_index):
     # get selected dataset
+    if negative_class_index == 'all':
+        negative_class_index = range(impact[~impact[label]].shape[0])
+
     impact_selected = pd.concat([impact[impact[label]],
                                  impact[~impact[label]].iloc[negative_class_index]], ignore_index=True)
 
