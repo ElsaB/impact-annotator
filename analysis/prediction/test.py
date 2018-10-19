@@ -75,7 +75,7 @@ def run_model_detailed_CV(model, X, y, cv_strategy):
 # add to metrics the necessary metrics to compute later the ROC curve, precision-recall curve and confusion matrix for each fold
 # also adds the predicted probability for each sample and the true value
 # only used in run_model()
-def get_other_metrics(metrics, X, y, cv_strategy, detailed_cv=False):
+def get_other_metrics(metrics, X, y, cv_strategy):
 
     # create empty list for the new metrics
     new_columns = ['y_test', 'y_predicted',

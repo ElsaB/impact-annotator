@@ -135,7 +135,8 @@ class Selene_Job:
 
                 # load metrics.pkl in a pandas dataframe
                 print('➞ load metrics.pkl in pandas dataframe self.metrics')
-                self.metrics = pd.read_pickle(self.local_job_directory_path + '/metrics.pkl')
+                self.metrics = Metrics()
+                self.metrics.read_from_pkl(self.local_job_directory_path + '/metrics.pkl')
 
                 print('➞ print main results')
                 print_mean_metrics(self.metrics)
