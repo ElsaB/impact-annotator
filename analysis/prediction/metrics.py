@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as seaborn
 
-from sklearn.metrics import roc_curve, precision_recall_curve, confusion_matrix
+from sklearn.metrics import roc_curve, precision_recall_curve, confusion_matrix, recall
 from sklearn.model_selection import cross_validate, learning_curve
 import time
 
