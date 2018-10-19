@@ -4,40 +4,42 @@ import matplotlib.pyplot as plt
 import seaborn as seaborn
 
 from sklearn.metrics import roc_curve, precision_recall_curve, confusion_matrix
-from sklearn.model_selection import cross_validate
+from sklearn.model_selection import cross_validate, learning_curve
 import time
 
 class Metrics():
 
-    def __init__(self, model=None, X=None, y=None, cv_strategy=None, scoring=['accuracy', 'f1', 'roc_auc', 'average_precision'], n_jobs=1):
+    def __init__(self, model=None, X=None, y=None, cv_strategy=None, scoring=['accuracy', 'f1', 'roc_auc', 'average_precision'], n_jobs=1, run_model=True,
+                 read_from_pkl=False, path=None):
 
-        self.number_of_folds = cv_strategy.get_n_splits()
-
-        self.metrics = pd.DataFrame(index=range(self.number_of_folds),
-                                    columns=['fit_time', 'score_time', 'estimator'] +
-                                            ['train_{}'.format(score_name) for score_name in scoring] +
-                                            ['test_{}'.format(score_name) for score_name in scoring] +
-                                            ['gs_best_parameters', 'gs_cv_results'] + 
-                                            ['y_test', 'y_proba_pred', 'y_class_pred',
-                                             'test_fpr', 'test_tpr', 'roc_thresh',
-                                             'precision', 'recall', 'pr_thresh',
-                                             'confusion_matrix'])
-        self.metrics.index.name = 'fold_number'
-
-        self.model = model
-        self.X = X
-        self.y = y
-        self.cv_strategy = cv_strategy
         self.scoring = scoring
-        self.n_jobs = n_jobs
 
-        if model:
-            self.run_model()
+        if not read_from_pkl:
+            self.number_of_folds = cv_strategy.get_n_splits()
 
+            self.metrics = pd.DataFrame(index=range(self.number_of_folds),
+                                        columns=['fit_time', 'score_time', 'estimator'] +
+                                                ['train_{}'.format(score_name) for score_name in scoring] +
+                                                ['test_{}'.format(score_name) for score_name in scoring] +
+                                                ['gs_best_parameters', 'gs_cv_results'] + 
+                                                ['y_test', 'y_proba_pred', 'y_class_pred',
+                                                 'test_fpr', 'test_tpr', 'roc_thresh',
+                                                 'precision', 'recall', 'pr_thresh',
+                                                 'confusion_matrix'])
+            self.metrics.index.name = 'fold_number'
 
-    def read_from_pkl(self, path):
-        self.metrics = pd.read_pickle(path)
-        self.number_of_folds = self.metrics.shape[0]
+            self.model = model
+            self.X = X
+            self.y = y
+            self.cv_strategy = cv_strategy
+            
+            self.n_jobs = n_jobs
+
+            if run_model:
+                self.run_model()
+        else:
+            self.metrics = pd.read_pickle(path)
+            self.number_of_folds = self.metrics.shape[0]
 
 
     # display the self.metrics DataFrame
@@ -47,6 +49,9 @@ class Metrics():
 
     def get_metrics(self):
         return self.metrics
+
+    def save(self):
+        self.metrics.to_pickle('metrics.pkl')
 
     # run the given model with the given parameters
     # return a pandas DataFrame object containing all the relevant metrics, including the grid search metrics when a grid_search was performed
@@ -412,7 +417,73 @@ class Metrics():
             plt.legend(loc='lower right', prop={'size': 15})
 
 
-    def save(self):
-        self.metrics.to_pickle('metrics.pkl')
+
+
+    # plot learning curves
+    # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_learning_curve.html
+    def get_learning_curves_metrics(self, train_sizes=np.linspace(0.1, 1, 10), scoring='roc_auc', n_jobs=1):
+        print('Run learning curves computation...', end='')
+        start = time.time()
+
+        self.lc_train_sizes, self.lc_train_scores, self.lc_test_scores = learning_curve(self.model, self.X, self.y,
+                                                                                        train_sizes=train_sizes, cv=self.cv_strategy,
+                                                                                        n_jobs=n_jobs, error_score='raise')
+
+        print(' done! ({:.2f}s)'.format(time.time() - start))
+
+
+
+    # work in progress...
+    def plot_learning_curves(self, figsize=(10, 10)):
+        # set plot
+        plt.figure(figsize=figsize)
+        plt.title('Learning curves')
+        plt.xlabel('Number of training examples')
+        plt.ylabel('ROC AUC score')
+
+        train_scores_mean = np.mean(self.lc_train_scores, axis=1)
+        test_scores_mean  = np.mean(self.lc_test_scores , axis=1)
+        test_scores_std   = np.std(self.lc_test_scores  , axis=1)
+        train_scores_std  = np.std(self.lc_train_scores , axis=1)
+
+         # plot metrics and their standard deviations
+        plt.plot(self.lc_train_sizes, train_scores_mean, 'o-', color='r', markersize = 10, label='mean train score')
+        plt.plot(self.lc_train_sizes, test_scores_mean , 'o-', color='g', markersize = 10, label='mean test score')
+        plt.fill_between(self.lc_train_sizes, train_scores_mean - train_scores_std, train_scores_mean + train_scores_std,
+                         alpha=0.1, color='r', label='mean train score ± 1 std. dev.')
+        plt.fill_between(self.lc_train_sizes, test_scores_mean - test_scores_std, test_scores_mean + test_scores_std,
+                         alpha=0.1, color='g', label='mean test score ± 1 std. dev.')
+        
+        plt.legend(loc='best', prop={'size': figsize[0] * 1.5})
+
+
+
+    # work in progress...
+    # This is *gini importance* (and not the mean decrease accuracy), see https://stackoverflow.com/questions/15810339/how-are-feature-importances-in-randomforestclassifier-determined>
+    def plot_features_importance(self, random_forest=False, figsize=(20, 8)):
+        print('Fit model...', end='')
+        start = time.time()
+
+        self.model.fit(self.X, self.y)
+
+        print(' done! ({:.2f}s)'.format(time.time() - start))
+        
+
+        feature_importance = pd.DataFrame({'value': self.model.feature_importances_.tolist()}, index=self.X.columns.tolist())
+        feature_importance.sort_values(by='value', axis=0, inplace=True)
+        
+        if random_forest:
+            feature_importance['inter_tree_variability'] = np.std([tree.feature_importances_ for tree in self.model.estimators_], axis=0)
+        else:
+            feature_importance['inter_tree_variability'] = 0
+        
+        plt.figure(figsize=figsize)
+        
+        plt.subplot(1, 2, 1)
+        feature_importance.tail(15).value.plot.barh(width=0.85, xerr=feature_importance.tail(15)['inter_tree_variability'], linewidth=0)
+            
+        plt.subplot(1, 2, 2)
+        feature_importance.value.plot.barh(width=0.85, xerr=feature_importance['inter_tree_variability'], linewidth=0)
+        plt.tight_layout()
 
 

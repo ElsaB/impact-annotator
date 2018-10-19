@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as seaborn
 
-from metrics import *
+from metrics import Metrics
 
 class Summary():
 
@@ -22,7 +22,7 @@ class Summary():
     # display the self.summary DataFrame
     def display(self, highlight_max=True):
         if highlight_max:
-            display(self.summary[self.columns_score_mean].style.highlight_max(axis=0, color='yellow').set_precision(3))
+            display(self.summary[self.columns_score_mean].style.highlight_max(axis=0, color='salmon').set_precision(3))
         else:
             display(self.summary)
 
@@ -35,17 +35,16 @@ class Summary():
 
     def plot(self, figsize=(10, 12)):
         summary_transpose = self.summary.copy().iloc[::-1].transpose().iloc[::-1]
-        
+
         fig, ax = plt.subplots(1, 1, figsize=figsize)
-        #if not colors:
-        #    colors = ['darkblue', 'purple', 'grey', 'maroon', 'crimson', 'salmon', 'darkgoldenrod', 'seagreen', 'mediumseagreen']
 
 
         mean_metrics = summary_transpose.loc[self.columns_score_mean]
         std_metrics  = summary_transpose.loc[self.columns_score_std]
+        std_metrics.index = mean_metrics.index
 
         mean_metrics.plot.barh(ax=ax, width=0.85, color=self.summary.iloc[::-1]['color'],
-                               xerr=std_metrics, error_kw={'ecolor': 'black', 'capsize': 2})
+                               xerr=std_metrics, error_kw={'ecolor': 'black', 'capsize': 2}, linewidth=0)
             
         # print text results
         for rect in ax.patches:
@@ -55,4 +54,12 @@ class Summary():
         # invert legend order
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(handles[::-1], labels[::-1], loc='center left', bbox_to_anchor=(1, 0.5), prop={'size': 18})
-        ax.set_xlim(right=1.05)
+        ax.set_xlim(right=1.1)
+
+
+    def save(self, summary_name):
+        self.summary.to_pickle(summary_name)
+
+
+    def load(self, path):
+        self.summary = pd.read_pickle(path)

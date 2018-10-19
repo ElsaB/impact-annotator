@@ -1,5 +1,6 @@
 import pandas as pd
 from custom_tools import print_md
+#from metrics import Metrics
 
 # returns true if the file at path_to_file exists
 def exist_file(path_to_file):
@@ -133,13 +134,12 @@ class Selene_Job:
                 ! scp -r {self.selene_ssh_server_path + ':' + self.selene_job_directory_path}/metrics.pkl    {self.local_job_directory_path}
                 ! scp -r {self.selene_ssh_server_path + ':' + self.selene_job_directory_path}/job_output.txt {self.local_job_directory_path}
 
-                # load metrics.pkl in a pandas dataframe
-                print('➞ load metrics.pkl in pandas dataframe self.metrics')
-                self.metrics = Metrics()
-                self.metrics.read_from_pkl(self.local_job_directory_path + '/metrics.pkl')
+                # load metrics.pkl in a Metrics object
+                print('➞ load metrics.pkl in object self.metrics')
+                self.metrics = Metrics(read_from_pkl=True, path=self.local_job_directory_path + '/metrics.pkl')
 
                 print('➞ print main results')
-                print_mean_metrics(self.metrics)
+                self.metrics.print_mean()
 
             else:
                 print_md(self.get_job_md_string_('red') + '⚠️ does not exist on the cluster, is not done yet or an error occured before the creation of `metrics.pkl`\n')
