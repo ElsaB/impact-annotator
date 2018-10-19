@@ -20,11 +20,12 @@ class Impact_Wrapper():
         self.impact = self.impact.iloc[permutation]
         self.impact.reset_index(drop=True, inplace=True)
 
-        self.impact_processed = self.impact.copy()
         self.label = label
 
 
     def process(self, features):
+        self.impact_processed = self.impact.copy()
+        
         self.impact_processed['is_artefact'] = (self.impact_processed['confidence_class'] == "UNLIKELY")
 
         self.impact_processed = self.impact_processed[features + [self.label]]
