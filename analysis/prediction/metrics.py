@@ -336,7 +336,7 @@ class Metrics():
 
 
     # plot confusion matrix for each fold
-    def plot_confusion_matrix(self, figsize=(20, 3)):
+    def plot_confusion_matrix(self, figsize=(20, 3), legend_size=12):
         # set plot
         plt.figure(figsize=figsize)
 
@@ -348,10 +348,32 @@ class Metrics():
             plt.title('fold {}'.format(i + 1))
             
             prop = pd.DataFrame(cm.values / (cm.sum(axis = 1)[:, np.newaxis]), index=['False', 'True'], columns=['False', 'True'])
-            labels = prop.applymap(lambda x: '{:.1f}%'.format(100 * x)) + cm.applymap(lambda x: ' (%d)' % x)
+            labels = prop.applymap(lambda x: '{:.1f}%'.format(100 * x)) + cm.applymap(lambda x: ' ({})'.format(x))
             
             # plot confusion matrix
-            seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": figsize[0] / 2})
+            seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": legend_size})
+
+
+
+    # work in progress...
+    def plot_mean_confusion_matrix(self, figsize=(6, 5), legend_size=16):
+        # set plot
+        plt.figure(figsize=figsize)
+        plt.title('mean confusion matrix over {} folds'.format(self.number_of_folds))
+        
+        cms = [fold_metrics['confusion_matrix'] for i, fold_metrics in self.metrics.iterrows()]
+
+        mean_cm = pd.DataFrame(np.mean(cms, axis = 0), index=['False', 'True'], columns=['False', 'True'])
+        std_cm  = pd.DataFrame(np.std(cms, axis = 0) , index=['False', 'True'], columns=['False', 'True'])
+        
+        prop = pd.DataFrame(mean_cm.values / (mean_cm.sum(axis = 1)[:, np.newaxis]), index=['False', 'True'], columns=['False', 'True'])
+        pstd = pd.DataFrame(std_cm.values  / (mean_cm.sum(axis = 1)[:, np.newaxis]), index=['False', 'True'], columns=['False', 'True'])
+        
+        labels = prop.applymap(lambda x: '{:.1f}%'.format(100 * x))   + mean_cm.applymap(lambda x: ' ({:.1f})'.format(x)) + '\n' +\
+                 pstd.applymap(lambda x: '± {:.1f}%'.format(100 * x)) + std_cm.applymap(lambda x: ' (± {:.1f})'.format(x))
+        
+        # plot confusion matrix
+        seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": legend_size})
 
 
 
