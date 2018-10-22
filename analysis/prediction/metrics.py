@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as seaborn
 
-from sklearn.metrics import roc_curve, precision_recall_curve, confusion_matrix, recall
+from sklearn.metrics import roc_curve, precision_recall_curve, confusion_matrix
 from sklearn.model_selection import cross_validate, learning_curve
 import time
 
@@ -336,9 +336,9 @@ class Metrics():
 
 
     # plot confusion matrix for each fold
-    def plot_confusion_matrix(self):
+    def plot_confusion_matrix(self, figsize=(20, 3)):
         # set plot
-        plt.figure(figsize = (4 * self.number_of_folds, 3))
+        plt.figure(figsize=figsize)
 
         # for each fold
         for i, fold_metrics in self.metrics.iterrows():
@@ -351,7 +351,7 @@ class Metrics():
             labels = prop.applymap(lambda x: '{:.1f}%'.format(100 * x)) + cm.applymap(lambda x: ' (%d)' % x)
             
             # plot confusion matrix
-            seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": 12})
+            seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": figsize[0] / 2})
 
 
 
