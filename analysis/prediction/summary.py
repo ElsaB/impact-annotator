@@ -5,9 +5,12 @@ import seaborn as seaborn
 
 from metrics import Metrics
 
+# work in progress...
 class Summary():
 
     def __init__(self, scoring=['accuracy', 'f1', 'roc_auc', 'average_precision']):
+
+        self.metrics_dict = {}
 
         self.columns_score_mean = ['test_{}_mean'.format(score_name) for score_name in scoring]
         self.columns_score_std  = ['test_{}_std'.format(score_name)  for score_name in scoring]
@@ -28,6 +31,8 @@ class Summary():
 
 
     def add(self, metrics, metrics_name, color):
+        self.metrics_dict[metrics_name] = metrics
+
         self.summary.loc[metrics_name] = [metrics.get_metrics()['test_{}'.format(score_name)].mean() for score_name in self.scoring] +\
                                          [metrics.get_metrics()['test_{}'.format(score_name)].std() for score_name in self.scoring] +\
                                          [color]
@@ -63,3 +68,27 @@ class Summary():
 
     def load(self, path):
         self.summary = pd.read_pickle(path)
+
+
+    def plot_cv_curves(self, figsize=(40, 10)):
+        plt.figure(figsize=figsize)
+
+        for i, score_name in enumerate(self.scoring):
+            plt.subplot(1, len(self.scoring), i+1)
+            plt.title(score_name)
+
+            for metrics_name, metrics in self.metrics_dict.items():
+                metrics.get_metrics()['test_{}'.format(score_name)].plot(style = '-o', label=metrics_name, alpha=0.7)
+
+        plt.legend()
+
+
+
+
+
+
+
+
+
+
+

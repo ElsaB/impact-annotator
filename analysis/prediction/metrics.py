@@ -9,7 +9,7 @@ import time
 
 class Metrics():
 
-    def __init__(self, model=None, X=None, y=None, cv_strategy=None, scoring=['accuracy', 'f1', 'roc_auc', 'average_precision'], n_jobs=1, run_model=True,
+    def __init__(self, model=None, X=None, y=None, cv_strategy=None, groups=None, scoring=['accuracy', 'f1', 'roc_auc', 'average_precision'], n_jobs=1, run_model=True,
                  read_from_pkl=False, path=None):
 
         self.scoring = scoring
@@ -29,6 +29,7 @@ class Metrics():
             self.metrics.index.name = 'fold_number'
 
             self.model = model
+            self.groups = groups
             self.X = X
             self.y = y
             self.cv_strategy = cv_strategy
@@ -60,7 +61,7 @@ class Metrics():
         start = time.time()
 
         # get cross validation metrics
-        results = cross_validate(self.model, self.X, self.y, cv=self.cv_strategy, scoring=self.scoring,
+        results = cross_validate(self.model, self.X, self.y, groups=self.groups, cv=self.cv_strategy, scoring=self.scoring,
                                  return_train_score=True, return_estimator=True, n_jobs=self.n_jobs, error_score='raise')
         self.metrics.update(pd.DataFrame(results))
 
@@ -89,7 +90,7 @@ class Metrics():
     # only used in run_model()
     def _get_other_metrics(self):
         # for each fold
-        for i, (train_index, test_index) in enumerate(self.cv_strategy.split(self.X, self.y)):
+        for i, (train_index, test_index) in enumerate(self.cv_strategy.split(self.X, self.y, groups=self.groups)):
             (X_train, X_test) = (self.X.iloc[train_index], self.X.iloc[test_index])
             (y_train, y_test) = (self.y.iloc[train_index], self.y.iloc[test_index])
 
