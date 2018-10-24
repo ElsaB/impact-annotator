@@ -61,6 +61,17 @@ class Selene_Job:
             print_md(self.get_job_md_string_('green') + '✅ data loaded')
 
 
+    # work in progress...
+    def load_script(self, path_to_script):
+        if not exist_file(self.local_job_directory_path):
+            print_md(self.get_job_md_string_('red') + '⚠️ does not exist yet')
+        else:
+            print('➞ cp script.ipy from {} to {}'.format(path_to_script, self.local_job_directory_path))
+            !cp {path_to_script} {self.local_job_directory_path}
+
+            print_md(self.get_job_md_string_('green') + '✅ script loaded')
+
+
     # this function:
     #   - scp the local job directory to the cluster analysis/prediction/ssh_remote_jobs directory
     #   - setup a working environment to launch the job
@@ -138,8 +149,8 @@ class Selene_Job:
                 print('➞ load metrics.pkl in object self.metrics')
                 self.metrics = Metrics(read_from_pkl=True, path=self.local_job_directory_path + '/metrics.pkl')
 
-                print('➞ print main results')
-                self.metrics.print_mean()
+                #print('➞ print main results')
+                #self.metrics.print_mean()
 
             else:
                 print_md(self.get_job_md_string_('red') + '⚠️ does not exist on the cluster, is not done yet or an error occured before the creation of `metrics.pkl`\n')

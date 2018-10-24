@@ -173,22 +173,22 @@ class Metrics():
 
 
     # plot ROC curve, PR curve and predicted probability distribution side by side
-    def plot_threshold_decision_curves(self, figsize=(30, 10), plot_thresholds=True):
+    def plot_threshold_decision_curves(self, figsize=(30, 10), plot_thresholds=True, show_folds_legend=True):
         fig, (ax0, ax1, ax2) = plt.subplots(1, 3, figsize=figsize)
 
         legend_size = figsize[0] / 3 * 1.5
 
-        self.plot_roc(ax0, legend_size, plot_thresholds)
-        self.plot_precision_recall(ax1, legend_size, plot_thresholds)
+        self.plot_roc(ax0, legend_size, plot_thresholds, show_folds_legend)
+        self.plot_precision_recall(ax1, legend_size, plot_thresholds, show_folds_legend)
         self.plot_probability_distribution(ax2, legend_size)
 
 
 
     # plot ROC curve for each fold (and the associated threshold) and a mean ROC curve
     # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
-    def plot_roc(self, ax, legend_size, plot_thresholds=True):
+    def plot_roc(self, ax, legend_size, plot_thresholds=True, show_folds_legend=True):
         # set plot
-        ax.set_title('ROC curve')
+        ax.set_title('ROC curve for {} folds'.format(self.number_of_folds))
         ax.set_xlabel('false positive rate')
         ax.set_ylabel('true positive rate  |  threshold value')
         ax.set_xlim(-0.05, 1.05)
@@ -210,8 +210,11 @@ class Metrics():
             tprs[-1][0] = 0.0 # threshold > 1 for the first point (ie the last tpr value, we correct the interpolation)
 
             # plot ROC curve
-            plt = ax.plot(fpr, tpr, linewidth=0.6, alpha=0.4,
-                          label='ROC fold %d (AUC = %0.3f)' % (i + 1, fold_metrics['test_roc_auc']))
+            if show_folds_legend:
+                label = 'ROC fold %d (AUC = %0.3f)' % (i + 1, fold_metrics['test_roc_auc'])
+            else:
+                label = None
+            plt = ax.plot(fpr, tpr, linewidth=0.6, alpha=0.4, label=label)
 
             # plot thresholds
             if plot_thresholds:
@@ -243,9 +246,9 @@ class Metrics():
     # strongly inspired by previous function
     # see https://classeval.wordpress.com/introduction/introduction-to-the-precision-recall-plot/
     # WARNING: for simplicity we use linear interpolation but this is wrong (cf. previous website)
-    def plot_precision_recall(self, ax, legend_size, plot_thresholds=True):
+    def plot_precision_recall(self, ax, legend_size, plot_thresholds=True, show_folds_legend=True):
         # set plot
-        ax.set_title('Precision-Recall curve')
+        ax.set_title('Precision-Recall curve for {} folds'.format(self.number_of_folds))
         ax.set_xlabel('recall')
         ax.set_ylabel('precision  |  threshold value')
         ax.set_xlim(-0.05, 1.05)
@@ -276,8 +279,11 @@ class Metrics():
             precisions.append(np.interp(mean_recall, recall[::-1], precision[::-1]))
 
             # plot PR curve
-            plt = ax.plot(recall, precision, linewidth=0.6, alpha=0.4,
-                          label='PR fold %d (AP = %0.3f)' % (i + 1, fold_metrics['test_average_precision']))
+            if show_folds_legend:
+                label = 'PR fold %d (AP = %0.3f)' % (i + 1, fold_metrics['test_average_precision'])
+            else:
+                label = None
+            plt = ax.plot(recall, precision, linewidth=0.6, alpha=0.4, label=label)
 
             # plot thresholds
             if plot_thresholds:
