@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as seaborn
+from scipy.stats import ttest_rel
 
 from metrics import Metrics
 
@@ -113,10 +114,24 @@ class Summary():
         plt.legend()
 
 
+    def plot_2_vs_2(self, figsize=(4, 7), scoring=None)
+        if not scoring:
+            scoring = self.scoring
 
+        plt.figure(figsize=(figsize[0] * len(scoring), figsize[1]))
 
+        for i, score_name in enumerate(scoring):
+            plt.subplot(1, len(scoring), i + 1)
+            plt.title(score_name)
 
+            metric_x = self.metrics_dict.values[0].get_metrics()['test_{}'.format(score_name)]
+            metric_y = self.metrics_dict.values[0].get_metrics()['test_{}'.format(score_name)]
 
+            plt.plot(metric_x, metric_y, style='o', alpha=0.7, label='rel')
+            plt.plot(plt.gca().get_xlim(), plt.gca().get_ylim())
+            print(ttest_rel(metric_x, metric_y))
+
+        plt.legend()
 
 
 
