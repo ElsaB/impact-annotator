@@ -9,7 +9,7 @@ import time
 
 class Metrics():
 
-    def __init__(self, model=None, X=None, y=None, cv_strategy=None, groups=None, scoring=['accuracy', 'f1', 'recall', 'precision', 'roc_auc', 'average_precision'], n_jobs=1, run_model=True,
+    def __init__(self, model=None, X=None, y=None, cv_strategy=None, groups=None, scoring=['average_precision', 'roc_auc', 'precision', 'recall', 'f1', 'accuracy'], n_jobs=1, run_model=True,
                  read_from_pkl=False, path=None):
 
         self.scoring = scoring

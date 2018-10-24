@@ -114,7 +114,7 @@ class Summary():
         plt.legend()
 
 
-    def plot_2_vs_2(self, figsize=(4, 7), scoring=None)
+    def plot_2_vs_2(self, figsize=(4, 7), scoring=None):
         if not scoring:
             scoring = self.scoring
 
