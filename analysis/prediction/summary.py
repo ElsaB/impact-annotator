@@ -8,7 +8,7 @@ from metrics import Metrics
 # work in progress...
 class Summary():
 
-    def __init__(self, scoring=['accuracy', 'f1', 'roc_auc', 'average_precision']):
+    def __init__(self, scoring=['accuracy', 'f1', 'recall', 'precision', 'roc_auc', 'average_precision']):
 
         self.metrics_dict = {}
 
@@ -70,15 +70,20 @@ class Summary():
         self.summary = pd.read_pickle(path)
 
 
-    def plot_cv_curves(self, figsize=(40, 10)):
-        plt.figure(figsize=figsize)
+    def plot_cv_curves(self, figsize=(7, 7), scoring=None):
+        if not scoring:
+            scoring = self.scoring[::-1]
 
-        for i, score_name in enumerate(self.scoring):
-            plt.subplot(1, len(self.scoring), i+1)
+        plt.figure(figsize=(figsize[0] * len(scoring), figsize[1]))
+
+        for i, score_name in enumerate(scoring):
+            plt.subplot(1, len(scoring), i + 1)
             plt.title(score_name)
 
+            j = 0
             for metrics_name, metrics in self.metrics_dict.items():
-                metrics.get_metrics()['test_{}'.format(score_name)].plot(style = '-o', label=metrics_name, alpha=0.7)
+                metrics.get_metrics()['test_{}'.format(score_name)].plot(style = '-o', label=metrics_name, alpha=0.7, color=self.summary.iloc[j]['color'])
+                j += 1
 
         plt.legend()
 
