@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as seaborn
-from scipy.stats import ttest_rel
+from scipy.stats import normaltest, ttest_rel
 
 from metrics import Metrics
 
@@ -64,7 +64,7 @@ class Summary():
 
 
 
-    def plot(self, figsize=(20, 10), fontsize=10):
+    def plot(self, figsize=(25, 8), fontsize=12):
         summary_transpose = self.summary.copy().transpose()
 
         fig, ax = plt.subplots(1, 1, figsize=figsize)
@@ -115,7 +115,7 @@ class Summary():
         plt.legend()
 
 
-    def plot_2_vs_2(self, figsize=(40, 7), scoring=None):
+    def plot_2_vs_2(self, metric_x_name, metric_y_name, figsize=(40, 7), scoring=None):
         if not scoring:
             scoring = self.scoring
 
@@ -125,27 +125,32 @@ class Summary():
             plt.subplot(1, len(scoring), i + 1)
             plt.title(score_name)
 
-            metric_x = list(self.metrics_dict.values())[0].get_metrics()['test_{}'.format(score_name)]
-            metric_y = list(self.metrics_dict.values())[1].get_metrics()['test_{}'.format(score_name)]
+            metric_x = self.metrics_dict[metric_x_name].get_metrics()['test_{}'.format(score_name)]
+            metric_y = self.metrics_dict[metric_y_name].get_metrics()['test_{}'.format(score_name)]
+
+            pvalue_is_normal_x = normaltest(metric_x).pvalue
+            pvalue_is_normal_y = normaltest(metric_y).pvalue
+            if pvalue_is_normal_x < 0.05 or pvalue_is_normal_y < 0.05:
+                is_not_normal_warning = '\nWARNING: distribution not gaussian\np_x={:.2e} | p_y={:.2e}'.format(pvalue_is_normal_x, pvalue_is_normal_y)
+            else:
+                is_not_normal_warning = ''
 
             plt.plot(metric_x, metric_y, 'o', alpha=0.6, label='rel')
-            plt.xlabel(list(self.metrics_dict.keys())[0])
-            plt.ylabel(list(self.metrics_dict.keys())[1])
-
+            plt.xlabel(metric_x_name)
+            plt.ylabel(metric_y_name)
+            
 
             xmin, xmax = plt.gca().get_xlim()
             ymin, ymax = plt.gca().get_ylim()
-
             new_min = min(xmin, ymin)
             new_max = max(xmax, ymax)
-            
             plt.plot([new_min, new_max], [new_min, new_max])
-            ttest = ttest_rel(metric_x, metric_y)
-            p_value = ttest[1]
-            title = plt.title(score_name + ' (p={:.2e})'.format(p_value))
 
-            if p_value > 0.01:
-                plt.setp(title, color='r')
+
+            pvalue = ttest_rel(metric_x, metric_y).pvalue
+            title = plt.title(score_name + ' (p={:.2e})'.format(pvalue) + is_not_normal_warning)
+            if pvalue < 0.05: # means significantly different with a 95% confidence
+                plt.setp(title, color='r', fontweight='bold', fontsize=14)
 
 
 

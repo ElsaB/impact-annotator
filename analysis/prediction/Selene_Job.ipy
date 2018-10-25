@@ -49,7 +49,7 @@ class Selene_Job:
 
 
     # save the X and y data as .pkl in the local analysis/prediction/ssh_remote_jobs/ directory
-    def load_data(self, X, y):
+    def load_data(self, X, y, path_to_script=None):
         # print an error if the job doesn't exist
         if not exist_file(self.local_job_directory_path):
             print_md(self.get_job_md_string_('red') + '⚠️ does not exist yet')
@@ -60,16 +60,11 @@ class Selene_Job:
 
             print_md(self.get_job_md_string_('green') + '✅ data loaded')
 
+            if path_to_script:
+                print('➞ cp script.ipy from {} to {}'.format(path_to_script, self.local_job_directory_path))
+                !cp {path_to_script} {self.local_job_directory_path}
 
-    # work in progress...
-    def load_script(self, path_to_script):
-        if not exist_file(self.local_job_directory_path):
-            print_md(self.get_job_md_string_('red') + '⚠️ does not exist yet')
-        else:
-            print('➞ cp script.ipy from {} to {}'.format(path_to_script, self.local_job_directory_path))
-            !cp {path_to_script} {self.local_job_directory_path}
-
-            print_md(self.get_job_md_string_('green') + '✅ script loaded')
+                print_md(self.get_job_md_string_('green') + '✅ script loaded')
 
 
     # this function:

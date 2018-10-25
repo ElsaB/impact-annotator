@@ -29,3 +29,7 @@ def get_table(data):
 # ex: print_count(5, 10) → "5/10 (50.00%)"
 def print_count(numerator, denominator):
     print("%d/%d (%.2f%%)" % (numerator, denominator, 100 * numerator / denominator))
+
+
+def unlist(l):
+    return [x for sublist in l for x in sublist]
