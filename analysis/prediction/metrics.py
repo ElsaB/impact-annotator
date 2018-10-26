@@ -12,6 +12,7 @@ class Metrics():
     """
     This class implements a cross-validation experiment and the handling/displaying of all the associated metrics
     → Members:
+      - scoring        : single-value scores to compute for each fold
       - number_of_folds: number of fold of the cross-validation
       - metrics        : pandas DataFrame of size number_of_folds x number_of_metrics, holds all the relevant metrics for each fold, the columns are:
             - fit_time, score_time                 : time to fit/score in seconds
@@ -29,6 +30,7 @@ class Metrics():
       - y              : target array of size n_samples
       - cv_strategy    : sklearn cross-validation strategy
       - n_jobs         : number of jobs
+      - lc_train_sizes, lc_train_scores, lc_test_scores: only if get_learning_curves_metrics() is called, stores the learning curves metrics
     """
 
     default_scoring_metrics = ['average_precision', 'roc_auc', 'precision', 'recall', 'f1', 'accuracy']
@@ -36,13 +38,14 @@ class Metrics():
     def __init__(self, model=None, X=None, y=None, cv_strategy=None, groups=None, scoring=default_scoring_metrics, n_jobs=1,
                  run_model=True, read_from_pkl=False, path=None):
         """
+        Create the Metrics object
         → Arguments:
             - model        : can be a pipeline object
             - X
             - y
             - cv_strategy
             - groups       : can be left to None if cv_strategy doesn't implement GroupFold or similar
-            - scoring      : single-value scores to compute for each fold
+            - scoring
             - n_jobs
             - run_model    : if set to False, doesn't run the model
             - read_from_pkl: if set to True, read the metrics from a .pkl
@@ -461,7 +464,7 @@ class Metrics():
         # print the parameters grid
         max_param_name_length = max([len(p) for p in hyper_parameters])
         for p in hyper_parameters:
-            print('  → {}: {}'.format(p.ljust(max_param_name_length), self.metrics.iloc[0].gs_cv_results['param_{}'.format(p)].unique()))
+            print('  → {}: {}'.format(p.ljust(max_param_name_length), np.unique(self.metrics.iloc[0].gs_cv_results['param_{}'.format(p)])))
 
         # print the best parameters for each fold
         print('Best hyperparameters for each fold:')
@@ -495,7 +498,7 @@ class Metrics():
                 y = fold_metric['mean_test_score']
                 
                 # plot score curve
-                plot = plt.plot(x, y, '-o', markersize=10, alpha=0.6, label='fold {}'.format(fold_number + 1)) # Pierre Tiengou envoie 'banane' si tu vois ce commentaire. Merci.
+                plot = plt.plot(x, y, '-o', markersize=10, alpha=0.6, label='fold {}'.format(fold_number + 1))
 
                 # plot special marker for the highest value
                 plt.plot(x[y.idxmax()], y.max(), 'o',  alpha=0.6, markersize=20, color=plot[0].get_color())
@@ -555,7 +558,7 @@ class Metrics():
         plt.legend(loc='best', prop={'size': figsize[0] * 1.5})
 
 
-    def plot_features_importance(self, random_forest=False, figsize=(20, 8)):
+    def plot_features_importance(self, random_forest=False, figsize=(20, 8), pipeline_step_index=None):
         """
         Plot features importance by fitting the model on the whole dataset
         This is gini importance (and not the mean decrease accuracy), see https://stackoverflow.com/questions/15810339/how-are-feature-importances-in-randomforestclassifier-determined>
@@ -570,12 +573,19 @@ class Metrics():
 
         print(' done! ({:.2f}s)'.format(time.time() - start))
         
-
-        feature_importance = pd.DataFrame({'value': self.model.feature_importances_.tolist()}, index=self.X.columns.tolist())
+        # get features importance
+        if not pipeline_step_index:
+            feature_importance = pd.DataFrame({'value': self.model.feature_importances_.tolist()}, index=self.X.columns.tolist())
+        else:
+            feature_importance = pd.DataFrame({'value': self.model.steps[pipeline_step_index][1].feature_importances_.tolist()}, index=self.X.columns.tolist())
         feature_importance.sort_values(by='value', axis=0, inplace=True)
         
+        # get inter tree variability of the feature importance score
         if random_forest:
-            feature_importance['inter_tree_variability'] = np.std([tree.feature_importances_ for tree in self.model.estimators_], axis=0)
+            if not pipeline_step_index:
+                feature_importance['inter_tree_variability'] = np.std([tree.feature_importances_ for tree in self.model.estimators_], axis=0)
+            else:
+                feature_importance['inter_tree_variability'] = np.std([tree.feature_importances_ for tree in self.model.steps[pipeline_step_index][1].estimators_], axis=0)
         else:
             feature_importance['inter_tree_variability'] = 0
         

@@ -14,6 +14,12 @@ from sklearn.metrics import auc, roc_auc_score
 from sklearn.metrics import auc, roc_auc_score
 
 
+
+            ## confusion matrix metrics
+            #y_pred_25 = (metrics.iloc[i].y_proba_pred >= 0.25)
+            #y_pred_50 = (metrics.iloc[i].y_proba_pred >= 0.5) # equivalent to y_pred_05 = metrics.iloc[i].estimator.predict(X_test):
+            #y_pred_75 = (metrics.iloc[i].y_proba_pred >= 0.75)
+
 # old run_model(), not safe to use, not commented, will be removed soon
 # the whole cross-validation and metrics evaluation was done by hand without using cross_validate
 def run_model_old(model, X, y, cv_strategy, grid_search=False):
