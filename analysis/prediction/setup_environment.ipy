@@ -1,5 +1,12 @@
-print('Setup environment...', end='')
+"""
+This file setup the Jupyter notebook by:
+- loading all appropriate libraries and custom files
+- setting some jupyter notebook display parameters (for plots, dataframe...)
+- checking if the current conda environment is the good one
+"""
 
+
+print('Setup environment...', end='')
 
 # special notebook embedding for matplotlib figures
 %matplotlib inline
@@ -11,9 +18,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import seaborn
 
-# load custom functions
+# load custom files
 from custom_tools import *
-from ml_tools import *
 from metrics import *
 from summary import *
 from impact_wrapper import *
@@ -30,10 +36,10 @@ matplotlib.rcParams['figure.figsize'] = (6, 6)
 # set the matplotlib figures style
 seaborn.set()
 
-
 print(' done!')
 
-# check current conda env, prints a warning if the current conda env is not the project conda env (ie impact-annotator_env)
+
+# check current conda env, print a warning if the current conda env is not the project conda env (impact-annotator_env)
 current_conda_env = !echo $CONDA_DEFAULT_ENV
 current_conda_env = current_conda_env[0]
 if current_conda_env == 'impact-annotator_env':
