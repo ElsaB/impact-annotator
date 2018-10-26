@@ -1,35 +1,58 @@
 from IPython.display import Markdown, display
 import pandas as pd
 
-# print markdown string in the notebook
 def print_md(string, color=None):
+    """
+    Print markdown string in the notebook.
+    → Arguments:
+        - string: the string to print ('\t' is replaced by a tabulation, '\n' is replaced by a line break)
+        - color : if specified prints the whole string with the given color
+    """
+    # replace '\t' and '\n' by their markdowns equivalent
     string = string.replace('\t', '&emsp;')
     string = string.replace('\n', '<br>')
+
+    # use html tags to specify the string color
     if color:
-        string = '<span style="color:' + color + '">' + string + '</span>'
+        string = '<span style="color:{}">{}</span>'.format(color, string)
 
     display(Markdown(string))
 
 
-# return a count and frequency table of a categorical pandas Serie
+def print_count(numerator, denominator):
+    """
+    Print custom string of the proportion numerator / denominator.
+    → Ex: print_count(5, 12) ⟹ '5/12 (41.067%)'
+    → Arguments:
+        - numerator  : the numerator value
+        - denominator: the denominator value, should not be null
+    """
+    print('{}/{} ({:.2f}%)'.format(numerator,
+                                   denominator,
+                                   100 * numerator / denominator))
+
+
+def unlist(nested_list):
+    """
+    Return the unnested version of a nested list (nested depth being not more than one).
+    → Ex: unlist([[1, 2], [3, 4]]) ⟹ [1, 2, 3, 4]
+    → Arguments:
+        - nested_list: the nested list
+    """
+    return [x for sublist in nested_list for x in sublist]
+
+
 def get_table(data):
+    """
+    Return a count and frequency table of a categorical pandas Serie.
+    → Arguments:
+        - data: the categorical pandas Serie
+    """
     # get the count and convert to dataframe
-    table = data.value_counts().to_frame()
+    table = pd.DataFrame(data={'count_': data.value_counts()})
 
-    # rename the first column
-    table.rename(columns={table.columns[0]: 'count_'}, inplace=True)
-
-    # create the frequency column
-    table['freq_'] = table.apply(lambda x: (x / sum(table.count_) * 100).round(1).astype(str) + "%", axis=0)
+    # create the frequency column and convert to a string like '52.3%'
+    total_count = table['count_'].sum()
+    table['freq_'] = table.apply(lambda x: '{:.2f}%'.format(100 * x['count_'] / total_count), axis=1)
     
     return table
-
-
-# print custom proportion of numerator / denominator
-# ex: print_count(5, 10) → "5/10 (50.00%)"
-def print_count(numerator, denominator):
-    print("%d/%d (%.2f%%)" % (numerator, denominator, 100 * numerator / denominator))
-
-
-def unlist(l):
-    return [x for sublist in l for x in sublist]
