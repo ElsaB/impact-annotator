@@ -23,6 +23,7 @@ from custom_tools import *
 from metrics import *
 from summary import *
 from impact_wrapper import *
+from selene_job import *
 
 # set jupyter notebook pandas dataframe output parameters
 pd.set_option('display.max_rows'    , 200)
