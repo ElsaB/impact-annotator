@@ -6,21 +6,59 @@ import seaborn as seaborn
 from sklearn.metrics import roc_curve, precision_recall_curve, confusion_matrix
 from sklearn.model_selection import cross_validate, learning_curve
 import time
+from custom_tools import *
 
 class Metrics():
+    """
+    This class implements a cross-validation experiment and the handling/displaying of all the associated metrics
+    → Members:
+      - number_of_folds: number of fold of the cross-validation
+      - metrics        : pandas DataFrame of size number_of_folds x number_of_metrics, holds all the relevant metrics for each fold, the columns are:
+            - fit_time, score_time                 : time to fit/score in seconds
+            - estimator                            : model fitted on the train test
+            - train_<score_name>, test_<score_name>: train and test single-value scores
+            - gs_best_parameters, gs_cv_results    : holds grid-search metrics if one was performed, NA otherwise
+            - y_test                               : the y array of the test test
+            - y_proba_pred, y_class_pred           : the predicted probability and class for each entry of y_test
+            - test_fpr, test_tpr, roc_thresh       : metrics to plot roc curve
+            - precision, recall, pr_thresh         : metrics to plot precision-recall curve
+            - confusion_matrix                     : confusion matrix for the predicted class
+      - model          : sklearn model
+      - groups         : data groups array if they exist
+      - X              : features matrix of size n_samples x n_features
+      - y              : target array of size n_samples
+      - cv_strategy    : sklearn cross-validation strategy
+      - n_jobs         : number of jobs
+    """
 
-    def __init__(self, model=None, X=None, y=None, cv_strategy=None, groups=None, scoring=['average_precision', 'roc_auc', 'precision', 'recall', 'f1', 'accuracy'], n_jobs=1, run_model=True,
-                 read_from_pkl=False, path=None):
+    default_scoring_metrics = ['average_precision', 'roc_auc', 'precision', 'recall', 'f1', 'accuracy']
+
+    def __init__(self, model=None, X=None, y=None, cv_strategy=None, groups=None, scoring=default_scoring_metrics, n_jobs=1,
+                 run_model=True, read_from_pkl=False, path=None):
+        """
+        → Arguments:
+            - model        : can be a pipeline object
+            - X
+            - y
+            - cv_strategy
+            - groups       : can be left to None if cv_strategy doesn't implement GroupFold or similar
+            - scoring      : single-value scores to compute for each fold
+            - n_jobs
+            - run_model    : if set to False, doesn't run the model
+            - read_from_pkl: if set to True, read the metrics from a .pkl
+            - path         : path to the .pkl if read_from_pkl is True
+        """
 
         self.scoring = scoring
 
         if not read_from_pkl:
             self.number_of_folds = cv_strategy.get_n_splits()
 
+            # create the metrics DataFrame
             self.metrics = pd.DataFrame(index=range(self.number_of_folds),
                                         columns=['fit_time', 'score_time', 'estimator'] +
-                                                ['train_{}'.format(score_name) for score_name in scoring] +
-                                                ['test_{}'.format(score_name) for score_name in scoring] +
+                                                ['train_{}'.format(score_name) for score_name in self.scoring] +
+                                                ['test_{}'.format(score_name)  for score_name in self.scoring] +
                                                 ['gs_best_parameters', 'gs_cv_results'] + 
                                                 ['y_test', 'y_proba_pred', 'y_class_pred',
                                                  'test_fpr', 'test_tpr', 'roc_thresh',
@@ -28,13 +66,12 @@ class Metrics():
                                                  'confusion_matrix'])
             self.metrics.index.name = 'fold_number'
 
-            self.model = model
-            self.groups = groups
-            self.X = X
-            self.y = y
+            self.model       = model
+            self.X           = X
+            self.y           = y
             self.cv_strategy = cv_strategy
-            
-            self.n_jobs = n_jobs
+            self.groups      = groups
+            self.n_jobs      = n_jobs
 
             if run_model:
                 self.run_model()
@@ -43,20 +80,33 @@ class Metrics():
             self.number_of_folds = self.metrics.shape[0]
 
 
-    # display the self.metrics DataFrame
     def display(self):
+        """
+        Display the self.metrics DataFrame
+        """
         display(self.metrics)
 
 
     def get_metrics(self):
+        """
+        Return the self.metrics DataFrame
+        """
         return self.metrics
 
-    def save(self):
-        self.metrics.to_pickle('metrics.pkl')
 
-    # run the given model with the given parameters
-    # return a pandas DataFrame object containing all the relevant metrics, including the grid search metrics when a grid_search was performed
+    def save(self, path='metrics.pkl'):
+        """
+        Save self.metrics to a .pkl
+        → Arguments:
+            - path: string specifying the path to the .pkl file
+        """
+        self.metrics.to_pickle(path)
+
+
     def run_model(self):
+        """
+        Run the model and evaluate all the metrics values to fill the self.metrics DataFrame
+        """
         print('Run model...', end='')
         start = time.time()
 
@@ -65,30 +115,25 @@ class Metrics():
                                  return_train_score=True, return_estimator=True, n_jobs=self.n_jobs, error_score='raise')
         self.metrics.update(pd.DataFrame(results))
 
-        # get grid search metrics if the model seems to have performed a grid search
+        # get grid search metrics if the model have performed a grid search
         if hasattr(self.metrics.iloc[0]['estimator'], 'best_params_'):
             self.metrics['gs_best_parameters'] = self.metrics['estimator'].apply(lambda x: x.best_params_)
             self.metrics['gs_cv_results']      = self.metrics['estimator'].apply(lambda x: x.cv_results_)
 
-
-        # get ROC curve, precision-recall curve and confusion matrix, warning this implies:
-        # - creating the cross-validation folds again
-        # - re-testing the fitted model on the test folds
+        # get ROC curve, PR curve and confusion matrix metrics
+        # WARNING: this implies re-testing the fitted model on the test folds
         self._get_other_metrics()
-
 
         # we remove the estimators from the metrics because they can be quite memory-expensive (for random forest with a lot of trees for example)
         self.metrics.drop('estimator', axis=1, inplace=True)
 
-
         print(' done! ({:.2f}s)'.format(time.time() - start))
     
 
-
-    # add to metrics the necessary metrics to compute later the ROC curve, precision-recall curve and confusion matrix for each fold
-    # also adds the predicted probability, the predicted class for each sample and the true value
-    # only used in run_model()
     def _get_other_metrics(self):
+        """
+        Compute the ROC curve, PR curve and confusion matrix metrics as well as the predicted probability and class arrays
+        """
         # for each fold
         for i, (train_index, test_index) in enumerate(self.cv_strategy.split(self.X, self.y, groups=self.groups)):
             (X_train, X_test) = (self.X.iloc[train_index], self.X.iloc[test_index])
@@ -96,53 +141,51 @@ class Metrics():
 
             fold_metrics = self.metrics.iloc[i].copy(deep=False)
             
-            ## predicted probability metrics
+            # prediction metrics
             fold_metrics['y_test']       = y_test.values
             fold_metrics['y_proba_pred'] = fold_metrics['estimator'].predict_proba(X_test)[:,1]
             fold_metrics['y_class_pred'] = fold_metrics['estimator'].predict(X_test)
 
-            ## ROC metrics       
+            # ROC metrics
             fpr, tpr, roc_thresholds = roc_curve(fold_metrics['y_test'], fold_metrics['y_proba_pred'])
             fold_metrics['test_fpr']   = fpr
             fold_metrics['test_tpr']   = tpr
             fold_metrics['roc_thresh'] = roc_thresholds
 
-            ## precision-recall metrics       
+            # precision-recall metrics
             precision, recall, pr_thresholds = precision_recall_curve(fold_metrics['y_test'], fold_metrics['y_proba_pred'])
             fold_metrics['precision'] = precision
             fold_metrics['recall']    = recall
             fold_metrics['pr_thresh'] = pr_thresholds
 
-            ## confusion matrix metrics
-            #y_pred_25 = (metrics.iloc[i].y_proba_pred >= 0.25)
-            #y_pred_50 = (metrics.iloc[i].y_proba_pred >= 0.5) # equivalent to y_pred_05 = metrics.iloc[i].estimator.predict(X_test):
-            #y_pred_75 = (metrics.iloc[i].y_proba_pred >= 0.75)            
-
+            # confusion matrix metrics  
             fold_metrics['confusion_matrix'] = confusion_matrix(fold_metrics['y_test'], fold_metrics['y_class_pred'])
 
 
-
-    # print the average test set accuracy, test ROC AUC and test F1-score for a given metrics DataFrame
     def print_mean(self):
-        # test set mean metrics and standard_deviation over the folds
+        """
+        Print the test set mean score and std deviation for each single-value score
+        """
         for score_name in self.scoring:
             test_scores = self.metrics['test_{}'.format(score_name)]
             print('▴ Mean {:17}: {:.3f} ± {:.3f}'.format(score_name, test_scores.mean(), test_scores.std()))
 
 
-
-    # print multiple metrics values for the train and test set accross each folds, including the grid search metrics when a grid_search was performed
-    # set detailed_grid_search_metrics to True when you want the detailed grid search metrics
     def print_fold_details(self, detailed_grid_search_metrics=False):
+        """
+        For each fold, print the test set score and std deviation for each single-value score, also print grid search metrics if they exist
+        → Arguments:
+            - detailed_grid_search_metrics: if True print detailed grid search metrics for each fold and for each set of hyperparameters
+        """
         
-        # boolean variable being True if the metrics DataFrame contains grid search metrics
+        # the boolean grid_search is True if the self.metrics DataFrame contains grid search metrics
         grid_search = not pd.isnull(self.metrics.iloc[0]['gs_best_parameters'])
 
+        # Print standard output format
         print('Fold #: [fit_time | score_time]')
         print('  → score_name_1: [test_score_1 | train_score_1]')
         print('  → score_name_2: [test_score_2 | train_score_2]')
         print('  → ...')
-
 
         if grid_search:
             print('  → best hyperparameters: {\'hyperparameter_name_1\': best_value, ...}')
@@ -171,22 +214,33 @@ class Metrics():
                         print('     - {:.3f} ± {:.3f} for {}'.format(mean, std, param))
 
 
-
-    # plot ROC curve, PR curve and predicted probability distribution side by side
     def plot_threshold_decision_curves(self, figsize=(30, 10), plot_thresholds=True, show_folds_legend=True):
-        fig, (ax0, ax1, ax2) = plt.subplots(1, 3, figsize=figsize)
+        """
+        Plot ROC curve, PR curve and predicted probability distribution side-by-side
+        → Arguments:
+            - figsize          : global figure size
+            - plot_thresholds  : for the ROC and PR curve, if True plot the thresholds curve for each fold
+            - show_folds_legend: for the ROC and PR curve, if True show the legend for each fold curve
+        """
+        fig, ax = plt.subplots(1, 3, figsize=figsize)
 
         legend_size = figsize[0] / 3 * 1.5
 
-        self.plot_roc(ax0, legend_size, plot_thresholds, show_folds_legend)
-        self.plot_precision_recall(ax1, legend_size, plot_thresholds, show_folds_legend)
-        self.plot_probability_distribution(ax2, legend_size)
+        self.plot_roc(ax[0], legend_size, plot_thresholds, show_folds_legend)
+        self.plot_precision_recall(ax[1], legend_size, plot_thresholds, show_folds_legend)
+        self.plot_probability_distribution(ax[2], legend_size)
 
 
-
-    # plot ROC curve for each fold (and the associated threshold) and a mean ROC curve
-    # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
     def plot_roc(self, ax, legend_size, plot_thresholds=True, show_folds_legend=True):
+        """
+        Plot ROC curve for each fold (and the associated threshold) and a mean interpolated ROC curve
+        Strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
+        → Arguments:
+            - ax               : matplotlib axis object
+            - legend_size      : size of the legend
+            - plot_thresholds  : if True plot the thresholds curve for each fold
+            - show_folds_legend: if True show the legend for each fold curve
+        """
         # set plot
         ax.set_title('ROC curve for {} folds'.format(self.number_of_folds))
         ax.set_xlabel('false positive rate')
@@ -194,10 +248,8 @@ class Metrics():
         ax.set_xlim(-0.05, 1.05)
         ax.set_ylim(-0.05, 1.05)
         
-
         mean_fpr = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
         tprs = [] # true positive rate list for each fold
-
 
         # for each fold
         for i, fold_metrics in self.metrics.iterrows():
@@ -205,7 +257,7 @@ class Metrics():
 
             # because the length of fpr and tpr vary with the fold (size of thresholds  = nunique(y_pred[:, 1]) + 1), we can't just do
             # fprs.append(fpr) and tprs.append(tpr)
-            # we use a linear interpolation to find the values of fpr for a 101 chosen tpr values
+            # we use a linear interpolation to find the values of fpr for a 101 chosen tpr values (mean_fpr)
             tprs.append(np.interp(mean_fpr, fpr, tpr))
             tprs[-1][0] = 0.0 # threshold > 1 for the first point (ie the last tpr value, we correct the interpolation)
 
@@ -218,35 +270,39 @@ class Metrics():
 
             # plot thresholds
             if plot_thresholds:
-                thresholds[0] = 1.001 # value is > 1, we set it just above one for the graphic
+                thresholds[0] = 1.001 # value is > 1, we set it just above one for the graphic style
                 ax.plot(fpr, thresholds, linewidth=0.6, alpha=0.4, color=plt[0].get_color())
-
         
+
         # plot baseline
         ax.plot([0, 1], [0, 1], '--r', linewidth=0.5, alpha=1, label='random')
-
 
         # plot mean ROC
         mean_tpr = np.mean(tprs, axis=0)
         ax.plot(mean_fpr, mean_tpr, 'b', linewidth=2,
                 label='mean ROC (AUC = {:.3f} ± {:.3f})'.format(self.metrics['test_roc_auc'].mean(), self.metrics['test_roc_auc'].std()))
 
-
         # plot mean ROC std
         std_tpr = np.std(tprs, axis=0)
         ax.fill_between(mean_fpr, mean_tpr - std_tpr, mean_tpr + std_tpr, color='blue', alpha=0.15,
                          label='mean ROC ± 1 std. dev.')
 
-
         ax.legend(loc='lower right', prop={'size': legend_size})
 
 
-
-    # plot Precision-Recall curve (PR) for each fold (and the associated threshold) and a mean PR curve
-    # strongly inspired by previous function
-    # see https://classeval.wordpress.com/introduction/introduction-to-the-precision-recall-plot/
-    # WARNING: for simplicity we use linear interpolation but this is wrong (cf. previous website)
     def plot_precision_recall(self, ax, legend_size, plot_thresholds=True, show_folds_legend=True):
+        """
+        Plot Precision-Recall curve (PR) for each fold (and the associated threshold) and a mean PR curve
+        Strongly inspired by self.plot_roc() method
+        See https://classeval.wordpress.com/introduction/introduction-to-the-precision-recall-plot/
+        WARNING: for simplicity we use linear interpolation but this is wrong (cf. previous website)
+        → Arguments:
+            - ax               : matplotlib axis object
+            - legend_size      : size of the legend
+            - plot_thresholds  : if True plot the thresholds curve for each fold
+            - show_folds_legend: if True show the legend for each fold curve
+        """
+
         # set plot
         ax.set_title('Precision-Recall curve for {} folds'.format(self.number_of_folds))
         ax.set_xlabel('recall')
@@ -254,10 +310,8 @@ class Metrics():
         ax.set_xlim(-0.05, 1.05)
         ax.set_ylim(-0.05, 1.05)
         
-
         mean_recall = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
         precisions = [] # precision value list for each fold
-
 
         # for each fold
         for i, fold_metrics in self.metrics.iterrows():
@@ -266,15 +320,14 @@ class Metrics():
             # correct first point precision to make a horizontal line between first and second point
             # from the sklearn documentation: "The last precision and recall values are 1. and 0. respectively and do not have a corresponding
             # threshold. This ensures that the graph starts on the y axis."
-            # this methodology is advised by the website quoted at the beginning
+            # this methodology is advised by the website quoted in the main method comment
             precision[-1] = precision[-2]
-
 
             # because the length of precision and recall vary with the fold (size of thresholds  = nunique(y_pred[:, 1]) + 1), we can't just do
             # precisions.append(precision) and recalls.append(recall)
             # we use a linear interpolation to find the values of precision for a 101 chosen recall values
             # WARNING: this is wrong, this choice has been made for simplicity
-            # aslo, the documentation for np.interp asks the coordinates where we want to interpolate the values to be sorted, these explains the need to do [::-1]
+            # Also, the documentation for np.interp asks the coordinates where we want to interpolate the values to be sorted, these explains the need to do [::-1]
             # for both recall and precision
             precisions.append(np.interp(mean_recall, recall[::-1], precision[::-1]))
 
@@ -290,20 +343,16 @@ class Metrics():
                 # cf last comment on sklearn documentation, there's no threshold for the first point so we don't plot it
                 ax.plot(recall[:-1], thresholds, linewidth=0.6, alpha=0.4, color=plt[0].get_color())
             
-
-        # plot baseline
-        # see website
+        # plot baseline (see website)
         positive_number = self.metrics['y_test'].apply(lambda x: sum(x)).sum()
         negative_number = self.metrics['y_test'].apply(lambda x: sum(~x)).sum()
         positive_proportion = positive_number / (positive_number + negative_number)
         ax.plot([0, 1], [positive_proportion, positive_proportion], '--r', linewidth=0.5, alpha=1, label='random')
-
-
+ 
         # plot mean PR
         mean_precision = np.mean(precisions, axis=0)
         ax.plot(mean_recall, mean_precision, 'b', linewidth=2,
                 label='mean PR (AP = {:.3f} ± {:.3f})'.format(self.metrics['test_average_precision'].mean(), self.metrics['test_average_precision'].std()))
-
 
         # plot mean PR std
         std_precision = np.std(precisions, axis=0)
@@ -314,14 +363,15 @@ class Metrics():
         ax.legend(loc='lower left', prop={'size': legend_size})
 
 
-
-    # plot predicted probability distribution for True and False class
     def plot_probability_distribution(self, ax, legend_size):
-        # concatenate y_test and y_predicted list from each fold
-        y_test      = [value for y_test_fold_list      in self.metrics['y_test']      for value in y_test_fold_list]
-        y_predicted = [value for y_predicted_fold_list in self.metrics['y_proba_pred'] for value in y_predicted_fold_list]
-
-        dd = pd.DataFrame({'true_class': y_test, 'predicted_probability': y_predicted})
+        """
+        Plot predicted probability distribution for True and False class
+        → Arguments:
+            - ax         : matplotlib axis object
+            - legend_size: size of the legend
+        """
+        # concatenate all y_test and y_predicted list from each fold amd make a DataFrame
+        dd = pd.DataFrame({'true_class': unlist(self.metrics['y_test']), 'predicted_probability': unlist(self.metrics['y_proba_pred'])})
 
         # plot predicted probability by class
         seaborn.distplot(dd[dd['true_class'] == True]['predicted_probability'], bins=100,
@@ -333,7 +383,7 @@ class Metrics():
                          kde_kws={'bw': 0.01, 'alpha': 1},
                          hist_kws={'alpha': 0.2})
 
-        # set plot parameters
+        # set plot
         ax.set_xlim(0, 1)
         ax.set_title('predicted probability density by class')
         ax.set_xlabel('predicted probability')
@@ -341,9 +391,14 @@ class Metrics():
         ax.legend(loc='upper center', prop={'size': legend_size});
 
 
-
-    # plot confusion matrix for each fold
+    # work in progress...
     def plot_confusion_matrix(self, figsize=(20, 3), legend_size=12):
+        """
+        Plot confusion matrix for each fold
+        → Arguments:
+            - ax         : matplotlib axis object
+            - legend_size: size of the legend
+        """
         # set plot
         plt.figure(figsize=figsize)
 
@@ -361,9 +416,14 @@ class Metrics():
             seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": legend_size})
 
 
-
     # work in progress...
     def plot_mean_confusion_matrix(self, figsize=(6, 5), legend_size=16):
+        """
+        Plot mean confusion matrix
+        → Arguments:
+            - figsize    : figure size
+            - legend_size: size of the legend
+        """
         # set plot
         plt.figure(figsize=figsize)
         plt.title('mean confusion matrix over {} folds'.format(self.number_of_folds))
@@ -383,24 +443,25 @@ class Metrics():
         seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": legend_size})
 
 
-
-    # plot a subplot for each paramater p
-    # for each subplot:
-    #   plot a scatter line for each fold with:
-    #   - x: the parameter p values, the other parameters are fixed to their best values for the fold
-    #   - y: grid search score for this fold and this parameters set (ie moving parameter p and other parameters fixed)
-    def plot_grid_search_results(self, plot_error_bar = True):
+    def plot_grid_search_results(self, plot_error_bar=True):
+        """
+        For each hyperparameter p, plot a subplot made of multiple scatter plots (one for each fold) with for each scatter plot:
+        x: the hyperparameter p values, the other hyperparameters are fixed to their best values for the fold
+        y: the grid search score for this fold and this hyperparameters set (ie moving hyperparameter p and other hyperparameters fixed)
+        → Arguments:
+            - plot_error_bar: if True plot an error bar for each grid-search point (std on the nested cross-validation folds)
+        """
         # get hyper_parameters list
         hyper_parameters = list(self.metrics.iloc[0]['gs_best_parameters'].keys())
         
         # boiler plate code to get the number of folds in the nested cross-validation
         n_folds_nested_cross_validation = len([key for key in self.metrics.iloc[0]['gs_cv_results'].keys() if key.startswith('split') and key.endswith('_test_score')])
-        print('%d hyperparameters tuned for %d different folds (over a %d-fold nested cross-validation):' % (len(hyper_parameters), self.number_of_folds, n_folds_nested_cross_validation))
+        print('{} hyperparameters tuned for {} different folds (over a {}-fold nested cross-validation):'.format(len(hyper_parameters), self.number_of_folds, n_folds_nested_cross_validation))
         
         # print the parameters grid
         max_param_name_length = max([len(p) for p in hyper_parameters])
         for p in hyper_parameters:
-            print('  → {}: {}'.format(p.ljust(max_param_name_length), np.unique(self.metrics.iloc[0].gs_cv_results['param_{}'.format(p)])))
+            print('  → {}: {}'.format(p.ljust(max_param_name_length), self.metrics.iloc[0].gs_cv_results['param_{}'.format(p)].unique()))
 
         # print the best parameters for each fold
         print('Best hyperparameters for each fold:')
@@ -434,26 +495,30 @@ class Metrics():
                 y = fold_metric['mean_test_score']
                 
                 # plot score curve
-                plot = plt.plot(x, y, '-o', markersize=10, alpha = 0.6, label='fold {}'.format(fold_number + 1))
+                plot = plt.plot(x, y, '-o', markersize=10, alpha=0.6, label='fold {}'.format(fold_number + 1)) # Pierre Tiengou envoie 'banane' si tu vois ce commentaire. Merci.
 
                 # plot special marker for the highest value
-                plt.plot(x[y.idxmax()], y.max(), 'o',  alpha = 0.6, markersize=20, color=plot[0].get_color())
+                plt.plot(x[y.idxmax()], y.max(), 'o',  alpha=0.6, markersize=20, color=plot[0].get_color())
 
                 # plot error bars
                 if plot_error_bar:
-                    plt.errorbar(x, y, yerr=fold_metric['std_test_score'], capsize=5, label=None, ecolor=plot[0].get_color(), fmt = 'none', alpha = 0.5)
+                    plt.errorbar(x, y, yerr=fold_metric['std_test_score'], capsize=5, label=None, ecolor=plot[0].get_color(), fmt='none', alpha=0.5)
                 
             plt.legend(loc='lower right', prop={'size': 15})
 
 
-
-
-    # plot learning curves
-    # strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_learning_curve.html
     def get_learning_curves_metrics(self, train_sizes=np.linspace(0.1, 1, 10), scoring='roc_auc', n_jobs=1):
+        """
+        Get learning curves metrics.
+        → Arguments:
+            - train_sizes: sizes of the train set
+            - scoring    : scoring metric to evaluate
+            - n_jobs     : number of jobs
+        """
         print('Run learning curves computation...', end='')
         start = time.time()
 
+        # get learning curves
         self.lc_train_sizes, self.lc_train_scores, self.lc_test_scores = learning_curve(self.model, self.X, self.y,
                                                                                         train_sizes=train_sizes, cv=self.cv_strategy,
                                                                                         n_jobs=n_jobs, error_score='raise')
@@ -461,9 +526,13 @@ class Metrics():
         print(' done! ({:.2f}s)'.format(time.time() - start))
 
 
-
-    # work in progress...
     def plot_learning_curves(self, figsize=(10, 10)):
+        """
+        Plot learning curves
+        Strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_learning_curve.html
+        → Arguments:
+            - figsize: figure size
+        """
         # set plot
         plt.figure(figsize=figsize)
         plt.title('Learning curves')
@@ -476,8 +545,8 @@ class Metrics():
         train_scores_std  = np.std(self.lc_train_scores , axis=1)
 
          # plot metrics and their standard deviations
-        plt.plot(self.lc_train_sizes, train_scores_mean, 'o-', color='r', markersize = 10, label='mean train score')
-        plt.plot(self.lc_train_sizes, test_scores_mean , 'o-', color='g', markersize = 10, label='mean test score')
+        plt.plot(self.lc_train_sizes, train_scores_mean, 'o-', color='r', markersize=10, label='mean train score')
+        plt.plot(self.lc_train_sizes, test_scores_mean , 'o-', color='g', markersize=10, label='mean test score')
         plt.fill_between(self.lc_train_sizes, train_scores_mean - train_scores_std, train_scores_mean + train_scores_std,
                          alpha=0.1, color='r', label='mean train score ± 1 std. dev.')
         plt.fill_between(self.lc_train_sizes, test_scores_mean - test_scores_std, test_scores_mean + test_scores_std,
@@ -486,10 +555,14 @@ class Metrics():
         plt.legend(loc='best', prop={'size': figsize[0] * 1.5})
 
 
-
-    # work in progress...
-    # This is *gini importance* (and not the mean decrease accuracy), see https://stackoverflow.com/questions/15810339/how-are-feature-importances-in-randomforestclassifier-determined>
     def plot_features_importance(self, random_forest=False, figsize=(20, 8)):
+        """
+        Plot features importance by fitting the model on the whole dataset
+        This is gini importance (and not the mean decrease accuracy), see https://stackoverflow.com/questions/15810339/how-are-feature-importances-in-randomforestclassifier-determined>
+        → Arguments:
+            - random_forest: set to True if the model is Random Forest to get the inter tree variability error bars
+            - figsize      : figure size
+        """
         print('Fit model...', end='')
         start = time.time()
 
@@ -514,5 +587,3 @@ class Metrics():
         plt.subplot(1, 2, 2)
         feature_importance.value.plot.barh(width=0.85, xerr=feature_importance['inter_tree_variability'], linewidth=0)
         plt.tight_layout()
-
-
