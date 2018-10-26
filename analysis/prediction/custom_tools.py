@@ -3,7 +3,7 @@ import pandas as pd
 
 def print_md(string, color=None):
     """
-    Print markdown string in the notebook.
+    Print markdown string in the notebook
     → Arguments:
         - string: the string to print ('\t' is replaced by a tabulation, '\n' is replaced by a line break)
         - color : if specified prints the whole string with the given color
@@ -21,7 +21,7 @@ def print_md(string, color=None):
 
 def print_count(numerator, denominator):
     """
-    Print custom string of the proportion numerator / denominator.
+    Print custom string of the proportion numerator / denominator
     → Ex: print_count(5, 12) ⟹ '5/12 (41.067%)'
     → Arguments:
         - numerator  : the numerator value
@@ -34,7 +34,7 @@ def print_count(numerator, denominator):
 
 def unlist(nested_list):
     """
-    Return the unnested version of a nested list (nested depth being not more than one).
+    Return the unnested version of a nested list (nested depth being not more than one)
     → Ex: unlist([[1, 2], [3, 4]]) ⟹ [1, 2, 3, 4]
     → Arguments:
         - nested_list: the nested list
@@ -44,7 +44,7 @@ def unlist(nested_list):
 
 def get_table(data):
     """
-    Return a count and frequency table of a categorical pandas Serie.
+    Return a count and frequency table of a categorical pandas Serie
     → Arguments:
         - data: the categorical pandas Serie
     """
