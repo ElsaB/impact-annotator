@@ -23,7 +23,6 @@ class Metrics():
             - y_proba_pred, y_class_pred           : the predicted probability and class for each entry of y_test
             - test_fpr, test_tpr, roc_thresh       : metrics to plot roc curve
             - precision, recall, pr_thresh         : metrics to plot precision-recall curve
-            - confusion_matrix                     : confusion matrix for the predicted class
       - model          : sklearn model
       - groups         : data groups array if they exist
       - X              : features matrix of size n_samples x n_features
@@ -65,8 +64,7 @@ class Metrics():
                                                 ['gs_best_parameters', 'gs_cv_results'] + 
                                                 ['y_test', 'y_proba_pred', 'y_class_pred',
                                                  'test_fpr', 'test_tpr', 'roc_thresh',
-                                                 'precision', 'recall', 'pr_thresh',
-                                                 'confusion_matrix'])
+                                                 'precision', 'recall', 'pr_thresh'])
             self.metrics.index.name = 'fold_number'
 
             self.model       = model
@@ -135,7 +133,7 @@ class Metrics():
 
     def _get_other_metrics(self):
         """
-        Compute the ROC curve, PR curve and confusion matrix metrics as well as the predicted probability and class arrays
+        Compute the ROC curve, PR curve as well as the predicted probability and class arrays
         """
         # for each fold
         for i, (train_index, test_index) in enumerate(self.cv_strategy.split(self.X, self.y, groups=self.groups)):
@@ -160,9 +158,6 @@ class Metrics():
             fold_metrics['precision'] = precision
             fold_metrics['recall']    = recall
             fold_metrics['pr_thresh'] = pr_thresholds
-
-            # confusion matrix metrics  
-            fold_metrics['confusion_matrix'] = confusion_matrix(fold_metrics['y_test'], fold_metrics['y_class_pred'])
 
 
     def print_mean(self):
@@ -378,24 +373,39 @@ class Metrics():
 
         # plot predicted probability by class
         seaborn.distplot(dd[dd['true_class'] == True]['predicted_probability'], bins=100,
-                         ax=ax, label='True',
+                         ax=ax, label='artefact', color='green',
                          kde_kws={'bw': 0.01, 'alpha': 1},
                          hist_kws={'alpha': 0.2})
         seaborn.distplot(dd[dd['true_class'] == False]['predicted_probability'], bins=100,
-                         ax=ax, label='False',
+                         ax=ax, label='real', color='blue',
                          kde_kws={'bw': 0.01, 'alpha': 1},
                          hist_kws={'alpha': 0.2})
 
         # set plot
         ax.set_xlim(0, 1)
-        ax.set_title('predicted probability density by class')
-        ax.set_xlabel('predicted probability')
-        ax.set_ylabel('density')
+        #ax.set_title('predicted probability density by class')
+        #ax.set_xlabel('predicted probability')
+        #ax.set_ylabel('density')
         ax.legend(loc='upper center', prop={'size': legend_size});
 
 
+    def get_confusion_matrix(self, threshold):
+        """
+        Return a list of confusion matrix for each fold
+        → Arguments:
+            - threshold: the probability threshold at which we want to compute the confusion matrices 
+        """
+        cms = []
+
+        for i, fold_metrics in self.metrics.iterrows():
+            y_pred = (fold_metrics['y_proba_pred'] >= threshold)
+            cms.append(confusion_matrix(fold_metrics['y_test'], y_pred))
+
+        return cms
+
+
     # work in progress...
-    def plot_confusion_matrix(self, figsize=(20, 3), legend_size=12):
+    def plot_confusion_matrix(self, figsize=(20, 3), legend_size=12, threshold=0.5):
         """
         Plot confusion matrix for each fold
         → Arguments:
@@ -405,9 +415,12 @@ class Metrics():
         # set plot
         plt.figure(figsize=figsize)
 
+        cms = self.get_confusion_matrix(threshold)
+
         # for each fold
         for i, fold_metrics in self.metrics.iterrows():
-            cm = pd.DataFrame(fold_metrics['confusion_matrix'], index=['False', 'True'], columns=['False', 'True'])
+
+            cm = pd.DataFrame(cms[i], index=['False', 'True'], columns=['False', 'True'])
             
             plt.subplot(1, self.number_of_folds, i + 1)
             plt.title('fold {}'.format(i + 1))
@@ -420,7 +433,7 @@ class Metrics():
 
 
     # work in progress...
-    def plot_mean_confusion_matrix(self, figsize=(6, 5), legend_size=16):
+    def plot_mean_confusion_matrix(self, figsize=(6, 5), legend_size=16, threshold=0.5):
         """
         Plot mean confusion matrix
         → Arguments:
@@ -431,7 +444,7 @@ class Metrics():
         plt.figure(figsize=figsize)
         plt.title('mean confusion matrix over {} folds'.format(self.number_of_folds))
         
-        cms = [fold_metrics['confusion_matrix'] for i, fold_metrics in self.metrics.iterrows()]
+        cms = self.get_confusion_matrix(threshold)
 
         mean_cm = pd.DataFrame(np.mean(cms, axis = 0), index=['False', 'True'], columns=['False', 'True'])
         std_cm  = pd.DataFrame(np.std(cms, axis = 0) , index=['False', 'True'], columns=['False', 'True'])
