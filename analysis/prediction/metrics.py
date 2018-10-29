@@ -481,7 +481,7 @@ class Metrics():
             fix_parameters = [p for p in hyper_parameters if p != moving_parameter]
 
             plt.subplot(1, len(hyper_parameters), plot_id + 1)
-            plt.title('Varying "{}" with {} fixed to its(their) best value(s) for each fold'.format(moving_parameter, fix_parameters))
+            plt.title('Varying "{}" with all other hyperparameters\nfixed to its(their) best value(s) for each fold'.format(moving_parameter, fix_parameters))
             plt.ylabel('score')
             plt.xlabel(moving_parameter)
 
