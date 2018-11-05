@@ -77,12 +77,13 @@ class Selene_Job:
         return '<span style="color:' + color + '">Job < ' + str(self.job_id) + ' >: </span>'
 
 
-    def load_data(self, X, y, path_to_script=None):
+    def load_data(self, X, y, groups=None, path_to_script=None):
         """
         Save the X and y dataset as .pkl in the local job directory
         → Arguments:
             - X
             - y
+            - groups        : if specified, groups for GroupKFold
             - path_to_script: if specified also copy the script from the given path in the local job directory
         """
         # print an error if the job doesn't exist
@@ -93,6 +94,11 @@ class Selene_Job:
             print('➞ save X.pkl & y.pkl in ' + self.local_job_directory_path)
             X.to_pickle(self.local_job_directory_path + '/X.pkl')
             y.to_pickle(self.local_job_directory_path + '/y.pkl')
+
+            # save groups as .pkl
+            if groups is not None:
+                print('➞ save groups.pkl in ' + self.local_job_directory_path)
+                groups.to_pickle(self.local_job_directory_path + '/groups.pkl')
 
             print_md(self.get_job_md_string_('green') + '✅ data loaded')
 
