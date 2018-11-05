@@ -10,6 +10,7 @@ data/cleaned_IMPACT_mutations_180508.txt
 data/key.txt
 data/final_IMPACT_mutations_180508.txt
 data/annotated_final_IMPACT_mutations_180508.txt
+data/all_IMPACT_mutations_20181105.txt
 
 # data/annotate_with_click_annotvcf
 data/annotate_with_click_annotvcf/all_IMPACT_mutations_180508.vcf

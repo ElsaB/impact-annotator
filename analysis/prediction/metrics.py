@@ -557,64 +557,79 @@ class Metrics():
 
         for i, fold_metrics in self.metrics.iterrows():
             y_pred = (fold_metrics['y_proba_pred'] >= threshold)
-            cms.append(confusion_matrix(fold_metrics['y_test'], y_pred))
+            # we use [::-1][:,::-1] to invert axes and plot the usual confusion matrix (not the sklearn one)
+            cms.append(confusion_matrix(fold_metrics['y_test'], y_pred)[::-1][:,::-1])
 
         return cms
 
 
-    # work in progress...
-    def plot_confusion_matrix(self, figsize=(20, 3), legend_size=12, threshold=0.5):
+    def plot_confusion_matrix(self, figsize=(20, 3), fontsize=12, threshold=0.5):
         """
         Plot confusion matrix for each fold
         → Arguments:
             - ax         : matplotlib axis object
-            - legend_size: size of the legend
+            - fontsize   : size of the legend
+            - threshold  : probability threshold used to choose the predicted y
         """
         # set plot
         plt.figure(figsize=figsize)
 
+        # get the confusion matrices list
         cms = self.get_confusion_matrix(threshold)
 
         # for each fold
-        for i, fold_metrics in self.metrics.iterrows():
+        for i, conf_mat in enumerate(cms):
 
-            cm = pd.DataFrame(cms[i], index=['False', 'True'], columns=['False', 'True'])
+            cm = pd.DataFrame(conf_mat, index=['True', 'False'], columns=['True', 'False'])
             
+            # set plot
             plt.subplot(1, self.number_of_folds, i + 1)
             plt.title('fold {}'.format(i + 1))
             
-            prop = pd.DataFrame(cm.values / (cm.sum(axis = 1)[:, np.newaxis]), index=['False', 'True'], columns=['False', 'True'])
+            # compute some metrics
+            prop = pd.DataFrame(cm.values / (cm.sum(axis = 1)[:, np.newaxis]), index=['True', 'False'], columns=['True', 'False'])
+            
+            # compute custom label
             labels = prop.applymap(lambda x: '{:.1f}%'.format(100 * x)) + cm.applymap(lambda x: ' ({})'.format(x))
             
             # plot confusion matrix
-            seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": legend_size})
+            seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": fontsize})
+
+            plt.ylabel('Real', fontsize=fontsize)
+            plt.xlabel('Predicted', fontsize=fontsize)
 
 
-    # work in progress...
-    def plot_mean_confusion_matrix(self, figsize=(6, 5), legend_size=16, threshold=0.5):
+    def plot_mean_confusion_matrix(self, figsize=(6, 5), fontsize=16, threshold=0.5):
         """
-        Plot mean confusion matrix
+        Plot mean confusion matrix accross every fold
         → Arguments:
             - figsize    : figure size
-            - legend_size: size of the legend
+            - fontsize   : size of the legend
+            - threshold  : probability threshold used to choose the predicted y
         """
         # set plot
         plt.figure(figsize=figsize)
-        plt.title('mean confusion matrix over {} folds'.format(self.number_of_folds))
+        plt.title('mean confusion matrix over {} folds'.format(self.number_of_folds), fontsize=fontsize)
         
+        # get the confusion matrices list
         cms = self.get_confusion_matrix(threshold)
 
-        mean_cm = pd.DataFrame(np.mean(cms, axis = 0), index=['False', 'True'], columns=['False', 'True'])
-        std_cm  = pd.DataFrame(np.std(cms, axis = 0) , index=['False', 'True'], columns=['False', 'True'])
+        # compute some metrics
+        mean_cm = pd.DataFrame(np.mean(cms, axis = 0), index=['True', 'False'], columns=['True', 'False'])
+        std_cm  = pd.DataFrame(np.std(cms , axis = 0), index=['True', 'False'], columns=['True', 'False'])
         
-        prop = pd.DataFrame(mean_cm.values / (mean_cm.sum(axis = 1)[:, np.newaxis]), index=['False', 'True'], columns=['False', 'True'])
-        pstd = pd.DataFrame(std_cm.values  / (mean_cm.sum(axis = 1)[:, np.newaxis]), index=['False', 'True'], columns=['False', 'True'])
+        prop = pd.DataFrame(mean_cm.values / (mean_cm.sum(axis = 1)[:, np.newaxis]), index=['True', 'False'], columns=['True', 'False'])
+        pstd = pd.DataFrame(std_cm.values  / (mean_cm.sum(axis = 1)[:, np.newaxis]), index=['True', 'False'], columns=['True', 'False'])
         
+        # compute custom label
         labels = prop.applymap(lambda x: '{:.1f}%'.format(100 * x))   + mean_cm.applymap(lambda x: ' ({:.1f})'.format(x)) + '\n' +\
                  pstd.applymap(lambda x: '± {:.1f}%'.format(100 * x)) + std_cm.applymap(lambda x: ' (± {:.1f})'.format(x))
         
         # plot confusion matrix
-        seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": legend_size})
+        seaborn.heatmap(prop, annot=labels, fmt='s', cmap=plt.cm.Blues, vmin=0, vmax=1, annot_kws={"size": fontsize})
+
+        plt.ylabel('Real', fontsize=fontsize)
+        plt.xlabel('Predicted', fontsize=fontsize)
 
 
     def plot_grid_search_results(self, plot_error_bar=True):

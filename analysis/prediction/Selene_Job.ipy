@@ -83,7 +83,7 @@ class Selene_Job:
         → Arguments:
             - X
             - y
-            - groups        : if specified, groups for GroupKFold
+            - groups        : if specified, groups for GroupKFold cross-validation
             - path_to_script: if specified also copy the script from the given path in the local job directory
         """
         # print an error if the job doesn't exist
