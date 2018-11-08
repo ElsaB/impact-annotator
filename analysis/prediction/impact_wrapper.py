@@ -51,6 +51,13 @@ class Impact_Wrapper():
         # create the 'is_artefact' feature
         self.impact['is_artefact'] = (self.impact['confidence_class'] == "UNLIKELY")
 
+        # create the 'is_driver' feature
+        self.impact['is_driver'] = (self.impact['oncogenic'].isin(['Likely Oncogenic', 'Oncogenic', 'Predicted Oncogenic']))
+
+        if label == 'is_driver':
+            self.impact = self.impact[~self.impact['is_artefact']]
+            self.impact.reset_index(drop=True, inplace=True)
+
         # default categorical features
         self.categorical_features = Impact_Wrapper.original_categorical_features
 

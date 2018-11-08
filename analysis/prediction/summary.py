@@ -129,7 +129,7 @@ class Summary():
         xmin, xmax = ax.get_xlim()
         plt.xticks(rotation=0, fontsize=fontsize)
         plt.yticks(fontsize=fontsize)
-        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), prop={'size': fontsize * 1.2})
+        plt.legend(loc='lower center', ncol=2, bbox_to_anchor=(0.5, -0.23), prop={'size': fontsize * 1.2})
         plt.ylim(top=1.1)
 
 
