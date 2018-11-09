@@ -529,11 +529,11 @@ class Metrics():
 
         # plot predicted probability by class
         seaborn.distplot(dd[dd['true_class'] == True]['predicted_probability'], bins=100,
-                         ax=ax, label='artefact', color='green',
+                         ax=ax, label='artefact', color='blue',
                          kde_kws={'bw': 0.01, 'alpha': 1},
                          hist_kws={'alpha': 0.2})
         seaborn.distplot(dd[dd['true_class'] == False]['predicted_probability'], bins=100,
-                         ax=ax, label='real', color='blue',
+                         ax=ax, label='real', color='green',
                          kde_kws={'bw': 0.01, 'alpha': 1},
                          hist_kws={'alpha': 0.2})
 
@@ -544,7 +544,7 @@ class Metrics():
         ax.set_ylabel('density', fontsize=fontsize)
         ax.xaxis.set_tick_params(labelsize=fontsize)
         ax.yaxis.set_tick_params(labelsize=fontsize)
-        ax.legend(loc='upper center', prop={'size': fontsize});
+        ax.legend(bbox_to_anchor=(0.9, 0.9), prop={'size': 50});
 
 
     def get_confusion_matrix(self, threshold):
