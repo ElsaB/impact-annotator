@@ -13,13 +13,15 @@ $ git clone https://github.com/ElsaB/impact-annotator.git
 ```
 
 ### Step 1: Setup your R environment
-The first part of the repository was written and tested under `R 3.5.1` and `R 3.2.3`, working with JupyterLab. To work with this repository please make sure to have the following R packages installed:
+The first part of the repository was written and tested under `R 3.5.1` and `R 3.2.3`, working with JupyterLab.
 
-* `tidyverse`
-* `gridExtra`
-* `utf8`
-* `readxl`
-* `hexbin`
+To work with this repository please make sure to have the following R packages installed:
+
+- `tidyverse`
+- `gridExtra`
+- `utf8`
+- `readxl`
+- `hexbin`
 
 ```R
 # run in an R console
@@ -31,7 +33,18 @@ install.packages('hexbin',    repos = 'http://cran.us.r-project.org')
 ```
 
 ### Step 2: Setup your Python environment
-The second part of the repository was written and tested under `Python 3.6`, working with JupyterLab. You can see the requirements under [`conda-env_requirements.yml`](https://github.com/ElsaB/impact-annotator/blob/master/conda-env_requirements.txt). To work with this repository please:
+The second part of the repository was written and tested under `Python 3.6`, working with JupyterLab. You can see the requirements under [`conda-env_requirements.yml`](https://github.com/ElsaB/impact-annotator/blob/master/conda-env_requirements.txt). The main Python packages used are:
+
+- `numpy`
+- `matplotlib`
+- `seaborn`
+- `pandas`
+- `scikit-learn`
+- `imbalanced-learn`
+- `ipython`
+- `nb_conda_kernels`
+
+To work with this repository please:
 
 #### Step 2.1: Setup a python virtualenv on the cluster
 
@@ -129,13 +142,13 @@ All Python notebooks will begin with the following lines, which load a set of cu
 
 ## Structure of the repository
 
-* **`analysis/`**: folder to design and run analysis, contains several sub-folders: `description/`, `prediction/`
+- **`analysis/`**: folder to design and run analysis, contains several sub-folders: `description/`, `prediction/`
 
-* **`data/`**: raw data and main processed data, processed data should be reprducible from raw data  
+- **`data/`**: raw data and main processed data, processed data should be reprducible from raw data  
     :warning: this folder should not be versionned
 
-* **`doc/`**: useful documentation, bibliography, slides for talks
+- **`doc/`**: useful documentation, bibliography, slides for talks
 
-* **`temp/`**: drafts, temporary files and old scripts
+- **`temp/`**: drafts, temporary files and old scripts
 
-* **`utils/`**: main scripts used across analysis (predictors, cross-validation scripts, evaluation scripts, tools...)
+- **`utils/`**: main scripts used across analysis (predictors, cross-validation scripts, evaluation scripts, tools...)
