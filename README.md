@@ -6,6 +6,24 @@
 
 ***
 
+## Repository structure
+
+- **`analysis/`**: folder to design and run analysis, contains several sub-folders:
+    - `description/`: this part is written in R and contains the description/annotation/formating process of the dataset
+    - `prediction/`: this part is written in Python and contains the classifier building process
+
+- **`data/`**: raw data and main processed data, processed data should be reprducible from raw data  
+  > :warning: This folder should not be versionned.
+
+- **`doc/`**: useful documentation, bibliography, slides for talks
+
+- **`temp/`**: drafts, temporary files and old scripts
+
+- **`utils/`**: main scripts used across analysis (predictors, cross-validation scripts, evaluation scripts, tools...)
+
+
+
+
 ## Work with this repository
 You can clone this repository using:
 ```shell
@@ -53,8 +71,9 @@ To create the virtualenv used by the jobs, please run the following commands on 
 # create the virtualenv
 $ mkvirtualenv --python=python3.6 impact-annotator_env
 # install useful libraries
-$ pip install ipython nb_conda_kernels numpy matplotlib seaborn scikit-learn pandas imblearn
+$ pip install numpy matplotlib seaborn pandas scikit-learn imbalanced-learn ipython nb_conda_kernels
 ```
+
 Some useful command lines:
 ```bash
 # activate the virtualenv
@@ -66,6 +85,7 @@ $ deactivate
 # remove the virtualenv
 $ rmvirtualenv impact-annotator_env
 ```
+
 Please add the following line in your `.bashrc` or `.bash_profile` to use virtualenv functions directly from the notebook later:
 ```bash
 # add in your .bashrc or .bash_profile
@@ -79,6 +99,7 @@ To create the conda-env, please run the following command:
 # create the conda-env and load the appropriate libraries
 $ conda env create --name impact-annotator_env --file conda-env_requirements.yml
 ```
+
 Some useful command lines:
 ```bash
 # activate the conda-env
@@ -92,14 +113,14 @@ $ conda env remove --name impact-annotator_env
 
 ```
 
-:warning: Please always activate the `impact-annotator_env` conda-env before running any Python notebook, to make sure you have all the necessary dependecies and the good libraries version:
-```bash
-# if you use jupyter notebook
-$ source activate impact-annotator_env; jupyter notebook
-
-# if you use jupyter lab
-$ source activate impact-annotator_env; jupyter lab
-```
+> :warning: Please always activate the `impact-annotator_env` conda-env before running any Python notebook, to make sure you have all the necessary dependecies and the good libraries version:
+> ```bash
+> # if you use jupyter notebook
+> $ source activate impact-annotator_env; jupyter notebook
+> 
+> # if you use jupyter lab
+> $ source activate impact-annotator_env; jupyter lab
+> ```
 
 In any Python Jupyter notebook, importing the file `utils/python/setup_environment.ipy` automatically check that you're running the notebook under the `impact-annotator_env` conda-env, you can check it yourself by running in the notebook:
 ```ipython
@@ -137,18 +158,3 @@ All Python notebooks will begin with the following lines, which load a set of cu
 # if you want to send jobs on the cluster from the notebook on your local computer, please also run:
 %run ../../../utils/Python/Selene_Job.ipy 
 ```
-
-
-
-## Structure of the repository
-
-- **`analysis/`**: folder to design and run analysis, contains several sub-folders: `description/`, `prediction/`
-
-- **`data/`**: raw data and main processed data, processed data should be reprducible from raw data  
-    :warning: this folder should not be versionned
-
-- **`doc/`**: useful documentation, bibliography, slides for talks
-
-- **`temp/`**: drafts, temporary files and old scripts
-
-- **`utils/`**: main scripts used across analysis (predictors, cross-validation scripts, evaluation scripts, tools...)

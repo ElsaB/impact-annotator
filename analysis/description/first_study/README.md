@@ -1,4 +1,4 @@
-# First study [Pierre] 
+# First study
 
 ### List of all the notebooks
 
