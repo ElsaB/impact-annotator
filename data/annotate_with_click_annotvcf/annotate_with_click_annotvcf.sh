@@ -9,8 +9,8 @@ mkdir temp
 
 printf "\n${GREEN}-> Convert .txt to .vcf...${NC}\n"
 
-INPUT_FILE="../all_IMPACT_mutations_180508.txt"
-OUTPUT_VCF="temp/all_IMPACT_mutations_180508.vcf"
+INPUT_FILE="../all_IMPACT_mutations_181105.txt"
+OUTPUT_VCF="temp/all_IMPACT_mutations_181105.vcf"
 
 python3 convert_impact_to_vcf.py $INPUT_FILE $OUTPUT_VCF
 
@@ -48,11 +48,11 @@ click_annotvcf annotvcf \
 
 
 printf "\n${GREEN}-> Cleaning...${NC}\n"
-mv temp/annotvcf.output.most_severe.tsv.gz ./click_annotvcf_IMPACT_mutations_180508.txt.gz
-gzip -d click_annotvcf_IMPACT_mutations_180508.txt.gz
+mv temp/annotvcf.output.most_severe.tsv.gz ./click_annotvcf_IMPACT_mutations_181105.txt.gz
+gzip -d click_annotvcf_IMPACT_mutations_181105.txt.gz
 rm -rf temp
 deactivate
 
 
 printf "\n${GREEN}-> Create header_click_annotvcf.txt...${NC}\n"
-grep '##' click_annotvcf_IMPACT_mutations_180508.txt > header_click_annotvcf.txt
+grep '##' click_annotvcf_IMPACT_mutations_181105.txt > header_click_annotvcf.txt
