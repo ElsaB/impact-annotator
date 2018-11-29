@@ -53,8 +53,9 @@ To create the virtualenv used by the jobs, please run the following commands on 
 # create the virtualenv
 $ mkvirtualenv --python=python3.6 impact-annotator_env
 # install useful libraries
-$ pip install ipython nb_conda_kernels numpy matplotlib seaborn scikit-learn pandas imblearn
+$ pip install numpy matplotlib seaborn pandas scikit-learn imbalanced-learn ipython nb_conda_kernels
 ```
+
 Some useful command lines:
 ```bash
 # activate the virtualenv
@@ -66,6 +67,7 @@ $ deactivate
 # remove the virtualenv
 $ rmvirtualenv impact-annotator_env
 ```
+
 Please add the following line in your `.bashrc` or `.bash_profile` to use virtualenv functions directly from the notebook later:
 ```bash
 # add in your .bashrc or .bash_profile
@@ -79,6 +81,7 @@ To create the conda-env, please run the following command:
 # create the conda-env and load the appropriate libraries
 $ conda env create --name impact-annotator_env --file conda-env_requirements.yml
 ```
+
 Some useful command lines:
 ```bash
 # activate the conda-env
