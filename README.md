@@ -158,3 +158,21 @@ All Python notebooks will begin with the following lines, which load a set of cu
 # if you want to send jobs on the cluster from the notebook on your local computer, please also run:
 %run ../../../utils/Python/Selene_Job.ipy 
 ```
+<<<<<<< HEAD
+=======
+
+
+
+## Structure of the repository
+
+- **`analysis/`**: folder to design and run analysis, contains several sub-folders: `description/`, `prediction/`
+
+- **`data/`**: raw data and main processed data, processed data should be reprducible from raw data  
+  > :warning: This folder should not be versionned.
+
+- **`doc/`**: useful documentation, bibliography, slides for talks
+
+- **`temp/`**: drafts, temporary files and old scripts
+
+- **`utils/`**: main scripts used across analysis (predictors, cross-validation scripts, evaluation scripts, tools...)
+>>>>>>> a06b8c0cf9bf4c80ead908850a364ba270cb9d02
