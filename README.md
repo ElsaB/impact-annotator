@@ -148,7 +148,7 @@ All Python notebooks will begin with the following lines, which load a set of cu
 - **`analysis/`**: folder to design and run analysis, contains several sub-folders: `description/`, `prediction/`
 
 - **`data/`**: raw data and main processed data, processed data should be reprducible from raw data  
-    :warning: this folder should not be versionned
+  > :warning: This folder should not be versionned.
 
 - **`doc/`**: useful documentation, bibliography, slides for talks
 
