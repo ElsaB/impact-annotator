@@ -89,7 +89,7 @@ $ source activate impact-annotator_env; jupyter lab
 ```
 
 In any Python Jupyter notebook, importing the file `utils/python/setup_environment.ipy` automatically check that you're running the notebook under the `impact-annotator_env` conda-env, you can check it yourself by running in the notebook:
-```python
+```ipython
 # prints the current conda-env used
 !echo $CONDA_DEFAULT_ENV
 
@@ -118,7 +118,7 @@ setup_environment("../../../utils/R")
 ```
 
 All Python notebooks will begin with the following lines, which load a set of custom function designed by us, and load appropriate libraries, it also makes sure that you're working on the `impact-annotator_env` that you should have created earlier:
-```python
+```ipython
 %run ../../../utils/Python/setup_environment.ipy
 
 # if you want to send jobs on the cluster from the notebook on your local computer, please also run:
