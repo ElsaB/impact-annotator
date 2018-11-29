@@ -22,7 +22,7 @@ The first part of the repository was written and tested under `R 3.5.1` and `R 3
 * `hexbin`
 
 ```R
-# to run in an R console
+# run in an R console
 install.packages('tidyverse', repos = 'http://cran.us.r-project.org')
 install.packages('gridExtra', repos = 'http://cran.us.r-project.org')
 install.packages('utf8',      repos = 'http://cran.us.r-project.org')
@@ -31,7 +31,7 @@ install.packages('hexbin',    repos = 'http://cran.us.r-project.org')
 ```
 
 ### Step 2: Setup your Python environment
-The second part of the repository was written and tested under `Python 3.6`, working with JupyterLab. You can see the requirements under [`conda-env_requirements.yml`](https://github.com/ElsaB/impact-annotator/blob/master/analysis/prediction/conda-env_requirements.yml). To work with this repository please:
+The second part of the repository was written and tested under `Python 3.6`, working with JupyterLab. You can see the requirements under [`conda-env_requirements.yml`](https://github.com/ElsaB/impact-annotator/blob/master/conda-env_requirements.txt). To work with this repository please:
 
 #### Step 2.1: Setup a python virtualenv on the cluster
 
@@ -83,14 +83,16 @@ $ conda env remove --name impact-annotator_env
 ```bash
 # if you use jupyter notebook
 $ source activate impact-annotator_env; jupyter notebook
+
 # if you use jupyter lab
 $ source activate impact-annotator_env; jupyter lab
 ```
 
 In any Python Jupyter notebook, importing the file `utils/python/setup_environment.ipy` automatically check that you're running the notebook under the `impact-annotator_env` conda-env, you can check it yourself by running in the notebook:
-```ipython
+```python
 # prints the current conda-env used
 !echo $CONDA_DEFAULT_ENV
+
 # list all the conda-env on your computer, the one you're working on is indicated by a star
 !conda env list
 ```
@@ -116,10 +118,10 @@ setup_environment("../../../utils/R")
 ```
 
 All Python notebooks will begin with the following lines, which load a set of custom function designed by us, and load appropriate libraries, it also makes sure that you're working on the `impact-annotator_env` that you should have created earlier:
-```ipython
+```python
 %run ../../../utils/Python/setup_environment.ipy
 
-# if you want to send jobs on the cluster from the notebook on your local computer, please add:
+# if you want to send jobs on the cluster from the notebook on your local computer, please also run:
 %run ../../../utils/Python/Selene_Job.ipy 
 ```
 
@@ -130,7 +132,7 @@ All Python notebooks will begin with the following lines, which load a set of cu
 * **`analysis/`**: folder to design and run analysis, contains several sub-folders: `description/`, `prediction/`
 
 * **`data/`**: raw data and main processed data, processed data should be reprducible from raw data  
-    :warning: This folder should not be versionned
+    :warning: this folder should not be versionned
 
 * **`doc/`**: useful documentation, bibliography, slides for talks
 
