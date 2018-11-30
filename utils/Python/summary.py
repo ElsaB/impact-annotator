@@ -96,43 +96,6 @@ class Summary():
         plt.ylim(top=1.1)
 
 
-    # to remove
-    def plot_pres(self, figsize=(25, 8), fontsize=12):
-        """
-        Plot a comparison of the metrics accross every score
-        → Arguments:
-            - figsize : the size of the figure
-            - fontsize: the score text label font size
-        """
-        summary_transpose = self.summary.copy().transpose()
-
-        fig, ax = plt.subplots(1, 1, figsize=figsize)
-
-        # get mean and std metrics
-        mean_metrics = summary_transpose.loc[self.columns_score_mean]
-        std_metrics  = summary_transpose.loc[self.columns_score_std]
-        std_metrics.index = mean_metrics.index
-
-        # plot comparison
-        mean_metrics.plot.bar(ax=ax, width=0.85, color=self.summary['color'],
-                               yerr=std_metrics, error_kw={'ecolor': 'black', 'capsize': 6, 'linewidth': 3}, linewidth=0)
-            
-        # print text results
-        for rect in ax.patches:
-            ax.text(rect.get_x() + rect.get_width() / 2, rect.get_height() + 0.01 + std_metrics.max().max(),
-                    '{:.3f}'.format(rect.get_height()), ha='center', va='bottom', color=rect.get_facecolor(), fontsize=fontsize, rotation=55)
-
-        # plot reference 1.0 value
-        plt.plot(ax.get_xlim(), [1.0, 1.0], '--', alpha=0.5, linewidth=2, color='navy')
-
-        # set plot
-        xmin, xmax = ax.get_xlim()
-        plt.xticks(rotation=0, fontsize=fontsize)
-        plt.yticks(fontsize=fontsize)
-        plt.legend(loc='lower center', ncol=2, bbox_to_anchor=(0.5, -0.23), prop={'size': fontsize * 1.2})
-        plt.ylim(top=1.1)
-
-
     def save(self, path):
         """
         Save self.summary to a .pkl

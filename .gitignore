@@ -47,3 +47,6 @@ temp/Features
 
 analysis/prediction/ssh_remote_jobs/*/
 ! analysis/prediction/ssh_remote_jobs/
+
+analysis/prediction/somatic_classification/ssh_remote_jobs/*/
+! analysis/prediction/ssh_remote_jobs/

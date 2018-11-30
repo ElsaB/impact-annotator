@@ -295,72 +295,6 @@ class Metrics():
         ax.legend(loc='lower right', prop={'size': fontsize})
 
 
-    def plot_roc_pres(self, ax, fontsize, plot_thresholds=True, show_folds_legend=True):
-        """
-        Plot ROC curve for each fold (and the associated threshold) and a mean interpolated ROC curve
-        Strongly inspired by http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
-        → Arguments:
-            - ax               : matplotlib axis object
-            - fontsize         : size of the legend
-            - plot_thresholds  : if True plot the thresholds curve for each fold
-            - show_folds_legend: if True show the legend for each fold curve
-        """
-        # set plot
-        ax.set_title('ROC curve for {} folds'.format(self.number_of_folds), fontsize=fontsize)
-        ax.set_xlabel('false positive rate', fontsize=fontsize)
-        if plot_thresholds:
-            ax.set_ylabel('true positive rate  |  threshold value', fontsize=fontsize)
-        else:
-            ax.set_ylabel('true positive rate', fontsize=fontsize)
-        ax.set_xlim(-0.05, 1.05)
-        ax.set_ylim(-0.05, 1.05)
-        ax.xaxis.set_tick_params(labelsize=fontsize)
-        ax.yaxis.set_tick_params(labelsize=fontsize)
-        
-        mean_fpr = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
-        tprs = [] # true positive rate list for each fold
-
-        # for each fold
-        for i, fold_metrics in self.metrics.iterrows():
-            fpr, tpr, thresholds = fold_metrics['test_fpr'], fold_metrics['test_tpr'], fold_metrics['roc_thresh']
-
-            # because the length of fpr and tpr vary with the fold (size of thresholds  = nunique(y_pred[:, 1]) + 1), we can't just do
-            # fprs.append(fpr) and tprs.append(tpr)
-            # we use a linear interpolation to find the values of fpr for a 101 chosen tpr values (mean_fpr)
-            tprs.append(np.interp(mean_fpr, fpr, tpr))
-            tprs[-1][0] = 0.0 # threshold > 1 for the first point (ie the last tpr value, we correct the interpolation)
-
-            # plot ROC curve
-            if show_folds_legend:
-                label = 'ROC fold %d (AUC = %0.3f)' % (i + 1, fold_metrics['test_roc_auc'])
-            else:
-                label = None
-            plt = ax.plot(fpr, tpr, linewidth=1, alpha=0.4, label=label)
-
-            # plot thresholds
-            if plot_thresholds:
-                thresholds[0] = 1.001 # value is > 1, we set it just above one for the graphic style
-                ax.plot(fpr, thresholds, linewidth=1.5, alpha=0.4, color=plt[0].get_color())
-        
-
-        # plot baseline
-        ax.plot([0, 1], [0, 1], '--r', linewidth=1.5, alpha=1, label='random')
-
-        # plot mean ROC
-        mean_tpr = np.mean(tprs, axis=0)
-        ax.plot(mean_fpr, mean_tpr, 'b', linewidth=3,
-                label='mean ROC (AUC = {:.3f} ± {:.3f})'.format(self.metrics['test_roc_auc'].mean(), self.metrics['test_roc_auc'].std()))
-
-        # plot mean ROC std
-        std_tpr = np.std(tprs, axis=0)
-        ax.fill_between(mean_fpr, mean_tpr - std_tpr, mean_tpr + std_tpr, color='blue', alpha=0.15,
-                         label='mean ROC ± 1 std. dev.')
-        
-
-        ax.legend(loc='lower right', prop={'size': fontsize})
-
-
-
     def plot_precision_recall(self, ax, fontsize, plot_thresholds=True, show_folds_legend=True):
         """
         Plot Precision-Recall curve (PR) for each fold (and the associated threshold) and a mean PR curve
@@ -439,84 +373,6 @@ class Metrics():
         ax.legend(loc='lower left', prop={'size': fontsize})
 
 
-    def plot_precision_recall_pres(self, ax, fontsize, plot_thresholds=True, show_folds_legend=True):
-        """
-        Plot Precision-Recall curve (PR) for each fold (and the associated threshold) and a mean PR curve
-        Strongly inspired by self.plot_roc() method
-        See https://classeval.wordpress.com/introduction/introduction-to-the-precision-recall-plot/
-        WARNING: for simplicity we use linear interpolation but this is wrong (cf. previous website)
-        → Arguments:
-            - ax               : matplotlib axis object
-            - fontsize         : size of the legend
-            - plot_thresholds  : if True plot the thresholds curve for each fold
-            - show_folds_legend: if True show the legend for each fold curve
-        """
-
-        # set plot
-        ax.set_title('Precision-Recall curve for {} folds'.format(self.number_of_folds), fontsize=fontsize)
-        ax.set_xlabel('recall', fontsize=fontsize)
-        if plot_thresholds:
-            ax.set_ylabel('precision  |  threshold value', fontsize=fontsize)
-        else:
-            ax.set_ylabel('precision', fontsize=fontsize)
-        ax.set_xlim(-0.05, 1.05)
-        ax.set_ylim(-0.05, 1.05)
-        ax.xaxis.set_tick_params(labelsize=fontsize)
-        ax.yaxis.set_tick_params(labelsize=fontsize)
-        
-        mean_recall = np.linspace(0, 1, 101) # [0, 0.01, 0.02, ..., 0.09, 1.0]
-        precisions = [] # precision value list for each fold
-
-        # for each fold
-        for i, fold_metrics in self.metrics.iterrows():
-            precision, recall, thresholds = fold_metrics['precision'], fold_metrics['recall'], fold_metrics['pr_thresh']
-            
-            # correct first point precision to make a horizontal line between first and second point
-            # from the sklearn documentation: "The last precision and recall values are 1. and 0. respectively and do not have a corresponding
-            # threshold. This ensures that the graph starts on the y axis."
-            # this methodology is advised by the website quoted in the main method comment
-            precision[-1] = precision[-2]
-
-            # because the length of precision and recall vary with the fold (size of thresholds  = nunique(y_pred[:, 1]) + 1), we can't just do
-            # precisions.append(precision) and recalls.append(recall)
-            # we use a linear interpolation to find the values of precision for a 101 chosen recall values
-            # WARNING: this is wrong, this choice has been made for simplicity
-            # Also, the documentation for np.interp asks the coordinates where we want to interpolate the values to be sorted, these explains the need to do [::-1]
-            # for both recall and precision
-            precisions.append(np.interp(mean_recall, recall[::-1], precision[::-1]))
-
-            # plot PR curve
-            if show_folds_legend:
-                label = 'PR fold %d (AP = %0.3f)' % (i + 1, fold_metrics['test_average_precision'])
-            else:
-                label = None
-            plt = ax.plot(recall, precision, linewidth=1, alpha=0.4, label=label)
-
-            # plot thresholds
-            if plot_thresholds:
-                # cf last comment on sklearn documentation, there's no threshold for the first point so we don't plot it
-                ax.plot(recall[:-1], thresholds, linewidth=1.5, alpha=0.4, color=plt[0].get_color())
-            
-        # plot baseline (see website)
-        positive_number = self.metrics['y_test'].apply(lambda x: sum(x)).sum()
-        negative_number = self.metrics['y_test'].apply(lambda x: sum(~x)).sum()
-        positive_proportion = positive_number / (positive_number + negative_number)
-        ax.plot([0, 1], [positive_proportion, positive_proportion], '--r', linewidth=1.5, alpha=1, label='random')
- 
-        # plot mean PR
-        mean_precision = np.mean(precisions, axis=0)
-        ax.plot(mean_recall, mean_precision, 'b', linewidth=3,
-                label='mean PR (AP = {:.3f} ± {:.3f})'.format(self.metrics['test_average_precision'].mean(), self.metrics['test_average_precision'].std()))
-
-        # plot mean PR std
-        std_precision = np.std(precisions, axis=0)
-        ax.fill_between(mean_recall, mean_precision - std_precision, mean_precision + std_precision, color='blue', alpha=0.15,
-                         label='mean PR ± 1 std. dev.')
-
-
-        ax.legend(loc='lower left', prop={'size': fontsize})
-
-
     def plot_probability_distribution(self, ax, fontsize):
         """
         Plot predicted probability distribution for True and False class
@@ -544,7 +400,7 @@ class Metrics():
         ax.set_ylabel('density', fontsize=fontsize)
         ax.xaxis.set_tick_params(labelsize=fontsize)
         ax.yaxis.set_tick_params(labelsize=fontsize)
-        ax.legend(bbox_to_anchor=(0.9, 0.9), prop={'size': 50});
+        ax.legend(bbox_to_anchor=(0.9, 0.9), prop={'size': fontsize});
 
 
     def get_confusion_matrix(self, threshold):
@@ -556,7 +412,10 @@ class Metrics():
         cms = []
 
         for i, fold_metrics in self.metrics.iterrows():
-            y_pred = (fold_metrics['y_proba_pred'] >= threshold)
+            if threshold == 0.5:
+                y_pred = fold_metrics['y_class_pred']
+            else:
+                y_pred = (fold_metrics['y_proba_pred'] >= threshold)
             # we use [::-1][:,::-1] to invert axes and plot the usual confusion matrix (not the sklearn one)
             cms.append(confusion_matrix(fold_metrics['y_test'], y_pred)[::-1][:,::-1])
 

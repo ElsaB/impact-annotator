@@ -27,7 +27,7 @@ class Selene_Job:
       - metrics                              : job Metrics object
     """
 
-    def __init__(self, job_id, cluster_username, cluster_path_to_impact_annotator, local_path_to_ssh_remote_jobs, load_from_id=False):
+    def __init__(self, job_id, cluster_username, cluster_path_to_ssh_remote_jobs, local_path_to_ssh_remote_jobs, load_from_id=False):
         """
         Create a job or reload one from its job id
         → Ex: job = Selene_Job('RandomForest', 'guilminp', '/home/guilminp/impact-annotator', '../ssh_remote_jobs')
@@ -35,7 +35,7 @@ class Selene_Job:
         → Arguments:
             - job_id
             - cluster_username
-            - cluster_path_to_impact_annotator: cluster path to the cloned impact-annotator repository
+            - cluster_path_to_ssh_remote_jobs : cluster path to the the ssh_remote_jobs/ directory in the cloned impact-annotator repository
             - local_path_to_ssh_remote_jobs   : local path to the ssh_remote_jobs/ directory
             - load_from_id                    : if True, does not create the job and find it
         """
@@ -47,9 +47,9 @@ class Selene_Job:
         self.script_path = self.local_job_directory_path + '/script.ipy'
 
         # cluster path
-        self.selene_ssh_server_path = cluster_username + '@selene.mskcc.org'
-        self.selene_ssh_remote_jobs_directory_path = cluster_path_to_impact_annotator + '/analysis/prediction/ssh_remote_jobs'
-        self.selene_job_directory_path             = cluster_path_to_impact_annotator + '/analysis/prediction/ssh_remote_jobs/job_' + str(job_id)
+        self.selene_ssh_server_path                = cluster_username + '@selene.mskcc.org'
+        self.selene_ssh_remote_jobs_directory_path = cluster_path_to_ssh_remote_jobs
+        self.selene_job_directory_path             = cluster_path_to_ssh_remote_jobs + '/job_' + str(job_id)
 
         if load_from_id:
             # check if the job exist
@@ -128,7 +128,7 @@ class Selene_Job:
             print_md(self.get_job_md_string_('red') + '⚠️ does not exist yet')
         else:
             # scp the job directory to the cluster
-            print('➞ scp ' + self.local_job_directory_path + ' to ' + self.selene_ssh_server_path + ':' + self.selene_ssh_remote_jobs_directory_path)
+            print('➞ scp ' + self.local_job_directory_path + ' to ' + self.selene_ssh_server_path + ':' + self.selene_job_directory_path)
             !scp -r {self.local_job_directory_path} {self.selene_ssh_server_path + ':' + self.selene_ssh_remote_jobs_directory_path}
 
             # setup command to:
