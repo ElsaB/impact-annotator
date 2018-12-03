@@ -420,7 +420,7 @@ process_raw_features <- function(impact) {
                           "VARDICT")
     impact$variant_caller_cv <- sapply(impact$variant_caller_cv, function(x) variant_caller_table[x])
 
-    
+
     return (impact)
 }
 

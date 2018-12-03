@@ -1,4 +1,4 @@
-impact <- read.table("../final_IMPACT_mutations_180508.txt",
+impact <- read.table("../final_IMPACT_mutations_181105.txt",
 					 sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
 
@@ -43,4 +43,4 @@ impact$Variant_Classification <- apply(impact, 1, get_variant_classification)
 
 impact <- unique(impact)
 
-write.table(impact, "./ready_to_annotate_final_IMPACT_mutations_180508.txt", sep = "\t", row.names = FALSE)
+write.table(impact, "./ready_to_annotate_final_IMPACT_mutations_181105.txt", sep = "\t", row.names = FALSE)
