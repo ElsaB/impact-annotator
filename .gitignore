@@ -50,3 +50,9 @@ analysis/prediction/ssh_remote_jobs/*/
 
 analysis/prediction/somatic_classification/ssh_remote_jobs/*/
 ! analysis/prediction/ssh_remote_jobs/
+
+
+
+# temp
+data/impact_181105/**/*.txt
+data/impact_181105/**/*.vcf

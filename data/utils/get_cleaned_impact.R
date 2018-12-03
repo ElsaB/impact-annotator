@@ -1,5 +1,5 @@
-source("../src/utils/custom_tools.R")
-setup_environment("../src/utils")
+source("../../utils/R/custom_tools.R")
+setup_environment("../../utils/R/")
 
 impact_cleaned <- get_cleaned_impact(".")
 
