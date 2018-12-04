@@ -1,14 +1,15 @@
 # todo list
 
 ### General
-- [ ] read paper in details and understand differences/similarities
-- [ ] remove unmatched cases
+- [x] read paper in details and understand differences/similarities
+- [x] remove unmatched cases
 
 ### GitHub
 - [x] create `conda-env_requirements.yml` and remove prefix
 - [x] reorganize `src/` folder to `utils/R` and `utils/Python`
 - [x] mv `ml_tools.py` to `temp/old/`
 - [x] check main `README.md`
+- [x] merge other todo list
 - [ ] simplify `.gitignore`
 - [ ] check main `README.md` repository structure
 - [ ] sort `temp/` folder
@@ -17,17 +18,12 @@
 - [ ] check all R notebooks
 - [ ] check all Python notebooks
 - [ ] change main description of projet (get all rights - ask Elsa)
-- [ ] merge other todo list
-
-error click_annotvcf
+- [ ] explain impact_181105
 
 
-### Sampling
+### Sampling and cross-validation
 - [ ] undersampling inconsistent sorted/shuffle
 - [ ] Optimise undersampling/oversampling (imblearn technics)
-
-
-### Cross-validation
 - [ ] Unify patients and key for cross-validation? (http://scikit-learn.org/stable/modules/cross_validation.html#group-cv) -> Gfold repeated cross-validation
 
 
@@ -36,7 +32,6 @@ error click_annotvcf
 - [ ] Comment notebooks
 - [ ] Errors only appearing in detailed CV
 - [ ] Rewrite `cluster_job_tutorial.ipynb` and add a section on how to use `Metrics` and `Summary`
-- [ ] Rename metrics to experience
 - [ ] Metric representative of patient
 
 
