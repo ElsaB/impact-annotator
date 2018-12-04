@@ -341,9 +341,10 @@ process_raw_features <- function(impact) {
     for (c in vep_gnomad_colnames[grepl("_AC.AN_", vep_gnomad_colnames)])
         impact <- replace_na(impact, c, " 0 | 0")
 
-
+    #!! difference with original compute_final_dataset.R
     # [~ every rows] occurence_in_normals -> frequency_in_normals
     impact$occurence_in_normals[impact$occurence_in_normals == '0'] <- "0;0"
+    impact$occurence_in_normals[!grepl(';', impact$occurence_in_normals)] <- paste('0;', impact$occurence_in_normals[!grepl(';', impact$occurence_in_normals)])
     impact$frequency_in_normals <- sapply(impact$occurence_in_normals,
                                           function(s) as.double(strsplit(s, split = ';')[[1]][2]))
     impact$occurence_in_normals <- NULL

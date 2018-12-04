@@ -43,8 +43,8 @@ class Impact_Wrapper():
         if shuffle:
             # apply a permutation to self.impact
             rng = np.random.RandomState(42)
-            permutation = rng.permutation(len(self.impact))
-            self.impact = self.impact.iloc[permutation]
+            self.first_permutation = rng.permutation(len(self.impact))
+            self.impact = self.impact.iloc[self.first_permutation]
             # reset the index to [0, 1, ...]
             self.impact.reset_index(drop=True, inplace=True)
 
@@ -70,7 +70,7 @@ class Impact_Wrapper():
             - feature_values: features value, as a Serie or np.array or list
             - is_categorical: if True the feature will be processed as categorical
         """
-        self.impact[feature_name] = feature_values
+        self.impact[feature_name] = feature_values.reindex(self.first_permutation)
         if is_categorical:
             self.categorical_features.append(feature_name)
 

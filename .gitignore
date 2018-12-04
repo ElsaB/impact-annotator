@@ -10,18 +10,14 @@ data/**/*.csv
 data/**/*.tsv
 data/**/*.vcf
 data/**/*.xlsx
-! data/other_databases/CancerGenesList.txt
-! data/other_databases/candl-results-20180809100701.csv
-! data/utils/**.txt
+!data/other_databases/CancerGenesList.txt
+!data/other_databases/candl-results-20180809100701.csv
+!data/utils/**.txt
 
 # synonymous_mutations_analysis_extra
-analysis/description/synonymous_study/synonymous_mutations_analysis_extra
-! analysis/description/synonymous_study/synonymous_mutations_analysis_extra/get_samtools_and_IGV_snapshots.sh
-! analysis/description/synonymous_study/synonymous_mutations_analysis_extra/list_irb12_245.txt
+analysis/description/synonymous_study/synonymous_mutations_analysis_extra/**
+!analysis/description/synonymous_study/synonymous_mutations_analysis_extra/get_samtools_and_IGV_snapshots.sh
+!analysis/description/synonymous_study/synonymous_mutations_analysis_extra/list_irb12_245.txt
 
 # ssh_remote_jobs
-analysis/prediction/somatic_classification/ssh_remote_jobs/*/
-! analysis/prediction/ssh_remote_jobs/
-
-analysis/prediction/somatic_classification/test/*
-! analysis/prediction/somatic_classification/test/.gitkeep
+analysis/prediction/somatic_classification/ssh_remote_jobs/**

@@ -10,7 +10,7 @@
 - [x] mv `ml_tools.py` to `temp/old/`
 - [x] check main `README.md`
 - [x] merge other todo list
-- [ ] simplify `.gitignore`
+- [x] simplify `.gitignore`
 - [ ] check main `README.md` repository structure
 - [ ] sort `temp/` folder
 - [ ] check `data/` folder
