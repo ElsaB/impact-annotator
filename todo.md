@@ -19,6 +19,8 @@
 - [ ] check all Python notebooks
 - [ ] change main description of projet (get all rights - ask Elsa)
 - [ ] explain impact_181105
+- [ ] create new and clean git repository
+- clean `sorted_sampling_issue.ipynb`
 
 
 ### Sampling and cross-validation
@@ -33,6 +35,7 @@
 - [ ] Errors only appearing in detailed CV
 - [ ] Rewrite `cluster_job_tutorial.ipynb` and add a section on how to use `Metrics` and `Summary`
 - [ ] Metric representative of patient
+- [ ] change summary color handling
 
 
 ### Ideas
@@ -85,4 +88,11 @@ https://github.com/seandavi/awesome-cancer-variant-databases/blob/master/README.
     - CanDra feature supplementary materials
     - Cscape feature supplementary material
     - Expecto
+
+
+
+    ssh-add
+Enter passphrase for /Users/guilminp/.ssh/id_rsa:
+Identity added: /Users/guilminp/.ssh/id_rsa (/Users/guilminp/.ssh/id_rsa)
+🍄  guilminp ~ →
 
