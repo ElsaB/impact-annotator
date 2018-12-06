@@ -11,32 +11,32 @@
 - [x] check main `README.md`
 - [x] merge other todo list
 - [x] simplify `.gitignore`
-- [ ] check main `README.md` repository structure
+
+### Final clean
+- [ ] create new and clean git repository
 - [ ] sort `temp/` folder
 - [ ] check `data/` folder
 - [ ] check `analysis/` folder
+- [ ] check main `README.md` repository structure
 - [ ] check all R notebooks
 - [ ] check all Python notebooks
 - [ ] change main description of projet (get all rights - ask Elsa)
 - [ ] explain impact_181105
-- [ ] create new and clean git repository
-- clean `sorted_sampling_issue.ipynb`
-
+- [ ] clean `sorted_sampling_issue.ipynb`
+- [ ] Comment Python notebooks
+- [ ] Specifi `ssh-add` is necessary for anyone to use selene_job.ipy
 
 ### Sampling and cross-validation
 - [ ] undersampling inconsistent sorted/shuffle
 - [ ] Optimise undersampling/oversampling (imblearn technics)
 - [ ] Unify patients and key for cross-validation? (http://scikit-learn.org/stable/modules/cross_validation.html#group-cv) -> Gfold repeated cross-validation
 
-
 ### Other
 - [x] Bug with `Uniform` prediction
-- [ ] Comment notebooks
+- [x] change summary color handling
 - [ ] Errors only appearing in detailed CV
 - [ ] Rewrite `cluster_job_tutorial.ipynb` and add a section on how to use `Metrics` and `Summary`
 - [ ] Metric representative of patient
-- [ ] change summary color handling
-
 
 ### Ideas
 - [ ] Deep learning
@@ -54,13 +54,10 @@
 - [ ] OncoKB likely oncogenic, predicted oncogenic: go back on this classification later on
 - [ ] Call again the IMPACT `.bam` files with a uniform caller to perform analysis
 
-
 ### temp
 - `conda create -c conda-forge --name impact-annotator_env python=3.6 ipython nb_conda_kernels numpy matplotlib seaborn scikit-learn pandas imbalanced-learn`
-- **`results/`**: folder where the main results are summarized in a markdown (entries in the form YYMMDD)
 - `conda env export > conda-env_requirements.txt`
-
-Warning, dummy variables are also scaled!
+- Warning, dummy variables are also scaled!
 
 Other:
 Benchmarking articles
@@ -90,9 +87,4 @@ https://github.com/seandavi/awesome-cancer-variant-databases/blob/master/README.
     - Expecto
 
 
-
-    ssh-add
-Enter passphrase for /Users/guilminp/.ssh/id_rsa:
-Identity added: /Users/guilminp/.ssh/id_rsa (/Users/guilminp/.ssh/id_rsa)
-🍄  guilminp ~ →
-
+['maroon', 'firebrick', 'crimson', 'tomato', 'coral', 'lightcoral']

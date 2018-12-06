@@ -70,7 +70,7 @@ class Impact_Wrapper():
             - feature_values: features value, as a Serie or np.array or list
             - is_categorical: if True the feature will be processed as categorical
         """
-        self.impact[feature_name] = feature_values.reindex(self.first_permutation)
+        self.impact[feature_name] = feature_values
         if is_categorical:
             self.categorical_features.append(feature_name)
 

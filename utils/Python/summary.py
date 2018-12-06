@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as seaborn
+import seaborn
 from scipy.stats import normaltest, ttest_rel
 
 from metrics import Metrics
@@ -46,7 +46,7 @@ class Summary():
             display(self.summary)
 
 
-    def add(self, metrics, metrics_name, color='blue'):
+    def add(self, metrics, metrics_name, color=False):
         """
         Add a Metrics to self.summary
         → Arguments:
@@ -76,8 +76,16 @@ class Summary():
         std_metrics  = summary_transpose.loc[self.columns_score_std]
         std_metrics.index = mean_metrics.index
 
+        # get colors
+        colors = seaborn.color_palette("viridis", self.summary.shape[0])
+
+        # if some color have been specified, replace the default colors by the specified ones
+        for i, c in enumerate(self.summary['color']):
+            if c:
+                colors[i] = c
+
         # plot comparison
-        mean_metrics.plot.bar(ax=ax, width=0.85, color=self.summary['color'],
+        mean_metrics.plot.bar(ax=ax, width=0.85, color=colors,
                                yerr=std_metrics, error_kw={'ecolor': 'black', 'capsize': 2}, linewidth=0)
             
         # print text results
